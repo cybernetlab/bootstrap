@@ -1,2 +1,5 @@
 require 'bootstrap/view_helpers/base'
+require 'bootstrap/view_helpers/mixin'
 require 'bootstrap/view_helpers/grid'
+require 'bootstrap/view_helpers/table'
+require 'bootstrap/view_helpers/button'

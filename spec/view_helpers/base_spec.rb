@@ -1,6 +1,8 @@
 require 'spec_helper'
 
-describe Bootstrap::ViewHelpers::Base, type: :view do
+describe Bootstrap::ViewHelpers::Base do
+  # TODO: add specs for initialization and other new stuff
+
   it 'sets tag to "div" by default' do
     expect(helper.tag).to eq 'div'
   end

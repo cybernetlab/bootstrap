@@ -9,6 +9,10 @@ module ViewHelpersExampleGroup
     @helper ||= helper_class.new view, *args, &block
   end
 
+  def wrapper *args, &block
+    @wrapper ||= wrapper_class.new view, *args, &block
+  end
+
   def rendered str = nil
     if block_given?
       Capybara::Node::Simple.new(yield)
@@ -23,9 +27,17 @@ module ViewHelpersExampleGroup
 
   included do
     metadata[:type] = :view_helpers
-
+    after {@helper = nil; @wrapper = nil}
     let(:view) {ActionView::Base.new}
     let(:helper_class) {Class.new described_class}
+    let(:wrapper_class) do
+      mod = described_class
+      Class.new Bootstrap::ViewHelpers::Base do
+        include mod
+        def render; @view.content_tag @tag, capture, @options; end
+        def helper_names; end
+      end
+    end
   end
 
   RSpec.configure do |config|

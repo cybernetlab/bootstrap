@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Bootstrap::ViewHelpers::Grid, type: :view do
+describe Bootstrap::ViewHelpers::Grid do
   it {expect(rendered).to have_selector 'div.container'}
   it {expect(rendered helper class: :test).to have_selector 'div.container.test'}
   it {expect(rendered(helper(class: :test) {|g| '<p></p>'.html_safe})).to have_selector 'div.container.test > p'}
@@ -13,7 +13,7 @@ describe Bootstrap::ViewHelpers::Grid, type: :view do
   it {expect(helper_class.helper_names).to eq 'grid'}
 end
 
-describe Bootstrap::ViewHelpers::GridRow, type: :view do
+describe Bootstrap::ViewHelpers::GridRow do
   it {expect(rendered).to have_selector 'div.row'}
   it {expect(rendered helper class: :test).to have_selector 'div.row.test'}
   it {expect(rendered(helper(class: :test) {|g| '<p></p>'.html_safe})).to have_selector 'div.row.test > p'}
@@ -29,7 +29,7 @@ describe Bootstrap::ViewHelpers::GridRow, type: :view do
   it {expect(helper_class.helper_names).to eq nil}
 end
 
-describe Bootstrap::ViewHelpers::GridCell, type: :view do
+describe Bootstrap::ViewHelpers::GridCell do
   it {expect(rendered).to have_selector 'div.col-md-3'}
   it {expect(rendered helper class: :test).to have_selector 'div.col-md-3.test'}
   it {expect(rendered(helper(class: :test) {|g| '<p></p>'.html_safe})).to have_selector 'div.col-md-3.test > p'}
@@ -38,37 +38,6 @@ describe Bootstrap::ViewHelpers::GridCell, type: :view do
     expect(Bootstrap::ViewHelpers::GridRow).to receive(:new).and_call_original
     helper.row
   end
-
-  it 'sanitize extra small classes' do
-    %w[col-xs-2 xs-2 xs_2 xs2 extra-small-2 extra_small_2 extrasmall2 XS-2 ExtraSmall2].each do |c|
-      @helper = nil
-      expect(rendered helper c).to have_selector 'div.col-xs-2'
-    end
-  end
-
-  it 'sanitize small classes' do
-    %w[col-sm-2 sm-2 sm_2 sm2 small-2 small_2 small2].each do |c|
-      @helper = nil
-      expect(rendered helper c).to have_selector 'div.col-sm-2'
-    end
-  end
-
-  it 'sanitize medium classes' do
-    %w[col-md-2 md-2 md_2 md2 medium-2 medium_2 medium2].each do |c|
-      @helper = nil
-      expect(rendered helper c).to have_selector 'div.col-md-2'
-    end
-  end
-
-  it 'sanitize large classes' do
-    %w[col-lg-2 lg-2 lg_2 lg2 large-2 large_2 large2].each do |c|
-      @helper = nil
-      expect(rendered helper c).to have_selector 'div.col-lg-2'
-    end
-  end
-
-  it {expect(rendered helper :sm3, :sm1).to have_selector 'div[@class="col-sm-3"]'}
-  it {expect(rendered helper :sm12, :lg1).to have_selector 'div.col-sm-12.col-lg-1'}
 
   %w[offset push pull].each do |act|
     it "sanitize extra small #{act}" do
@@ -100,5 +69,6 @@ describe Bootstrap::ViewHelpers::GridCell, type: :view do
     end
   end
 
+  it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::Column}
   it {expect(helper_class.helper_names).to eq nil}
 end

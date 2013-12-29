@@ -37,32 +37,29 @@ module Bootstrap
     end
 
     class GridCell < Base
-      def initialize view, *args, &block
-        no_class = true
-        super.each do |arg|
-          next unless arg.is_a?(String) || arg.is_a?(Symbol)
-          arg = arg.to_s.downcase
-          if /^(?:col[-_]?)?(?<size>(?:xs|(?:extra[-_]?small))|(?:sm|small)|(?:md|medium)|(?:lg|large))(?:[-_]?(?<act>offset|push|pull))?[-_]?(?<num>\d{1,2})$/ =~ arg
-            size = {'x' => 'xs', 'e' => 'xs', 's' => 'sm', 'm' => 'md', 'l' => 'lg'}[size[0]]
-            part = ['col', size, act].compact.join('-')
-            add_class "#{part}-#{num}" unless @options[:class].any? {|c| /^#{part}-\d{1,2}/ =~ c}
-            no_class = false if act.nil?
-          end
-        end
-        add_class 'col-md-3' if no_class
-      end
+      include Column
 
       def row *args, &block
         GridRow.new(@view, *args, &block).render
       end
 
       def render
-        #add_class 'col-md-3'
         @view.content_tag @tag, capture, @options
       end
 
       def self.helper_names
         nil
+      end
+
+      after_initialize do |*args|
+        args.each do |arg|
+          next unless arg.is_a?(String) || arg.is_a?(Symbol)
+          arg = arg.to_s.downcase
+          next unless /^(?:col[-_]?)?(?<size>(?:xs|(?:extra[-_]?small))|(?:sm|small)|(?:md|medium)|(?:lg|large))[-_]?(?<act>offset|push|pull)[-_]?(?<num>\d{1,2})$/ =~ arg
+          size = SIZES[size[0]]
+          add_class "col-#{size}-#{act}-#{num}" unless @options[:class].any? {|c| /^col-#{size}-#{act}-\d{1,2}/ =~ c}
+        end
+        add_class 'col-md-3' if options[:class].none? {|c| /^col-(xs|sm|md|lg)-\d{1,2}$/ =~ c}
       end
     end
   end
