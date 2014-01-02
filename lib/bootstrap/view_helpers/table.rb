@@ -7,7 +7,7 @@ module Bootstrap
         add_class 'table-bordered' if @bordered
         add_class 'table-hover' if @hover
         add_class 'table-condensed' if @condensed
-        html = @view.content_tag 'table', capture, @options
+        html = @view.content_tag 'table', content, @options
         html = @view.content_tag 'div', html, class: 'table-responsive' if @responsive
         html
       end
@@ -41,10 +41,6 @@ module Bootstrap
     class TableRow < Base
       include Contextual
 
-      def render
-        @view.content_tag 'tr', capture, @options
-      end
-
       def cell *args, &block
         TableCell.new(@view, *args, &block).render
       end
@@ -60,26 +56,25 @@ module Bootstrap
       def self.helper_names
         nil
       end
+
+      after_initialize do |*args|
+        @tag = 'tr'
+      end
     end
 
     class TableCell < Base
       include Column
 
-      def render
-        @view.content_tag @header ? 'th' : 'td', capture, @options
-      end
-
-      def self.helper_names
-        nil
-      end
+      def self.helper_names; nil; end
 
       after_initialize do |*args|
+        header = false
         args.each do |arg|
           arg = arg.to_s.downcase
-          @header = arg == 'header' || arg == 'head' || arg == 'th'
+          header = arg == 'header' || arg == 'head' || arg == 'th'
         end
-        @header = true if options.delete(:header) == true || options.delete(:head) == true || options.delete(:th)
-        @header = true if @tag == 'th'
+        header |= (options.delete(:header) == true) | (options.delete(:head) == true) | (options.delete(:th) == true)
+        @tag = (header || @tag == 'th') ? 'th' : 'td'
       end
     end
   end

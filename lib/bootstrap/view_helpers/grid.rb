@@ -1,11 +1,6 @@
 module Bootstrap
   module ViewHelpers
     class Grid < Base
-      def render
-        add_class 'container'
-        @view.content_tag @tag, capture, @options
-      end
-
       def row *args, &block
         GridRow.new(@view, *args, &block).render
       end
@@ -13,14 +8,13 @@ module Bootstrap
       def self.helper_names
         'grid'
       end
+
+      after_initialize do |*args|
+        add_class 'container'
+      end
     end
 
     class GridRow < Base
-      def render
-        add_class 'row'
-        @view.content_tag @tag, capture, @options
-      end
-
       def cell *args, &block
         GridCell.new(@view, *args, &block).render
       end
@@ -34,6 +28,10 @@ module Bootstrap
       def self.helper_names
         nil
       end
+
+      after_initialize do |*args|
+        add_class 'row'
+      end
     end
 
     class GridCell < Base
@@ -41,10 +39,6 @@ module Bootstrap
 
       def row *args, &block
         GridRow.new(@view, *args, &block).render
-      end
-
-      def render
-        @view.content_tag @tag, capture, @options
       end
 
       def self.helper_names

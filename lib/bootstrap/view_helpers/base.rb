@@ -22,8 +22,12 @@ module Bootstrap
         end
       end
 
-      def render *args
-        raise NotImplementedError
+      def render *args, &block
+        @view.content_tag @tag, content, @options
+      end
+
+      def content *args
+        @block.nil? ? '' : @view.capture(self, &@block)
       end
 
       attr_reader :options

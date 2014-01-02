@@ -32,5 +32,9 @@ describe Bootstrap::ViewHelpers::Button do
 
   it {expect(rendered helper :block).to have_selector "button.btn.btn-block"}
   it {expect(rendered helper block: true).to have_selector "button.btn.btn-block"}
+
+  # icons
+  it {expect(rendered helper icon: :bell).to have_selector 'button.btn.btn-default > i.fa.fa-bell'}
+  it {expect(rendered(helper {|b| b.icon :star})).to have_selector 'button.btn.btn-default > i.fa.fa-star'}
 end
 

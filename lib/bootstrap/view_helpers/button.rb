@@ -4,16 +4,21 @@ module Bootstrap
       include Activable
       include Disableable
 
-      def render
-        @view.content_tag @tag, capture, @options
+      def content &block
+        @icon.nil? ? super(&block) : @icon.render + super(&block)
       end
 
       def self.helper_names
         'button'
       end
 
+      def icon *args, &block
+        Icon.new(@view, *args, &block).render
+      end
+
       after_initialize do |*args|
         type = 'default'
+        @icon = nil
         args.each do |arg|
           next unless arg.is_a?(String) || arg.is_a?(Symbol)
           arg = arg.to_s.downcase
@@ -38,6 +43,9 @@ module Bootstrap
           s = options.delete :size
           size = SIZES.keys.select {|re| re.match s}.first
           add_class SIZES[size] unless size.nil? || @options[:class].any? {|c| SIZES.values.include? c}
+        end
+        if @options.key? :icon
+          @icon = Icon.new @view, @options.delete(:icon)
         end
         add_class 'btn-block' if @options.delete(:block) == true
       end
