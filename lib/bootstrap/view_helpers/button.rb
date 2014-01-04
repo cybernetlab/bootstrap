@@ -4,8 +4,10 @@ module Bootstrap
       include Activable
       include Disableable
       include DropdownMenuWrapper
+      include Sizable
 
       self.helper_names = ['button', 'radio', 'checkbox']
+      self.class_prefix = 'btn'
 
       def icon *args, &block
         Icon.new(@view, *args, &block).render
@@ -15,9 +17,11 @@ module Bootstrap
         @content = @text if @text.is_a? String
         @content = @icon.render + @content unless @icon.nil?
         if @dropdown_menu.is_a? Base
-          @content += @view.content_tag 'span', '', class: 'caret'
-          add_class 'dropdown-toggle'
-          set_data :toggle, 'dropdown'
+          unless @splitted
+            @content += @view.content_tag 'span', '', class: 'caret'
+            add_class 'dropdown-toggle'
+            set_data :toggle, 'dropdown'
+          end
         end
         if @helper_name == 'radio' || @helper_name == 'checkbox'
           @tag = 'label'
@@ -31,31 +35,35 @@ module Bootstrap
 
       set_callback :render, :after do
         if @dropdown_menu.is_a? Base
-          self.wrapper = {tag: 'div', class: 'btn-group'}
+          if @splitted
+            toggle = Base.new @view, @options.merge(tag: 'button')
+            toggle.send :add_class, 'dropdown-toggle'
+            toggle.send :set_data, :toggle, 'dropdown'
+            @content += toggle.render(@view.content_tag('span', '', class: 'caret'))
+          end
+          wrapper_class = ['btn-group']
+          wrapper_class << 'dropup' if @dropup
+          self.wrapper = {tag: 'div', class: wrapper_class}
           @content += @dropdown_menu.render
         end
       end
 
       set_callback :initialize, :after do
         type = 'default'
-        @text = nil
-        @icon = nil
+        @text, @icon, @splitted, @dropup = nil, nil, false, false
         @args.each do |arg|
           if TYPES.include? arg
             type = arg
           elsif arg == 'block'
             add_class 'btn-block'
+          elsif arg == 'toggle'
+            set_data :toggle, 'button'
+          elsif arg == 'splitted'
+            @splitted = true
+          elsif arg == 'dropup'
+            @dropup = true
           else
-            size = SIZES.keys.select {|re| re.match arg}.first
-            if size.nil?
-              if arg == 'toggle'
-                set_data :toggle, 'button'
-              else
-                @text = arg
-              end
-            else
-              add_class SIZES[size]
-            end
+            @text = arg.html_safe
           end
         end
         add_class ['btn', "btn-#{type}"]
@@ -66,14 +74,11 @@ module Bootstrap
           @options[:type] = "button" unless @options.include? :type
           @options[:type] = @options[:type].to_s.downcase
         end
-        if @options.key? :size
-          s = options.delete :size
-          size = SIZES.keys.select {|re| re.match s}.first
-          add_class SIZES[size] unless size.nil? || @options[:class].any? {|c| SIZES.values.include? c}
-        end
         if @options.key? :icon
           @icon = Icon.new @view, @options.delete(:icon)
         end
+        @splitted = true if @options.delete(:splitted) == true
+        @dropup = true if @options.delete(:dropup) == true
         @text = @options.delete :text if @options[:text].is_a? String
         set_data :toggle, 'button' if options.delete(:toggle) == true
         add_class 'btn-block' if @options.delete(:block) == true
@@ -87,11 +92,6 @@ module Bootstrap
 
       private
       TYPES = %w[default primary success info warning danger link]
-      SIZES = {
-        /^(btn[-_])?(sm|small)$/ => 'btn-sm',
-        /^(btn[-_])?(lg|large)$/ => 'btn-lg',
-        /^(btn[-_])?((xs)|(extra[-_]?small))$/ => 'btn-xs'
-      }
     end
   end
 end

@@ -1,7 +1,11 @@
 module Bootstrap
   module ViewHelpers
     class ButtonGroup < Base
+      include Sizable
+      include Justifable
+
       self.helper_names = 'button_group'
+      self.class_prefix = 'btn-group'
 
       def button *args, &block
         Button.new(@view, *args, &block).render
@@ -22,8 +26,13 @@ module Bootstrap
       end
 
       set_callback :initialize, :after do
-        @tag ||= 'div'
         add_class 'btn-group'
+        @args.each do |arg|
+          if arg == 'vertical'
+            add_class 'btn-group-vertical'
+          end
+        end
+        add_class 'btn-group-vertical' if options.delete(:vertical) == true
       end
     end
   end

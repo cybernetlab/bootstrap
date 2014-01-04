@@ -5,6 +5,10 @@ module ViewHelpersExampleGroup
     helper_class.class_eval &block if block_given?
   end
 
+  def with_wrapper_class &block
+    wrapper_class.class_eval &block if block_given?
+  end
+
   def helper *args, &block
     @helper ||= helper_class.new view, *args, &block
   end

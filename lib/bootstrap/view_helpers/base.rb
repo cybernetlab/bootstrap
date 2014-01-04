@@ -39,13 +39,50 @@ module Bootstrap
 
       attr_reader :options
 
+      def have_class? value = nil, &block
+        if value.is_a? Regexp
+          @options[:class].any? {|c| value.match c}
+        elsif value.is_a? String
+          @options[:class].any? {|c| value == c}
+        elsif value.is_a? Array
+          @options[:class].any? {|c| value.include? c}
+        elsif block_given?
+          @options[:class].any? &block
+        else
+          false
+        end
+      end
+
+      def have_no_class? value = nil, &block
+        if value.is_a? Regexp
+          @options[:class].none? {|c| value.match c}
+        elsif value.is_a? String
+          @options[:class].none? {|c| value == c}
+        elsif value.is_a? Array
+          @options[:class].none? {|c| value.include? c}
+        elsif block_given?
+          @options[:class].none? &block
+        else
+          false
+        end
+      end
+
       def self.helper_names
         instance_variable_defined?(:@helper_names) ? @helper_names : nil
+      end
+
+      def self.class_prefix
+        ([self] + ancestors).each {|c| return c.instance_variable_get :@class_prefix if c.instance_variable_defined?(:@class_prefix)}
+        nil
       end
 
       protected
       def self.helper_names= value
         @helper_names = value.is_a?(Array) ? value.flatten : value
+      end
+
+      def self.class_prefix= value
+        @class_prefix = value.to_s
       end
 
       def options= hash

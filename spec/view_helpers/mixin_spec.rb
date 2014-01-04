@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+# @TODO: dropdownwrapper testing
+
 describe Bootstrap::ViewHelpers::Contextual do
   %w[active success warning danger].each do |state|
     it "sets #{state} class throw arg" do
@@ -67,4 +69,42 @@ describe Bootstrap::ViewHelpers::Disableable do
   it {expect(wrapper disable: true, disabled: true).to_not have_option :disable, :disabled}
   it {expect(wrapper disable: false, disabled: false).to_not have_option :disable, :disabled}
   it {expect(wrapper disable: true, disabled: false).to_not have_option :disable, :disabled}
+end
+
+describe Bootstrap::ViewHelpers::Sizable do
+  it {expect(rendered wrapper :lg).to have_selector ".lg"}
+  it {expect(rendered wrapper :large).to have_selector ".lg"}
+  it {expect(rendered wrapper :sm).to have_selector ".sm"}
+  it {expect(rendered wrapper :small).to have_selector ".sm"}
+  it {expect(rendered wrapper :xs).to have_selector ".xs"}
+  it {expect(rendered wrapper :extrasmall).to have_selector ".xs"}
+  it {expect(rendered wrapper :extra_small).to have_selector ".xs"}
+  it {expect(rendered wrapper 'extra-small').to have_selector ".xs"}
+  it {expect(rendered wrapper size: :large).to have_selector ".lg"}
+  it {expect(rendered wrapper :small, size: :large).to have_selector ".sm"}
+  it 'adds class prefix' do
+    with_wrapper_class do
+      self.class_prefix = 'btn'
+    end
+    expect(rendered wrapper :lg).to have_selector '.btn-lg'
+    expect(rendered wrapper :btn_lg).to have_selector '.btn-lg'
+    expect(rendered wrapper :btn_large).to have_selector '.btn-lg'
+  end
+  it {expect(wrapper size: 'value').to_not have_option :size}
+end
+
+describe Bootstrap::ViewHelpers::Justifable do
+  it {expect(rendered wrapper).to_not have_selector '.justified'}
+  it {expect(rendered wrapper justify: true).to have_selector '.justified'}
+  it {expect(rendered wrapper justified: true).to have_selector '.justified'}
+  it {expect(rendered wrapper :justify).to have_selector '.justified'}
+  it {expect(rendered wrapper :justified).to have_selector '.justified'}
+  it 'adds class prefix' do
+    with_wrapper_class do
+      self.class_prefix = 'btn'
+    end
+    expect(rendered wrapper :justified).to have_selector '.btn-justified'
+  end
+  it {expect(wrapper justified: true, justify: false).to_not have_option :justified}
+  it {expect(wrapper justified: :none).to_not have_option :justified}
 end
