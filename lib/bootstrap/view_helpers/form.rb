@@ -1,13 +1,7 @@
 module Bootstrap
   module ViewHelpers
   	class Form < Base
-      #def row *args, &block
-      #  GridRow.new(@view, *args, &block).render
-      #end
-
-      def self.helper_names
-        'form'
-      end
+      self.helper_names = 'form'
 
       set_callback :initialize, :after do
         @args.each do |arg|

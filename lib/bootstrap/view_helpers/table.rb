@@ -1,12 +1,10 @@
 module Bootstrap
   module ViewHelpers
     class Table < Base
+      self.helper_names = 'table'
+
       def row *args, &block
         TableRow.new(@view, *args, &block).render
-      end
-
-      def self.helper_names
-        'table'
       end
 
       set_callback :initialize, :after do
@@ -48,10 +46,6 @@ module Bootstrap
       alias_method :th, :head
       alias_method :header, :head
 
-      def self.helper_names
-        nil
-      end
-
       set_callback :initialize, :after do
         @tag = 'tr'
       end
@@ -59,8 +53,6 @@ module Bootstrap
 
     class TableCell < Base
       include Column
-
-      def self.helper_names; nil; end
 
       set_callback :initialize, :after do
         header = false

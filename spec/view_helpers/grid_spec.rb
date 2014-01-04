@@ -10,7 +10,7 @@ describe Bootstrap::ViewHelpers::Grid do
     helper.row
   end
 
-  it {expect(helper_class.helper_names).to eq 'grid'}
+  it {expect(described_class.helper_names).to eq 'grid'}
 end
 
 describe Bootstrap::ViewHelpers::GridRow do
@@ -26,7 +26,7 @@ describe Bootstrap::ViewHelpers::GridRow do
   it {expect(helper.clear).to have_selector 'div.clearfix.visible-md'}
   it {expect(helper.clear :hidden_large).to have_selector 'div.clearfix.hidden-lg'}
 
-  it {expect(helper_class.helper_names).to eq nil}
+  it {expect(described_class.helper_names).to eq nil}
 end
 
 describe Bootstrap::ViewHelpers::GridCell do
@@ -70,5 +70,5 @@ describe Bootstrap::ViewHelpers::GridCell do
   end
 
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::Column}
-  it {expect(helper_class.helper_names).to eq nil}
+  it {expect(described_class.helper_names).to eq nil}
 end

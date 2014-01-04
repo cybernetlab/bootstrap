@@ -1,9 +1,7 @@
 module Bootstrap
   module ViewHelpers
     class Icon < Base
-      def self.helper_names
-        ['icon', 'i']
-      end
+      self.helper_names = ['icon', 'i']
 
       set_callback :capture, :after do
         @content = ''

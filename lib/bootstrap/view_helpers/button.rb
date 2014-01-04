@@ -4,13 +4,7 @@ module Bootstrap
       include Activable
       include Disableable
 
-      #def content &block
-      #  @icon.nil? ? super(&block) : @icon.render + super(&block)
-      #end
-
-      def self.helper_names
-        'button'
-      end
+      self.helper_names = 'button'
 
       def icon *args, &block
         Icon.new(@view, *args, &block).render

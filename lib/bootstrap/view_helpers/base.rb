@@ -55,10 +55,14 @@ module Bootstrap
       end
 
       def self.helper_names
-        raise NotImplementedError
+        instance_variable_defined?(:@helper_names) ? @helper_names : nil
       end
 
       protected
+      def self.helper_names= value
+        @helper_names = value.is_a?(Array) ? value.flatten : value
+      end
+
       def capture
         @content = nil
         run_callbacks :capture do

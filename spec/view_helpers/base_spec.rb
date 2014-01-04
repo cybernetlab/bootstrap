@@ -19,7 +19,7 @@ describe Bootstrap::ViewHelpers::Base do
   end
 
   it {expect(helper.render).to have_selector 'div'}
-  it {expect {helper_class.helper_names}.to raise_error NotImplementedError}
+  it {expect(helper_class.helper_names).to be_nil}
 
   it {expect(helper(tag: :p)).to_not have_option :tag}
 

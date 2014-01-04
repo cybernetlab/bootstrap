@@ -13,5 +13,5 @@ describe Bootstrap::ViewHelpers::Form do
 #    helper.row
 #  end
 
-  it {expect(helper_class.helper_names).to eq 'form'}
+  it {expect(described_class.helper_names).to eq 'form'}
 end

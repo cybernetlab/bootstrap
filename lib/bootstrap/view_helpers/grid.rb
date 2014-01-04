@@ -1,12 +1,10 @@
 module Bootstrap
   module ViewHelpers
     class Grid < Base
+      self.helper_names = 'grid'
+
       def row *args, &block
         GridRow.new(@view, *args, &block).render
-      end
-
-      def self.helper_names
-        'grid'
       end
 
       set_callback :initialize, :after do
@@ -25,10 +23,6 @@ module Bootstrap
         @view.content_tag 'div', '', class: ['clearfix', type]
       end
 
-      def self.helper_names
-        nil
-      end
-
       set_callback :initialize, :after do
         add_class 'row'
       end
@@ -39,10 +33,6 @@ module Bootstrap
 
       def row *args, &block
         GridRow.new(@view, *args, &block).render
-      end
-
-      def self.helper_names
-        nil
       end
 
       set_callback :initialize, :after do

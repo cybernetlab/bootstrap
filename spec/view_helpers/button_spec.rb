@@ -11,7 +11,6 @@ describe Bootstrap::ViewHelpers::Button do
   it {expect(rendered(helper(class: :test) {|g| '<p></p>'.html_safe})).to have_selector 'button.btn.btn-default.test > p'}
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::Activable}
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::Disableable}
-  it {expect(helper_class.helper_names).to eq 'button'}
 
   # types
   %i[default primary success info warning danger link].each do |type|
@@ -38,5 +37,7 @@ describe Bootstrap::ViewHelpers::Button do
   it {expect(rendered(helper {|b| b.icon :star})).to have_selector 'button.btn.btn-default > i.fa.fa-star'}
 
   it {expect(helper icon: :bell, block: true).to_not have_option :icon, :block}
+
+  it {expect(described_class.helper_names).to eq 'button'}
 end
 
