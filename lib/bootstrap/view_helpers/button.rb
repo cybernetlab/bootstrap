@@ -5,18 +5,27 @@ module Bootstrap
       include Disableable
       include DropdownMenuWrapper
 
-      self.helper_names = 'button'
+      self.helper_names = ['button', 'radio', 'checkbox']
 
       def icon *args, &block
         Icon.new(@view, *args, &block).render
       end
 
       set_callback :capture, :after do
+        @content = @text if @text.is_a? String
         @content = @icon.render + @content unless @icon.nil?
         if @dropdown_menu.is_a? Base
           @content += @view.content_tag 'span', '', class: 'caret'
           add_class 'dropdown-toggle'
           set_data :toggle, 'dropdown'
+        end
+        if @helper_name == 'radio' || @helper_name == 'checkbox'
+          @tag = 'label'
+          input_options = {type: @helper_name}
+          @options.each {|k, v| input_options[k] = @options.delete k unless k == :class || k == :type}
+          input_options[:checked] = 'checked' if input_options.key?(:checked) && input_options[:checked] != false
+          @content = @view.content_tag('input', '', input_options) + @content
+          @options[:label_for] = input_options[:id] unless input_options[:id].blank?
         end
       end
 
@@ -29,6 +38,7 @@ module Bootstrap
 
       set_callback :initialize, :after do
         type = 'default'
+        @text = nil
         @icon = nil
         @args.each do |arg|
           if TYPES.include? arg
@@ -37,7 +47,15 @@ module Bootstrap
             add_class 'btn-block'
           else
             size = SIZES.keys.select {|re| re.match arg}.first
-            add_class SIZES[size] unless size.nil?
+            if size.nil?
+              if arg == 'toggle'
+                set_data :toggle, 'button'
+              else
+                @text = arg
+              end
+            else
+              add_class SIZES[size]
+            end
           end
         end
         add_class ['btn', "btn-#{type}"]
@@ -56,7 +74,15 @@ module Bootstrap
         if @options.key? :icon
           @icon = Icon.new @view, @options.delete(:icon)
         end
+        @text = @options.delete :text if @options[:text].is_a? String
+        set_data :toggle, 'button' if options.delete(:toggle) == true
         add_class 'btn-block' if @options.delete(:block) == true
+
+        @options.keys.each do |key|
+          next unless /_text$/ =~ key
+          value = @options.delete(key)
+          set_data key.to_s.gsub(/_/, '-'), value if value.is_a? String
+        end
       end
 
       private

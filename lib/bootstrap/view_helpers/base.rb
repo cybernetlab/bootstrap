@@ -21,6 +21,8 @@ module Bootstrap
           self.options = options
 
           @args = @args.select {|a| a.is_a?(String) || a.is_a?(Symbol)}.map {|a| a.to_s.downcase}
+          @helper_name = options.delete(:helper_name) || self.class.helper_names
+          @helper_name = @helper_name[0] if @helper_name.is_a?(Array) && @helper_name.size > 0
         end
       end
 

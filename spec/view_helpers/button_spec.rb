@@ -12,6 +12,9 @@ describe Bootstrap::ViewHelpers::Button do
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::Activable}
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::Disableable}
 
+  it {expect(rendered helper 'test text').to have_selector 'button.btn.btn-default[text()="test text"]'}
+  it {expect(rendered helper text: 'test text').to have_selector 'button.btn.btn-default[text()="test text"]'}
+
   # types
   %i[default primary success info warning danger link].each do |type|
     it {expect(rendered helper type).to have_selector "button.btn.btn-#{type}"}
@@ -44,8 +47,22 @@ describe Bootstrap::ViewHelpers::Button do
     expect(html).to have_selector 'div.btn-group > ul.dropdown-menu > li.divider'
   end
 
-  it {expect(helper icon: :bell, block: true).to_not have_option :icon, :block}
+  # radios
+  it {expect(rendered helper 'text', name: 'group-name', id: 'option1', value: 'v1', class: 'someclass', helper_name: 'radio').to have_selector 'label.btn.btn-default.someclass[text()="text"][@label_for="option1"] > input[@type="radio"][@name="group-name"][@id="option1"][@value="v1"]'}
 
-  it {expect(described_class.helper_names).to eq 'button'}
+  # checkboxes
+  it {expect(rendered helper 'text', name: 'group-name', id: 'option1', value: 'v1', class: 'someclass', helper_name: 'checkbox').to have_selector 'label.btn.btn-default.someclass[text()="text"] > input[@type="checkbox"][@name="group-name"][@id="option1"][@value="v1"]'}
+
+  # toggling
+  it {expect(rendered helper :toggle).to have_selector 'button[@data-toggle="button"]'}
+  it {expect(rendered helper toggle: true).to have_selector 'button[@data-toggle="button"]'}
+  it {expect(rendered helper toggle: false).to_not have_selector 'button[@data-toggle="button"]'}
+
+  # state text
+  it {expect(rendered helper loading_text: 'text').to have_selector 'button[@data-loading-text="text"]'}
+
+  it {expect(helper icon: :bell, block: true, toggle: false, some_text: false).to_not have_option :icon, :block, :toggle, :some_text}
+
+  it {expect(described_class.helper_names).to eq ['button', 'radio', 'checkbox']}
 end
 
