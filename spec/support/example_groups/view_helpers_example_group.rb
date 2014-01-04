@@ -38,6 +38,20 @@ module ViewHelpersExampleGroup
         def helper_names; end
       end
     end
+
+    RSpec::Matchers.define :have_option do |*options|
+      match_for_should do |obj|
+        actual = obj.instance_variable_get :@options
+        options.flatten!
+        actual.select {|o| options.include? o}.size == options.size
+      end
+
+      match_for_should_not do |obj|
+        actual = obj.instance_variable_get :@options
+        options.flatten!
+        actual.select {|o| options.include? o}.size == 0
+      end
+    end
   end
 
   RSpec.configure do |config|

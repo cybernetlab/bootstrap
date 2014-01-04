@@ -8,6 +8,9 @@ describe Bootstrap::ViewHelpers::Contextual do
     it "sets #{state} class throw hash" do
       expect(rendered wrapper state => true).to have_selector "div.#{state}"
     end
+    it "remove #{state} from options" do
+      expect(wrapper state => true).to_not have_option state.to_sym
+    end
   end
 
   it {expect(rendered wrapper :active, :warning).to have_selector 'div[@class="active"]'}
@@ -47,6 +50,8 @@ describe Bootstrap::ViewHelpers::Activable do
   it {expect(rendered wrapper).to_not have_selector '.active'}
   it {expect(rendered wrapper active: true).to have_selector '.active'}
   it {expect(rendered wrapper :active).to have_selector '.active'}
+  it {expect(wrapper active: true).to_not have_option :active}
+  it {expect(wrapper active: false).to_not have_option :active}
 end
 
 describe Bootstrap::ViewHelpers::Disableable do
@@ -59,4 +64,7 @@ describe Bootstrap::ViewHelpers::Disableable do
   it {expect(rendered wrapper tag: :button, disabled: true).to_not have_selector '.disabled'}
   it {expect(rendered wrapper :disabled, tag: :button).to have_selector '[@disabled]'}
   it {expect(rendered wrapper :disabled, tag: :button).to_not have_selector '.disabled'}
+  it {expect(wrapper disable: true, disabled: true).to_not have_option :disable, :disabled}
+  it {expect(wrapper disable: false, disabled: false).to_not have_option :disable, :disabled}
+  it {expect(wrapper disable: true, disabled: false).to_not have_option :disable, :disabled}
 end

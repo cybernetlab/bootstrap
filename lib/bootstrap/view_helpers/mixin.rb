@@ -39,8 +39,8 @@ module Bootstrap
       extend ActiveSupport::Concern
       included do
         set_callback :initialize, :after do
-          add_class 'active' if @args.any? {|a| 'active' == a}
-          add_class 'active' if @options.delete(:active) == true
+          # [].any? avoiding short-circuit
+          add_class 'active' if [@args.any? {|a| 'active' == a}, @options.delete(:active) == true].any?
         end
       end
     end
@@ -49,9 +49,8 @@ module Bootstrap
       extend ActiveSupport::Concern
       included do
         set_callback :initialize, :after do
-          disable = @args.any? {|a| /^disable(d)?$/ =~ a}
-          disable = true if @options.delete(:disable) == true || @options.delete(:disabled) == true
-          if disable
+          # [].any? avoiding short-circuit
+          if [@args.any? {|a| /^disable(d)?$/ =~ a}, @options.delete(:disable) == true, @options.delete(:disabled) == true].any?
             if @tag == 'button'
               @options[:disabled] = 'disabled'
             else

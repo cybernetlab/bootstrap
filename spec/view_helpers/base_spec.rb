@@ -20,4 +20,9 @@ describe Bootstrap::ViewHelpers::Base do
 
   it {expect(helper.render).to have_selector 'div'}
   it {expect {helper_class.helper_names}.to raise_error NotImplementedError}
+
+  it {expect(helper(tag: :p)).to_not have_option :tag}
+
+  it {expect(helper.render '<p></p>'.html_safe).to have_selector 'div > p'}
+  it {expect(helper.render('<p></p>'.html_safe) {'<i></i>'.html_safe}).to have_selector 'div > p + i'}
 end

@@ -9,10 +9,6 @@ module Bootstrap
         'table'
       end
 
-      def render *args, &block
-        @responsive ? @view.content_tag('div', super, class: 'table-responsive') : super
-      end
-
       set_callback :initialize, :after do
         @responsive = false
         @args.each do |arg|
@@ -21,7 +17,7 @@ module Bootstrap
           end
         end
         SWITCHERS.each do |switch|
-          instance_variable_set "@#{switch}".to_sym, options.delete(switch).is_a?(TrueClass) if @options.include? switch
+          instance_variable_set "@#{switch}".to_sym, options.delete(switch) == true if @options.key? switch
         end
         @bordered = true if options.delete(:border) == true
         add_class 'table'
@@ -30,6 +26,7 @@ module Bootstrap
         add_class 'table-hover' if @hover
         add_class 'table-condensed' if @condensed
         @tag = 'table'
+        @wrapper = {tag: 'div', class: 'table-responsive'} if @responsive
       end
 
       private
@@ -69,8 +66,9 @@ module Bootstrap
         header = false
         @args.each do |arg|
           header = arg == 'header' || arg == 'head' || arg == 'th'
+          break if header
         end
-        header |= (options.delete(:header) == true) | (options.delete(:head) == true) | (options.delete(:th) == true)
+        header = [header, options.delete(:header) == true, options.delete(:head) == true, options.delete(:th) == true].any?
         @tag = (header || @tag == 'th') ? 'th' : 'td'
       end
     end

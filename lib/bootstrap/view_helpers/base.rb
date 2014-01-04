@@ -9,7 +9,7 @@ module Bootstrap
 
       def initialize view, *args, &block
         raise ArgumentError if view.nil? || !view.respond_to?(:capture)
-        @view, @args, @block = view, args, block
+        @view, @args, @block, @wrapper = view, args, block, nil
 
         run_callbacks :initialize do
           options = {tag: self.class.const_defined?(:TAG) ? self.class.const_get(:TAG) : 'div'}
@@ -20,23 +20,18 @@ module Bootstrap
 
           @args = @args.select {|a| a.is_a?(String) || a.is_a?(Symbol)}.map {|a| a.to_s.downcase}
         end
-#
-#        self.class.ancestors.each do |klass|
-#          next unless klass.instance_variable_defined? :@init
-#          klass.instance_variable_get(:@init).each do |init|
-#            self.instance_exec *args, &init
-#          end
-#        end
+
+        @wrapper = Base.new @view, @wrapper if @wrapper.is_a? Hash
       end
 
-      def render *args, &block
-        #capture
-        @view.content_tag @tag, capture, @options
+      def render *args
+        content = capture
+        args.flatten.each {|a| content += a if a.is_a? String}
+        content += yield self if block_given?
+        content = @view.content_tag @tag, content, @options
+        content = @wrapper.render content.html_safe if @wrapper.is_a? Base
+        content
       end
-
-#      def content *args
-#        @block.nil? ? '' : @view.capture(self, &@block)
-#      end
 
       attr_reader :options
       def options= hash
@@ -63,23 +58,17 @@ module Bootstrap
         raise NotImplementedError
       end
 
- #     def self.after_initialize &block
- #       @init = [] unless instance_variable_defined? :@init
- #       @init << block
- #     end
-
       protected
       def capture
-        @content = ''
+        @content = nil
         run_callbacks :capture do
-          @content = @block.nil? ? '' : @view.capture(self, &@block)
+          @content = @block.nil? ? ''.html_safe : @view.capture(self, &@block)
         end
         @content
       end
 
       def capture!
         capture.html_safe
-#        @content = @content.html_safe
       end
     end
   end
