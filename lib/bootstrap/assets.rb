@@ -26,8 +26,15 @@ module Bootstrap
       assets.register_preprocessor 'application/javascript', JSDirectiveProcessor
       assets.unregister_preprocessor 'text/css', Sprockets::DirectiveProcessor
       assets.register_preprocessor 'text/css', CSSDirectiveProcessor
+      config = Bootstrap.config
+      Rails.application.config.assets.paths << Engine.root.join('upstream', 'bootstrap', config.bootstrap_version, 'javascript')
+      Rails.application.config.assets.paths << Engine.root.join('upstream', 'bootstrap', config.bootstrap_version, 'stylesheets')
+      if config.font_awesome
+        Rails.application.config.assets.paths << Engine.root.join('upstream', 'font-awesome', config.font_awesome_version, 'stylesheets')
+      end
       Rails.application.config.assets.precompile << Proc.new do |file, path|
-        path == Engine.root.join('app', 'assets', 'fonts') && file =~ /\.(otf|eot|svg|ttf|woff)/
+        path == Engine.root.join('upstream', 'bootstrap', config.bootstrap_version, 'fonts') && file =~ /\.(otf|eot|svg|ttf|woff)/ ||
+        path == Engine.root.join('upstream', 'font-awesome', config.font_awesome_version,'fonts') && file =~ /\.(otf|eot|svg|ttf|woff)/
       end
     end
   end

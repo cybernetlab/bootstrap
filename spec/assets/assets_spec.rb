@@ -42,5 +42,9 @@ describe 'assets pipeline' do
       expect('application.css').to compile_with 'Bootstrap'
       expect('application.css').to_not compile_with 'Font Awesome'
     end
+
+    it 'includes fonts' do
+      expect('glyphicons-halflings-regular.eot').to be_in_precompile_list
+    end
   end
 end
