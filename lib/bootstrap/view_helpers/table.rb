@@ -24,7 +24,7 @@ module Bootstrap
         add_class 'table-hover' if @hover
         add_class 'table-condensed' if @condensed
         @tag = 'table'
-        @wrapper = {tag: 'div', class: 'table-responsive'} if @responsive
+        self.wrapper = {tag: 'div', class: 'table-responsive'} if @responsive
       end
 
       private

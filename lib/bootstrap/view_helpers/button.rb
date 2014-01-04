@@ -3,6 +3,7 @@ module Bootstrap
     class Button < Base
       include Activable
       include Disableable
+      include DropdownMenuWrapper
 
       self.helper_names = 'button'
 
@@ -12,6 +13,18 @@ module Bootstrap
 
       set_callback :capture, :after do
         @content = @icon.render + @content unless @icon.nil?
+        if @dropdown_menu.is_a? Base
+          @content += @view.content_tag 'span', '', class: 'caret'
+          add_class 'dropdown-toggle'
+          set_data :toggle, 'dropdown'
+        end
+      end
+
+      set_callback :render, :after do
+        if @dropdown_menu.is_a? Base
+          self.wrapper = {tag: 'div', class: 'btn-group'}
+          @content += @dropdown_menu.render
+        end
       end
 
       set_callback :initialize, :after do

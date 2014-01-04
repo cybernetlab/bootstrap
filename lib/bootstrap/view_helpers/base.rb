@@ -3,7 +3,9 @@ module Bootstrap
     class Base
       include ActiveSupport::Callbacks
 
-      define_callbacks :initialize, :capture
+      define_callbacks :initialize
+      define_callbacks :capture, terminator: 'result == false'
+      define_callbacks :render, terminator: 'result == false'
 
       attr_accessor :tag
 
@@ -20,20 +22,30 @@ module Bootstrap
 
           @args = @args.select {|a| a.is_a?(String) || a.is_a?(Symbol)}.map {|a| a.to_s.downcase}
         end
-
-        @wrapper = Base.new @view, @wrapper if @wrapper.is_a? Hash
       end
 
       def render *args
-        content = capture
-        args.flatten.each {|a| content += a if a.is_a? String}
-        content += yield self if block_given?
-        content = @view.content_tag @tag, content, @options
-        content = @wrapper.render content.html_safe if @wrapper.is_a? Base
-        content
+        capture
+        args.flatten.each {|a| @content += a if a.is_a? String}
+        @content += yield self if block_given?
+        run_callbacks :render do
+          @content = @view.content_tag @tag, @content, @options
+        end
+        @content = @wrapper.render @content.html_safe if @wrapper.is_a? Base
+        @content
       end
 
       attr_reader :options
+
+      def self.helper_names
+        instance_variable_defined?(:@helper_names) ? @helper_names : nil
+      end
+
+      protected
+      def self.helper_names= value
+        @helper_names = value.is_a?(Array) ? value.flatten : value
+      end
+
       def options= hash
         return unless hash.is_a? Hash
         hash.symbolize_keys!
@@ -54,19 +66,24 @@ module Bootstrap
         @options[:class].uniq!
       end
 
-      def self.helper_names
-        instance_variable_defined?(:@helper_names) ? @helper_names : nil
+      def set_data key, value
+        raise ArgumentError unless key.is_a?(String) || key.is_a?(Symbol)
+        @options[:data] ||= {}
+        @options[:data][key.to_sym] = value
       end
 
-      protected
-      def self.helper_names= value
-        @helper_names = value.is_a?(Array) ? value.flatten : value
+      def wrapper= value
+        if value.is_a? Base
+          @wrapper = value
+        elsif value.is_a? Hash
+          @wrapper = Base.new @view, value
+        end
       end
 
       def capture
-        @content = nil
+        @content = ''.html_safe
         run_callbacks :capture do
-          @content = @block.nil? ? ''.html_safe : @view.capture(self, &@block)
+          @content = @view.capture(self, &@block) || ''.html_safe unless @block.nil?
         end
         @content
       end

@@ -60,5 +60,22 @@ module Bootstrap
         end
       end
     end
+
+    module DropdownMenuWrapper
+      extend ActiveSupport::Concern
+
+      protected
+      def dropdown_menu
+        @dropdown_menu ||= DropdownMenu.new @view
+      end
+
+      included do
+        delegate :divider, :header, :item, to: :dropdown_menu
+
+        set_callback :initialize, :after do
+          @dropdown_menu = nil
+        end
+      end
+    end
   end
 end

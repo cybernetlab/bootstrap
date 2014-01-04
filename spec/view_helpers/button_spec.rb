@@ -36,6 +36,14 @@ describe Bootstrap::ViewHelpers::Button do
   it {expect(rendered helper icon: :bell).to have_selector 'button.btn.btn-default > i.fa.fa-bell'}
   it {expect(rendered(helper {|b| b.icon :star})).to have_selector 'button.btn.btn-default > i.fa.fa-star'}
 
+  # dropdown
+  it 'renders dropdown' do
+    helper {|b| b.divider}
+    html = rendered
+    expect(html).to have_selector 'div.btn-group > button.dropdown-toggle[@data-toggle="dropdown"] > span.caret'
+    expect(html).to have_selector 'div.btn-group > ul.dropdown-menu > li.divider'
+  end
+
   it {expect(helper icon: :bell, block: true).to_not have_option :icon, :block}
 
   it {expect(described_class.helper_names).to eq 'button'}
