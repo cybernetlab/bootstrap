@@ -1,17 +1,6 @@
 module Bootstrap
   module ViewHelpers
     class Table < Base
-      def render
-        add_class 'table'
-        add_class 'table-striped' if @striped
-        add_class 'table-bordered' if @bordered
-        add_class 'table-hover' if @hover
-        add_class 'table-condensed' if @condensed
-        html = @view.content_tag 'table', content, @options
-        html = @view.content_tag 'div', html, class: 'table-responsive' if @responsive
-        html
-      end
-
       def row *args, &block
         TableRow.new(@view, *args, &block).render
       end
@@ -20,10 +9,13 @@ module Bootstrap
         'table'
       end
 
-      after_initialize do |*args|
+      def render *args, &block
+        @responsive ? @view.content_tag('div', super, class: 'table-responsive') : super
+      end
+
+      set_callback :initialize, :after do
         @responsive = false
-        args.each do |arg|
-          arg = arg.to_s.downcase
+        @args.each do |arg|
           if SWITCHERS.include? arg.to_sym
             instance_variable_set "@#{arg}".to_sym, true
           end
@@ -32,6 +24,12 @@ module Bootstrap
           instance_variable_set "@#{switch}".to_sym, options.delete(switch).is_a?(TrueClass) if @options.include? switch
         end
         @bordered = true if options.delete(:border) == true
+        add_class 'table'
+        add_class 'table-striped' if @striped
+        add_class 'table-bordered' if @bordered
+        add_class 'table-hover' if @hover
+        add_class 'table-condensed' if @condensed
+        @tag = 'table'
       end
 
       private
@@ -57,7 +55,7 @@ module Bootstrap
         nil
       end
 
-      after_initialize do |*args|
+      set_callback :initialize, :after do
         @tag = 'tr'
       end
     end
@@ -67,10 +65,9 @@ module Bootstrap
 
       def self.helper_names; nil; end
 
-      after_initialize do |*args|
+      set_callback :initialize, :after do
         header = false
-        args.each do |arg|
-          arg = arg.to_s.downcase
+        @args.each do |arg|
           header = arg == 'header' || arg == 'head' || arg == 'th'
         end
         header |= (options.delete(:header) == true) | (options.delete(:head) == true) | (options.delete(:th) == true)

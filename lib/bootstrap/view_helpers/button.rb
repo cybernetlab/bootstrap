@@ -4,9 +4,9 @@ module Bootstrap
       include Activable
       include Disableable
 
-      def content &block
-        @icon.nil? ? super(&block) : @icon.render + super(&block)
-      end
+      #def content &block
+      #  @icon.nil? ? super(&block) : @icon.render + super(&block)
+      #end
 
       def self.helper_names
         'button'
@@ -16,12 +16,14 @@ module Bootstrap
         Icon.new(@view, *args, &block).render
       end
 
-      after_initialize do |*args|
+      set_callback :capture, :after do
+        @content = @icon.render + @content unless @icon.nil?
+      end
+
+      set_callback :initialize, :after do
         type = 'default'
         @icon = nil
-        args.each do |arg|
-          next unless arg.is_a?(String) || arg.is_a?(Symbol)
-          arg = arg.to_s.downcase
+        @args.each do |arg|
           if TYPES.include? arg
             type = arg
           elsif arg == 'block'

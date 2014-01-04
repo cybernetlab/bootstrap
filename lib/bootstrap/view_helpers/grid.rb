@@ -9,7 +9,7 @@ module Bootstrap
         'grid'
       end
 
-      after_initialize do |*args|
+      set_callback :initialize, :after do
         add_class 'container'
       end
     end
@@ -29,7 +29,7 @@ module Bootstrap
         nil
       end
 
-      after_initialize do |*args|
+      set_callback :initialize, :after do
         add_class 'row'
       end
     end
@@ -45,10 +45,8 @@ module Bootstrap
         nil
       end
 
-      after_initialize do |*args|
-        args.each do |arg|
-          next unless arg.is_a?(String) || arg.is_a?(Symbol)
-          arg = arg.to_s.downcase
+      set_callback :initialize, :after do
+        @args.each do |arg|
           next unless /^(?:col[-_]?)?(?<size>(?:xs|(?:extra[-_]?small))|(?:sm|small)|(?:md|medium)|(?:lg|large))[-_]?(?<act>offset|push|pull)[-_]?(?<num>\d{1,2})$/ =~ arg
           size = SIZES[size[0]]
           add_class "col-#{size}-#{act}-#{num}" unless @options[:class].any? {|c| /^col-#{size}-#{act}-\d{1,2}/ =~ c}
