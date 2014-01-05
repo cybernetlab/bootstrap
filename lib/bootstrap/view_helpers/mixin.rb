@@ -30,22 +30,18 @@ module Bootstrap
     module Activable
       extend ActiveSupport::Concern
       included do
-        flag :active
-        after_initialize {add_class 'active' if active?}
+        flag :active, html_class: 'active'
       end
     end
 
     module Disableable
       extend ActiveSupport::Concern
       included do
-        flag :disabled, aliases: [:disable]
-        after_initialize do
-          if disabled?
-            if @tag == 'button'
-              @options[:disabled] = 'disabled'
-            else
-              add_class 'disabled'
-            end
+        flag :disabled, aliases: [:disable] do |value|
+          if value
+            @tag == 'button' ? @options[:disabled] = 'disabled' : add_class('disabled')
+          else
+            @tag == 'button' ? @options.remove(:disabled) : remove_class('disabled')
           end
         end
       end

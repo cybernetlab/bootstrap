@@ -9,8 +9,8 @@ module Bootstrap
       self.helper_names = ['button', 'radio', 'checkbox']
       self.class_prefix = 'btn'
 
-      self.flag :block
-      self.flag :toggle
+      self.flag :block, html_class: 'btn-block'
+      self.flag(:toggle) {|value| value ? set_data(:toggle, 'button') : unset_data(:toggle)}
       self.flag :splitted
       self.flag :dropup
       self.enum :fashion, %i[default primary success info warning danger link]
@@ -54,7 +54,7 @@ module Bootstrap
         end
       end
 
-      set_callback :initialize, :after do
+      after_initialize do
         @text = @args.size > 0 ? @args[0].html_safe : nil
 
         @tag = 'button' unless @tag == 'a' || @tag == 'input'
@@ -70,8 +70,6 @@ module Bootstrap
 
         self.fashion ||= :default
         add_class ['btn', "btn-#{self.fashion}"]
-        add_class 'btn-block' if self.block?
-        set_data :toggle, 'button' if self.toggle?
 
         @options.keys.each do |key|
           next unless /_text$/ =~ key

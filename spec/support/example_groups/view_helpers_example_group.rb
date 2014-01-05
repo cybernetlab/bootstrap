@@ -58,14 +58,21 @@ module ViewHelpersExampleGroup
       end
     end
 
-    RSpec::Matchers.define :have_flag do |*flags|
+    RSpec::Matchers.define :have_flag do |flag|
+      chain :with do |options|
+        @options = options
+      end
+
       match do |obj|
+        @options ||= {}
         actual = obj.class.send :flags
-        flags.select {|flag| actual.include?(flag)}.size == flags.size
+        actual.include?(flag) && @options.all? {|k, v| actual[flag].key?(k) && actual[flag][k] == v}
       end
 
       failure_message_for_should do |obj|
-        "expected that #{obj.class.name} with flags #{obj.class.send :flags} would have flags #{flags}"
+        msg = "expected that #{obj.class.name} with flags #{obj.class.send :flags} would have flag #{flag}"
+        msg += " with options #{@options}" if instance_variable_defined? :@options
+        msg
       end
     end
 
@@ -77,6 +84,16 @@ module ViewHelpersExampleGroup
 
       failure_message_for_should do |obj|
         "expected that #{obj.class.name} with enums #{obj.class.send :enums} would have enums #{enums}"
+      end
+    end
+
+    RSpec::Matchers.define :have_safe_method do |method|
+      match do |obj|
+        if method.is_a? Array
+          method.all? {|m| obj.send(m).html_safe?}
+        else
+          obj.send(method).html_safe?
+        end
       end
     end
   end

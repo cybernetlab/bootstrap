@@ -30,9 +30,9 @@ module Bootstrap
           flags.each do |flag, opts|
             opts[:aliases].each do |al|
               aliases[al] = flag
-              @flags[flag] = @options.delete(al) == true if @options.key? al
+              self.send "#{flag}=", @options.delete(al) == true if @options.key? al
             end if opts[:aliases].is_a? Array
-            @flags[flag] = @options.delete(flag) == true if @options.key? flag
+            self.send "#{flag}=", @options.delete(flag) == true if @options.key? flag
           end
 
           enums.each do |enum, opts|
@@ -46,10 +46,10 @@ module Bootstrap
           @args.select! do |arg|
             if arg.is_a? Symbol
               if flags.key? arg
-                @flags[arg] = true
+                self.send "#{arg}=", true
                 false
               elsif aliases.key? arg
-                @flags[aliases[arg]] = true
+                self.send "#{aliases[arg]}=", true
                 false
               elsif enums_index.key? arg
                 @enums[enums_index[arg]] = arg
@@ -81,6 +81,35 @@ module Bootstrap
 
       attr_reader :options
 
+      def add_class value
+        if value.is_a? Array
+          @options[:class] += value.flatten.map {|v| v.to_s}
+        else
+          @options[:class].push(value.to_s)
+        end
+        @options[:class].uniq!
+      end
+
+      def remove_class value
+        if value.is_a? Array
+          value.flatten.each {|v| @options[:class].remove v if @options[:class].include? v}
+        else
+          @options[:class].remove value if @options[:class].include? value
+        end
+      end
+
+      def set_data key, value
+        raise ArgumentError unless key.is_a?(String) || key.is_a?(Symbol)
+        @options[:data] ||= {}
+        @options[:data][key.to_sym] = value
+      end
+
+      def unset_data key
+        raise ArgumentError unless key.is_a?(String) || key.is_a?(Symbol)
+        @options[:data] ||= {}
+        @options[:data].remove key.to_sym
+      end
+
       def have_class? value = nil, &block
         if value.is_a? Regexp
           @options[:class].any? {|c| value.match c}
@@ -89,7 +118,7 @@ module Bootstrap
         elsif value.is_a? Array
           @options[:class].any? {|c| value.include? c}
         elsif block_given?
-          @options[:class].any?() &block
+          @options[:class].any?(&block)
         else
           false
         end
@@ -103,7 +132,7 @@ module Bootstrap
         elsif value.is_a? Array
           @options[:class].none? {|c| value.include? c}
         elsif block_given?
-          @options[:class].none?() &block
+          @options[:class].none?(&block)
         else
           false
         end
@@ -119,6 +148,8 @@ module Bootstrap
       end
 
       protected
+      EMPTY_HTML = ''.html_safe
+
       def self.helper_names= value
         @helper_names = value.is_a?(Array) ? value.flatten : value
       end
@@ -128,15 +159,22 @@ module Bootstrap
       end
 
       # --- flags
-      def self.flag name, options = {}
+      def self.flag name, options = {}, &block
         getter = "#{name}?".to_sym
         setter = "#{name}=".to_sym
         name = name.to_sym unless name.is_a? Symbol
+        options[:block] = block if block_given?
+
         define_method getter do
           @flags[name] == true
         end
         define_method setter do |value|
-          @flags[name] = value == true
+          value = value == true
+          @flags[name] = value
+          if options.key? :html_class
+            value ? add_class(options[:html_class]) : remove_class(options[:html_class])
+          end
+          self.instance_exec(value, &options[:block]) if options[:block].is_a? Proc
         end
         @flags = {} unless instance_variable_defined? :@flags
         @flags[name] = options
@@ -195,23 +233,10 @@ module Bootstrap
         @options = hash
       end
 
-      def add_class value
-        if value.is_a? Array
-          @options[:class] += value.flatten.map {|v| v.to_s}
-        else
-          @options[:class].push(value.to_s)
-        end
-        @options[:class].uniq!
-      end
-
-      def set_data key, value
-        raise ArgumentError unless key.is_a?(String) || key.is_a?(Symbol)
-        @options[:data] ||= {}
-        @options[:data][key.to_sym] = value
-      end
-
       def wrapper= value
-        if value.is_a? Base
+        if value.nil?
+          @wrapper = nil
+        elsif value.is_a? Base
           @wrapper = value
         elsif value.is_a? Hash
           @wrapper = Base.new @view, value

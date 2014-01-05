@@ -7,9 +7,7 @@ module Bootstrap
         GridRow.new(@view, *args, &block).render
       end
 
-      set_callback :initialize, :after do
-        add_class 'container'
-      end
+      after_initialize {add_class 'container'}
     end
 
     class GridRow < Base
@@ -23,9 +21,7 @@ module Bootstrap
         @view.content_tag 'div', '', class: ['clearfix', type]
       end
 
-      set_callback :initialize, :after do
-        add_class 'row'
-      end
+      after_initialize {add_class 'row'}
     end
 
     class GridCell < Base
@@ -35,7 +31,7 @@ module Bootstrap
         GridRow.new(@view, *args, &block).render
       end
 
-      set_callback :initialize, :after do
+      after_initialize do
         @args.each do |arg|
           next unless /^(?:col[-_]?)?(?<size>(?:xs|(?:extra[-_]?small))|(?:sm|small)|(?:md|medium)|(?:lg|large))[-_]?(?<act>offset|push|pull)[-_]?(?<num>\d{1,2})$/ =~ arg
           size = SIZES[size[0]]

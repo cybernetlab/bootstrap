@@ -52,7 +52,7 @@ describe Bootstrap::ViewHelpers::Base do
 
   # flags
   context 'have flag "active"' do
-    before {successor_class.class_eval {self.flag :active, aliases: [:test, :alias]}}
+    before {successor_class.class_eval {self.flag :active, aliases: [:test, :alias], html_class: 'active' do add_class 'testing'; end}}
 
     it 'creates flag getter and setter' do
       expect(successor.active?).to be_false
@@ -80,6 +80,17 @@ describe Bootstrap::ViewHelpers::Base do
     it 'supports aliases in options' do
       expect(successor(test: true).active?).to be_true
       expect(successor test: true, alias: true, active: true).to_not have_option :active, :alias, :test
+    end
+
+    it 'renders with html class "active"' do
+      expect(successor :active).to render_with('.active')
+      @successor = nil; expect(successor :alias).to render_with('.active')
+      @successor = nil; expect(successor test: true).to render_with('.active')
+      @successor = nil; expect(successor active: true).to render_with('.active')
+    end
+
+    it 'calls block for "active"' do
+      expect(successor :active).to render_with('.testing')
     end
   end
 

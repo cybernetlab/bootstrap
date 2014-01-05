@@ -10,6 +10,9 @@ describe Bootstrap::ViewHelpers::Button do
   it {expect(helper class: :test).to render_with 'button.btn.btn-default.test'}
   it {expect(helper(class: :test) {|g| '<p></p>'.html_safe}).to render_with 'button.btn.btn-default.test > p'}
 
+  # method returns safety
+  it {expect(helper).to have_safe_method :icon}
+
   # behaviour
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::Activable}
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::Disableable}
@@ -46,8 +49,7 @@ describe Bootstrap::ViewHelpers::Button do
   it {expect(helper(:dropup) {|b| b.divider}).to render_with 'div.btn-group.dropup'}
 
   # block
-  it {expect(helper).to have_flag :block}
-  it {expect(helper :block).to render_with "button.btn.btn-block"}
+  it {expect(helper).to have_flag(:block).with(html_class: 'btn-block')}
 
   # radios
   it {expect(helper 'text', name: 'group-name', id: 'option1', value: 'v1', class: 'someclass', helper_name: 'radio').to render_with 'label.btn.btn-default.someclass[text()="text"][@label_for="option1"] > input[@type="radio"][@name="group-name"][@id="option1"][@value="v1"]'}

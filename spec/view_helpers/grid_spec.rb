@@ -10,6 +10,9 @@ describe Bootstrap::ViewHelpers::Grid do
     helper.row
   end
 
+  # method returns safety
+  it {expect(helper).to have_safe_method :row}
+
   it {expect(described_class.helper_names).to eq 'grid'}
 end
 
@@ -26,6 +29,9 @@ describe Bootstrap::ViewHelpers::GridRow do
   it {expect(helper {|h| h.clear}).to render_with 'div.row > div.clearfix.visible-md'}
   it {expect(helper {|h| h.clear :hidden_large}).to render_with 'div.row > div.clearfix.hidden-lg'}
 
+  # method returns safety
+  it {expect(helper).to have_safe_method :cell, :clear}
+
   it {expect(described_class.helper_names).to eq nil}
 end
 
@@ -38,6 +44,9 @@ describe Bootstrap::ViewHelpers::GridCell do
     expect(Bootstrap::ViewHelpers::GridRow).to receive(:new).and_call_original
     helper.row
   end
+
+  # method returns safety
+  it {expect(helper).to have_safe_method :row}
 
   %w[offset push pull].each do |act|
     it "sanitize extra small #{act}" do

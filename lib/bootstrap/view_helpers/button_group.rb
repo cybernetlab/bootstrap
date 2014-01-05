@@ -7,6 +7,8 @@ module Bootstrap
       self.helper_names = 'button_group'
       self.class_prefix = 'btn-group'
 
+      self.flag :vertical
+
       def button *args, &block
         Button.new(@view, *args, &block).render
       end
@@ -25,14 +27,9 @@ module Bootstrap
         Button.new(@view, *args, &block).render
       end
 
-      set_callback :initialize, :after do
+      after_initialize do
         add_class 'btn-group'
-        @args.each do |arg|
-          if arg == 'vertical'
-            add_class 'btn-group-vertical'
-          end
-        end
-        add_class 'btn-group-vertical' if options.delete(:vertical) == true
+        add_class 'btn-group-vertical' if vertical?
       end
     end
   end

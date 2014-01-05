@@ -5,11 +5,13 @@ module Bootstrap
 
       def divider
         @items << :divider
+        EMPTY_HTML
       end
 
       def header title
         raise ArgumentError unless title.is_a? String
         @items << title
+        EMPTY_HTML
       end
 
       def item *args, &block
@@ -38,9 +40,10 @@ module Bootstrap
         options[:tabindex] = '-1'
         options[:disabled] = disabled
         @items << [body, url, options]
+        EMPTY_HTML
       end
 
-      set_callback :initialize, :after do
+      after_initialize do
         @tag = 'ul'
         @options['role'] = 'menu'
         add_class 'dropdown-menu'

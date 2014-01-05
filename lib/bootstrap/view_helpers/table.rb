@@ -3,32 +3,20 @@ module Bootstrap
     class Table < Base
       self.helper_names = 'table'
 
+      self.flag :striped, html_class: 'table-striped'
+      self.flag :bordered, html_class: 'table-bordered'
+      self.flag :hover, html_class: 'table-hover'
+      self.flag :condensed, html_class: 'table-condensed'
+      self.flag(:responsive) {|value| self.wrapper = value ? {tag: 'div', class: 'table-responsive'} : nil}
+
       def row *args, &block
         TableRow.new(@view, *args, &block).render
       end
 
-      set_callback :initialize, :after do
-        @responsive = false
-        @args.each do |arg|
-          if SWITCHERS.include? arg.to_sym
-            instance_variable_set "@#{arg}".to_sym, true
-          end
-        end
-        SWITCHERS.each do |switch|
-          instance_variable_set "@#{switch}".to_sym, options.delete(switch) == true if @options.key? switch
-        end
-        @bordered = true if options.delete(:border) == true
+      after_initialize do
         add_class 'table'
-        add_class 'table-striped' if @striped
-        add_class 'table-bordered' if @bordered
-        add_class 'table-hover' if @hover
-        add_class 'table-condensed' if @condensed
         @tag = 'table'
-        self.wrapper = {tag: 'div', class: 'table-responsive'} if @responsive
       end
-
-      private
-      SWITCHERS = %i[responsive striped bordered hover condensed]
     end
 
     class TableRow < Base
@@ -46,15 +34,13 @@ module Bootstrap
       alias_method :th, :head
       alias_method :header, :head
 
-      set_callback :initialize, :after do
-        @tag = 'tr'
-      end
+      after_initialize {@tag = 'tr'}
     end
 
     class TableCell < Base
       include Column
 
-      set_callback :initialize, :after do
+      after_initialize do
         header = false
         @args.each do |arg|
           header = arg == 'header' || arg == 'head' || arg == 'th'

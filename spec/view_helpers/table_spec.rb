@@ -6,17 +6,12 @@ describe Bootstrap::ViewHelpers::Table do
   it {expect(helper class: :test).to render_with 'table.test.table'}
   it {expect(helper(class: :test) {|g| '<i>text</i>'.html_safe}).to render_with 'table.test.table > i'}
 
+  it {expect(helper).to have_flag(:striped).with(html_class: 'table-striped')}
+  it {expect(helper).to have_flag(:bordered).with(html_class: 'table-bordered')}
+  it {expect(helper).to have_flag(:hover).with(html_class: 'table-hover')}
+  it {expect(helper).to have_flag(:condensed).with(html_class: 'table-condensed')}
+  it {expect(helper).to have_flag(:responsive)}
   it {expect(helper :responsive).to render_with 'div.table-responsive > table.table'}
-  it {expect(helper responsive: true).to render_with 'div.table-responsive > table.table'}
-  it {expect(helper responsive: true).to_not have_option :responsive}
-
-  %i[striped bordered hover condensed].each do |style|
-    it {expect(helper style).to render_with "table.table.table-#{style}"}
-    it {expect(helper style => true).to render_with "table.table.table-#{style}"}
-    it {expect(helper style => true).to_not have_option style}
-  end
-
-  it {expect(helper border: true).to render_with 'table.table.table-bordered'}
 
   it 'renders child rows' do
     expect(Bootstrap::ViewHelpers::TableRow).to receive(:new).and_call_original

@@ -13,4 +13,7 @@ describe Bootstrap::ViewHelpers::DropdownMenu do
   it {expect(helper align: :none).to_not have_option :align}
 
   it {expect(described_class.helper_names).to eq 'dropdown_menu'}
+
+  # method returns safety
+  it {expect(helper).to have_safe_method :divider, :header, :item}
 end

@@ -42,13 +42,11 @@ describe Bootstrap::ViewHelpers::Column do
 end
 
 describe Bootstrap::ViewHelpers::Activable do
-  it {expect(wrapper).to have_flag :active}
-  it {expect(wrapper).to_not render_with '.active'}
-  it {expect(wrapper :active).to render_with '.active'}
+  it {expect(wrapper).to have_flag(:active).with(html_class: 'active')}
 end
 
 describe Bootstrap::ViewHelpers::Disableable do
-  it {expect(wrapper).to have_flag :disabled}
+  it {expect(wrapper).to have_flag(:disabled).with(aliases: [:disable])}
   it {expect(wrapper).to_not render_with '.disabled'}
   it {expect(wrapper :disabled).to render_with '.disabled'}
   it {expect(wrapper tag: :button).to_not render_with '[@disabled]'}
