@@ -3,11 +3,11 @@ module Bootstrap
     module Column
       extend ActiveSupport::Concern
       included do
-        set_callback :initialize, :after do
+        after_initialize do
           @args.select! do |arg|
             if /^(?:col[-_]?)?(?<size>(?:xs|(?:extra[-_]?small))|(?:sm|small)|(?:md|medium)|(?:lg|large))[-_]?(?<num>\d{1,2})$/ =~ arg
               size = SIZES[size[0]]
-              add_class "col-#{size}-#{num}" unless have_class? /^col-#{size}-\d{1,2}/
+              add_class "col-#{size}-#{num}" unless have_class?(/^col-#{size}-\d{1,2}/)
               false
             else
               true
@@ -22,51 +22,25 @@ module Bootstrap
     module Contextual
       extend ActiveSupport::Concern
       included do
-        set_callback :initialize, :after do
-          skip = have_class? ENUM
-          @args.select! do |arg|
-            if ENUM.include?(arg)
-              add_class arg unless skip
-              skip = true
-              false
-            else
-              true
-            end
-          end
-          ENUM.each do |state|
-            s = @options.delete state.to_sym
-            next if s.nil? || s != true || skip
-            add_class state
-            skip = true
-          end
-        end
+        enum :state, %i[active success warning danger]
+        after_initialize {add_class self.state unless self.state.nil?}
       end
-      protected
-      ENUM = %w[active success warning danger]
     end
 
     module Activable
       extend ActiveSupport::Concern
       included do
-        set_callback :initialize, :after do
-          size = @args.size
-          # remove `active` args from working array
-          @args.select! {|a| 'active' != a}
-          # [].any? avoiding short-circuit
-          add_class 'active' if [size != @args.size, @options.delete(:active) == true].any?
-        end
+        flag :active
+        after_initialize {add_class 'active' if active?}
       end
     end
 
     module Disableable
       extend ActiveSupport::Concern
       included do
-        set_callback :initialize, :after do
-          size = @args.size
-          # remove `disable` args from working array
-          @args.select! {|a| /^disable(d)?$/ !~ a}
-          # [].any? avoiding short-circuit
-          if [size != @args.size, @options.delete(:disable) == true, @options.delete(:disabled) == true].any?
+        flag :disabled, aliases: [:disable]
+        after_initialize do
+          if disabled?
             if @tag == 'button'
               @options[:disabled] = 'disabled'
             else
@@ -80,7 +54,7 @@ module Bootstrap
     module Sizable
       extend ActiveSupport::Concern
       included do
-        set_callback :initialize, :after do
+        after_initialize do
           prefix = self.class.class_prefix
           unless prefix.blank?
             re_prefix = "(#{prefix}[-_])?"
@@ -88,7 +62,7 @@ module Bootstrap
           else
             re_prefix = cl_prefix = ''
           end
-          skip = have_class? /^#{cl_prefix}(xs|sm|lg)$/
+          skip = have_class?(/^#{cl_prefix}(xs|sm|lg)$/)
           @args.select! do |arg|
             if /^#{re_prefix}(sm|small)$/ =~ arg
               add_class "#{cl_prefix}sm" unless skip
@@ -123,13 +97,9 @@ module Bootstrap
     module Justifable
       extend ActiveSupport::Concern
       included do
-        set_callback :initialize, :after do
-          size = @args.size
-          @args.select! {|a| 'justify' != a && 'justified' != a}
-          # [].any? avoiding short-circuit
-          if [size != @args.size, @options.delete(:justify) == true, @options.delete(:justified) == true].any?
-            add_class [self.class.class_prefix, 'justified'].compact.join '-'
-          end
+        flag :justified, aliases: [:justify]
+        after_initialize do
+          add_class [self.class.class_prefix, 'justified'].compact.join '-' if justified?
         end
       end
     end
@@ -144,10 +114,7 @@ module Bootstrap
 
       included do
         delegate :divider, :header, :item, to: :dropdown_menu
-
-        set_callback :initialize, :after do
-          @dropdown_menu = nil
-        end
+        after_initialize {@dropdown_menu = nil}
       end
     end
   end

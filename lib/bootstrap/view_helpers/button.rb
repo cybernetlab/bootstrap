@@ -9,6 +9,12 @@ module Bootstrap
       self.helper_names = ['button', 'radio', 'checkbox']
       self.class_prefix = 'btn'
 
+      self.flag :block
+      self.flag :toggle
+      self.flag :splitted
+      self.flag :dropup
+      self.enum :fashion, %i[default primary success info warning danger link]
+
       def icon *args, &block
         Icon.new(@view, *args, &block).render
       end
@@ -17,7 +23,7 @@ module Bootstrap
         @content = @text if @text.is_a? String
         @content = @icon.render + @content unless @icon.nil?
         if @dropdown_menu.is_a? Base
-          unless @splitted
+          unless splitted?
             @content += @view.content_tag 'span', '', class: 'caret'
             add_class 'dropdown-toggle'
             set_data :toggle, 'dropdown'
@@ -35,38 +41,22 @@ module Bootstrap
 
       set_callback :render, :after do
         if @dropdown_menu.is_a? Base
-          if @splitted
+          if splitted?
             toggle = Base.new @view, @options.merge(tag: 'button')
             toggle.send :add_class, 'dropdown-toggle'
             toggle.send :set_data, :toggle, 'dropdown'
             @content += toggle.render(@view.content_tag('span', '', class: 'caret'))
           end
           wrapper_class = ['btn-group']
-          wrapper_class << 'dropup' if @dropup
+          wrapper_class << 'dropup' if dropup?
           self.wrapper = {tag: 'div', class: wrapper_class}
           @content += @dropdown_menu.render
         end
       end
 
       set_callback :initialize, :after do
-        type = 'default'
-        @text, @icon, @splitted, @dropup = nil, nil, false, false
-        @args.each do |arg|
-          if TYPES.include? arg
-            type = arg
-          elsif arg == 'block'
-            add_class 'btn-block'
-          elsif arg == 'toggle'
-            set_data :toggle, 'button'
-          elsif arg == 'splitted'
-            @splitted = true
-          elsif arg == 'dropup'
-            @dropup = true
-          else
-            @text = arg.html_safe
-          end
-        end
-        add_class ['btn', "btn-#{type}"]
+        @text = @args.size > 0 ? @args[0].html_safe : nil
+
         @tag = 'button' unless @tag == 'a' || @tag == 'input'
         if @tag == 'a'
           @options[:role] = "button"
@@ -74,14 +64,14 @@ module Bootstrap
           @options[:type] = "button" unless @options.include? :type
           @options[:type] = @options[:type].to_s.downcase
         end
-        if @options.key? :icon
-          @icon = Icon.new @view, @options.delete(:icon)
-        end
-        @splitted = true if @options.delete(:splitted) == true
-        @dropup = true if @options.delete(:dropup) == true
+
+        @icon = @options.key?(:icon) ? Icon.new(@view, @options.delete(:icon)) : nil
         @text = @options.delete :text if @options[:text].is_a? String
-        set_data :toggle, 'button' if options.delete(:toggle) == true
-        add_class 'btn-block' if @options.delete(:block) == true
+
+        self.fashion ||= :default
+        add_class ['btn', "btn-#{self.fashion}"]
+        add_class 'btn-block' if self.block?
+        set_data :toggle, 'button' if self.toggle?
 
         @options.keys.each do |key|
           next unless /_text$/ =~ key
@@ -89,9 +79,6 @@ module Bootstrap
           set_data key.to_s.gsub(/_/, '-'), value if value.is_a? String
         end
       end
-
-      private
-      TYPES = %w[default primary success info warning danger link]
     end
   end
 end

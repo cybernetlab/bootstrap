@@ -11,7 +11,7 @@ module Bootstrap
 
       def initialize view, *args, &block
         raise ArgumentError if view.nil? || !view.respond_to?(:capture)
-        @view, @args, @block, @wrapper = view, args, block, nil
+        @flags, @enums, @view, @args, @block, @wrapper = {}, {}, view, args, block, nil
 
         run_callbacks :initialize do
           options = {tag: self.class.const_defined?(:TAG) ? self.class.const_get(:TAG) : 'div'}
@@ -19,6 +19,48 @@ module Bootstrap
 
           @tag = options.delete(:tag).to_s.downcase
           self.options = options
+
+          flags = self.class.flags
+          enums = self.class.enums
+          aliases = {}
+          enums_index = {}
+
+
+          # find flags in options
+          flags.each do |flag, opts|
+            opts[:aliases].each do |al|
+              aliases[al] = flag
+              @flags[flag] = @options.delete(al) == true if @options.key? al
+            end if opts[:aliases].is_a? Array
+            @flags[flag] = @options.delete(flag) == true if @options.key? flag
+          end
+
+          enums.each do |enum, opts|
+            opts[:values].each {|value| enums_index[value] = enum}
+            next unless @options.key? enum
+            value = @options.delete enum
+            @enums[enum] = value if opts[:values].include? value
+          end
+
+          # find flags in arguments
+          @args.select! do |arg|
+            if arg.is_a? Symbol
+              if flags.key? arg
+                @flags[arg] = true
+                false
+              elsif aliases.key? arg
+                @flags[aliases[arg]] = true
+                false
+              elsif enums_index.key? arg
+                @enums[enums_index[arg]] = arg
+                false
+              else
+                true
+              end
+            else
+              true
+            end
+          end
 
           @args = @args.select {|a| a.is_a?(String) || a.is_a?(Symbol)}.map {|a| a.to_s.downcase}
           @helper_name = options.delete(:helper_name) || self.class.helper_names
@@ -47,7 +89,7 @@ module Bootstrap
         elsif value.is_a? Array
           @options[:class].any? {|c| value.include? c}
         elsif block_given?
-          @options[:class].any? &block
+          @options[:class].any?() &block
         else
           false
         end
@@ -61,7 +103,7 @@ module Bootstrap
         elsif value.is_a? Array
           @options[:class].none? {|c| value.include? c}
         elsif block_given?
-          @options[:class].none? &block
+          @options[:class].none?() &block
         else
           false
         end
@@ -83,6 +125,63 @@ module Bootstrap
 
       def self.class_prefix= value
         @class_prefix = value.to_s
+      end
+
+      # --- flags
+      def self.flag name, options = {}
+        getter = "#{name}?".to_sym
+        setter = "#{name}=".to_sym
+        name = name.to_sym unless name.is_a? Symbol
+        define_method getter do
+          @flags[name] == true
+        end
+        define_method setter do |value|
+          @flags[name] = value == true
+        end
+        @flags = {} unless instance_variable_defined? :@flags
+        @flags[name] = options
+      end
+
+      def self.flags
+        flags = instance_variable_defined?(:@flags) ? @flags : {}
+        ancestors.each do |ancestor|
+          break if ancestor == Base
+          next unless ancestor.instance_variable_defined? :@flags
+          flags = ancestor.instance_variable_get(:@flags).merge flags
+        end
+        flags
+      end
+
+      # --- enums
+      def self.enum name, values, options = {}
+        getter = "#{name}".to_sym
+        setter = "#{name}=".to_sym
+        name = name.to_sym unless name.is_a? Symbol
+        define_method getter do
+          @enums[name]
+        end
+        define_method setter do |value|
+          return unless self.class.enums[name][:values].include? value
+          @enums[name] = value
+        end
+        @enums = {} unless instance_variable_defined? :@enums
+        @enums[name] = options.merge values: values
+      end
+
+      def self.enums
+        enums = instance_variable_defined?(:@enums) ? @enums : {}
+        ancestors.each do |ancestor|
+          break if ancestor == Base
+          next unless ancestor.instance_variable_defined? :@enums
+          enums = ancestor.instance_variable_get(:@enums).merge enums
+        end
+        enums
+      end
+
+
+
+      def self.after_initialize &block
+        set_callback :initialize, :after, &block
       end
 
       def options= hash

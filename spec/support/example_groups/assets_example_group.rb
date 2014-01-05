@@ -16,7 +16,7 @@ module AssetsExampleGroup
     end
 
     let :assets do
-      original_verbosity = $VERBOSE
+      @original_verbosity = $VERBOSE
       $VERBOSE = nil
       FileUtils.rm_r Dir.glob(Rails.root.join 'tmp', '*')
       Sprockets::Manifest.new(env, Rails.root.join('tmp'))

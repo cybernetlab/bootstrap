@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 describe Bootstrap::ViewHelpers::Button do
-  it {expect(rendered).to have_selector 'button.btn.btn-default[@type="button"]'}
-  it {expect(rendered helper type: 'submit').to have_selector 'button.btn.btn-default[@type="submit"]'}
-  it {expect(rendered helper tag: :a).to have_selector 'a.btn.btn-default[@role="button"]'}
-  it {expect(rendered helper tag: :input).to have_selector 'input.btn.btn-default[@type="button"]'}
-  it {expect(rendered helper tag: :input, type: :submit).to have_selector 'input.btn.btn-default[@type="submit"]'}
-  it {expect(rendered helper tag: :p).to have_selector 'button.btn.btn-default'}
-  it {expect(rendered helper class: :test).to have_selector 'button.btn.btn-default.test'}
-  it {expect(rendered(helper(class: :test) {|g| '<p></p>'.html_safe})).to have_selector 'button.btn.btn-default.test > p'}
+  it {expect(helper).to render_with 'button.btn.btn-default[@type="button"]'}
+  it {expect(helper type: 'submit').to render_with 'button.btn.btn-default[@type="submit"]'}
+  it {expect(helper tag: :a).to render_with 'a.btn.btn-default[@role="button"]'}
+  it {expect(helper tag: :input).to render_with 'input.btn.btn-default[@type="button"]'}
+  it {expect(helper tag: :input, type: :submit).to render_with 'input.btn.btn-default[@type="submit"]'}
+  it {expect(helper tag: :p).to render_with 'button.btn.btn-default'}
+  it {expect(helper class: :test).to render_with 'button.btn.btn-default.test'}
+  it {expect(helper(class: :test) {|g| '<p></p>'.html_safe}).to render_with 'button.btn.btn-default.test > p'}
 
   # behaviour
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::Activable}
@@ -17,60 +17,55 @@ describe Bootstrap::ViewHelpers::Button do
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::DropdownMenuWrapper}
 
   # text
-  it {expect(rendered helper 'test text').to have_selector 'button.btn.btn-default[text()="test text"]'}
-  it {expect(rendered helper text: 'test text').to have_selector 'button.btn.btn-default[text()="test text"]'}
+  it {expect(helper 'test text').to render_with 'button.btn.btn-default[text()="test text"]'}
+  it {expect(helper text: 'test text').to render_with 'button.btn.btn-default[text()="test text"]'}
 
-  # types
-  %i[default primary success info warning danger link].each do |type|
-    it {expect(rendered helper type).to have_selector "button.btn.btn-#{type}"}
+  # fashion
+  it {expect(helper).to have_enum :fashion}
+  it 'supports many fashions' do
+    %i[default primary success info warning danger link].each do |type|
+      @helper = nil; expect(helper type).to render_with "button.btn.btn-#{type}"
+      @helper = nil; expect(helper fashion: type).to render_with "button.btn.btn-#{type}"
+    end
   end
 
   # icons
-  it {expect(rendered helper icon: :bell).to have_selector 'button.btn.btn-default > i.fa.fa-bell'}
-  it {expect(rendered(helper {|b| b.icon :star})).to have_selector 'button.btn.btn-default > i.fa.fa-star'}
+  it {expect(helper icon: :bell).to render_with 'button.btn.btn-default > i.fa.fa-bell'}
+  it {expect(helper {|b| b.icon :star}).to render_with 'button.btn.btn-default > i.fa.fa-star'}
 
   # dropdown
-  it 'renders dropdown' do
-    helper('action text') {|b| b.divider}
-    html = rendered
-    expect(html).to have_selector 'div.btn-group > button.dropdown-toggle[@data-toggle="dropdown"][text()="action text"] > span.caret'
-    expect(html).to have_selector 'div.btn-group > ul.dropdown-menu > li.divider'
-  end
-  it 'renders splitted dropdown' do
-    helper(:splitted, :danger, 'action') {|b| b.divider}
-    html = rendered
-    expect(html).to have_selector 'div.btn-group > button.btn-danger[text()="action"]'
-    expect(html).to have_selector 'div.btn-group > button.btn-danger.dropdown-toggle[@data-toggle="dropdown"] > span.caret'
-    expect(html).to have_selector 'div.btn-group > ul.dropdown-menu > li.divider'
-  end
-  it 'renders dropdown' do
-    helper(:dropup) {|b| b.divider}
-    html = rendered
-    expect(html).to have_selector 'div.btn-group.dropup'
-  end
+  it {expect(helper('action text') {|b| b.divider}).to render_with 'div.btn-group > button.dropdown-toggle[@data-toggle="dropdown"][text()="action text"] > span.caret'}
+  it {expect(helper('action text') {|b| b.divider}).to render_with 'div.btn-group > ul.dropdown-menu > li.divider'}
+  # splitted dropdown
+  it {expect(helper).to have_flag :splitted}
+  it {expect(helper(:splitted, :danger, 'action') {|b| b.divider}).to render_with 'div.btn-group > button.btn-danger[text()="action"]'}
+  it {expect(helper(:splitted, :danger, 'action') {|b| b.divider}).to render_with 'div.btn-group > button.btn-danger.dropdown-toggle[@data-toggle="dropdown"] > span.caret'}
+  it {expect(helper(:splitted, :danger, 'action') {|b| b.divider}).to render_with 'div.btn-group > ul.dropdown-menu > li.divider'}
+  # dropup
+  it {expect(helper).to have_flag :dropup}
+  it {expect(helper(:dropup) {|b| b.divider}).to render_with 'div.btn-group.dropup'}
 
   # block
-  it {expect(rendered helper :block).to have_selector "button.btn.btn-block"}
-  it {expect(rendered helper block: true).to have_selector "button.btn.btn-block"}
+  it {expect(helper).to have_flag :block}
+  it {expect(helper :block).to render_with "button.btn.btn-block"}
 
   # radios
-  it {expect(rendered helper 'text', name: 'group-name', id: 'option1', value: 'v1', class: 'someclass', helper_name: 'radio').to have_selector 'label.btn.btn-default.someclass[text()="text"][@label_for="option1"] > input[@type="radio"][@name="group-name"][@id="option1"][@value="v1"]'}
+  it {expect(helper 'text', name: 'group-name', id: 'option1', value: 'v1', class: 'someclass', helper_name: 'radio').to render_with 'label.btn.btn-default.someclass[text()="text"][@label_for="option1"] > input[@type="radio"][@name="group-name"][@id="option1"][@value="v1"]'}
 
   # checkboxes
-  it {expect(rendered helper 'text', name: 'group-name', id: 'option1', value: 'v1', class: 'someclass', helper_name: 'checkbox').to have_selector 'label.btn.btn-default.someclass[text()="text"] > input[@type="checkbox"][@name="group-name"][@id="option1"][@value="v1"]'}
+  it {expect(helper 'text', name: 'group-name', id: 'option1', value: 'v1', class: 'someclass', helper_name: 'checkbox').to render_with 'label.btn.btn-default.someclass[text()="text"] > input[@type="checkbox"][@name="group-name"][@id="option1"][@value="v1"]'}
 
   # toggling
-  it {expect(rendered helper :toggle).to have_selector 'button[@data-toggle="button"]'}
-  it {expect(rendered helper toggle: true).to have_selector 'button[@data-toggle="button"]'}
-  it {expect(rendered helper toggle: false).to_not have_selector 'button[@data-toggle="button"]'}
+  it {expect(helper).to have_flag :toggle}
+  it {expect(helper :toggle).to render_with 'button[@data-toggle="button"]'}
 
   # state text
-  it {expect(rendered helper loading_text: 'text').to have_selector 'button[@data-loading-text="text"]'}
+  it {expect(helper loading_text: 'text').to render_with 'button[@data-loading-text="text"]'}
 
   # options cleaning
   it {expect(helper icon: :bell, block: true, toggle: false, some_text: false, splitted: true, dropup: true).to_not have_option :icon, :block, :toggle, :some_text, :splitted, :dropup}
 
   # class constants
   it {expect(described_class.helper_names).to eq ['button', 'radio', 'checkbox']}
-  it {expect(helper_class.class_prefix).to eq 'btn'}
+  it {expect(described_class.class_prefix).to eq 'btn'}
 end
