@@ -5,6 +5,7 @@ module Bootstrap
       included do
         after_initialize do
           @args.select! do |arg|
+            arg = arg.is_a?(Symbol) || arg.is_a?(String) ? arg.to_s.downcase : ''
             if /^(?:col[-_]?)?(?<size>(?:xs|(?:extra[-_]?small))|(?:sm|small)|(?:md|medium)|(?:lg|large))[-_]?(?<num>\d{1,2})$/ =~ arg
               size = SIZES[size[0]]
               add_class "col-#{size}-#{num}" unless have_class?(/^col-#{size}-\d{1,2}/)
@@ -60,6 +61,7 @@ module Bootstrap
           end
           skip = have_class?(/^#{cl_prefix}(xs|sm|lg)$/)
           @args.select! do |arg|
+            arg = arg.is_a?(Symbol) || arg.is_a?(String) ? arg.to_s.downcase : ''
             if /^#{re_prefix}(sm|small)$/ =~ arg
               add_class "#{cl_prefix}sm" unless skip
               skip = true
@@ -111,6 +113,7 @@ module Bootstrap
       included do
         delegate :divider, :header, :item, to: :dropdown_menu
         after_initialize {@dropdown_menu = nil}
+        after_render {@content += @dropdown_menu.render unless @dropdown_menu.nil?}
       end
     end
   end

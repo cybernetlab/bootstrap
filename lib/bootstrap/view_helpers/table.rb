@@ -43,6 +43,7 @@ module Bootstrap
       after_initialize do
         header = false
         @args.each do |arg|
+          arg = arg.is_a?(Symbol) || arg.is_a?(String) ? arg.to_s.downcase : ''
           header = arg == 'header' || arg == 'head' || arg == 'th'
           break if header
         end

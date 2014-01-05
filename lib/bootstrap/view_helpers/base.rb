@@ -62,7 +62,7 @@ module Bootstrap
             end
           end
 
-          @args = @args.select {|a| a.is_a?(String) || a.is_a?(Symbol)}.map {|a| a.to_s.downcase}
+#          @args = @args.select {|a| a.is_a?(String) || a.is_a?(Symbol)}.map {|a| a.to_s.downcase}
           @helper_name = options.delete(:helper_name) || self.class.helper_names
           @helper_name = @helper_name[0] if @helper_name.is_a?(Array) && @helper_name.size > 0
         end
@@ -88,26 +88,30 @@ module Bootstrap
           @options[:class].push(value.to_s)
         end
         @options[:class].uniq!
+        self # allow chaining
       end
 
       def remove_class value
         if value.is_a? Array
-          value.flatten.each {|v| @options[:class].remove v if @options[:class].include? v}
+          value.flatten.each {|v| @options[:class].delete v if @options[:class].include? v}
         else
-          @options[:class].remove value if @options[:class].include? value
+          @options[:class].delete value if @options[:class].include? value
         end
+        self # allow chaining
       end
 
       def set_data key, value
         raise ArgumentError unless key.is_a?(String) || key.is_a?(Symbol)
         @options[:data] ||= {}
         @options[:data][key.to_sym] = value
+        self # allow chaining
       end
 
       def unset_data key
         raise ArgumentError unless key.is_a?(String) || key.is_a?(Symbol)
         @options[:data] ||= {}
-        @options[:data].remove key.to_sym
+        @options[:data].delete key.to_sym
+        self # allow chaining
       end
 
       def have_class? value = nil, &block
@@ -147,8 +151,9 @@ module Bootstrap
         nil
       end
 
-      protected
       EMPTY_HTML = ''.html_safe
+
+      protected
 
       def self.helper_names= value
         @helper_names = value.is_a?(Array) ? value.flatten : value
@@ -220,6 +225,14 @@ module Bootstrap
 
       def self.after_initialize &block
         set_callback :initialize, :after, &block
+      end
+
+      def self.after_capture &block
+        set_callback :capture, :after, &block
+      end
+
+      def self.after_render &block
+        set_callback :render, :after, &block
       end
 
       def options= hash

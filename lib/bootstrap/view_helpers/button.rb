@@ -3,8 +3,8 @@ module Bootstrap
     class Button < Base
       include Activable
       include Disableable
-      include DropdownMenuWrapper
       include Sizable
+      include DropdownMenuWrapper
 
       self.helper_names = ['button', 'radio', 'checkbox']
       self.class_prefix = 'btn'
@@ -50,7 +50,6 @@ module Bootstrap
           wrapper_class = ['btn-group']
           wrapper_class << 'dropup' if dropup?
           self.wrapper = {tag: 'div', class: wrapper_class}
-          @content += @dropdown_menu.render
         end
       end
 
@@ -77,6 +76,7 @@ module Bootstrap
           set_data key.to_s.gsub(/_/, '-'), value if value.is_a? String
         end
       end
+
     end
   end
 end

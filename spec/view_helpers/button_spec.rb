@@ -38,7 +38,7 @@ describe Bootstrap::ViewHelpers::Button do
 
   # dropdown
   it {expect(helper('action text') {|b| b.divider}).to render_with 'div.btn-group > button.dropdown-toggle[@data-toggle="dropdown"][text()="action text"] > span.caret'}
-  it {expect(helper('action text') {|b| b.divider}).to render_with 'div.btn-group > ul.dropdown-menu > li.divider'}
+  it {expect(helper('action text') {|b| b.divider}).to render_with 'div.btn-group > button + ul.dropdown-menu > li.divider'}
   # splitted dropdown
   it {expect(helper).to have_flag :splitted}
   it {expect(helper(:splitted, :danger, 'action') {|b| b.divider}).to render_with 'div.btn-group > button.btn-danger[text()="action"]'}
