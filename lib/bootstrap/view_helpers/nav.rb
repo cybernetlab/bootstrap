@@ -28,6 +28,7 @@ module Bootstrap
     end
 
     class NavPills < Nav
+      flag :stacked, html_class: 'nav-stacked'
       html_class 'nav-pills'
     end
 

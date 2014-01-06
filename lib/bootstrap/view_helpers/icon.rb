@@ -7,7 +7,9 @@ module Bootstrap
 
       after_initialize do
         @tag = 'i'
-        @icon = @args.size < 1 ? 'asterisk' : @args[0]
+        @icon = @args.extract_first! Symbol, String
+        @icon = 'asterisk' if @icon.nil?
+        @icon = @icon.to_s
         prefix = Bootstrap.config.font_awesome ? 'fa' : 'glyphicon'
         add_class [prefix, "#{prefix}-#{@icon}"]
       end

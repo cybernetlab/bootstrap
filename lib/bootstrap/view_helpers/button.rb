@@ -16,7 +16,11 @@ module Bootstrap
       helper :icon, 'Bootstrap::ViewHelpers::Icon'
 
       after_capture do
-        @content = @icon.render + @content unless @icon.nil?
+        if @icon.nil?
+          @content += ' '.html_safe unless @content.empty?
+        else
+          @content = @icon.render + ' '.html_safe + @content
+        end
         if @helper_name == 'radio' || @helper_name == 'checkbox'
           @tag = 'label'
           input_options = {type: @helper_name}

@@ -18,6 +18,7 @@ module Bootstrap
 
     class GridCell < Base
       include Column
+      include TextContainer
 
       helper :row, 'Bootstrap::ViewHelpers::GridRow'
 
