@@ -12,8 +12,6 @@ describe Bootstrap::ViewHelpers::Grid do
 
   # method returns safety
   it {expect(helper).to have_safe_method :row}
-
-  it {expect(described_class.helper_names).to eq 'grid'}
 end
 
 describe Bootstrap::ViewHelpers::GridRow do
@@ -31,8 +29,6 @@ describe Bootstrap::ViewHelpers::GridRow do
 
   # method returns safety
   it {expect(helper).to have_safe_method :cell, :clear}
-
-  it {expect(described_class.helper_names).to eq nil}
 end
 
 describe Bootstrap::ViewHelpers::GridCell do
@@ -79,5 +75,4 @@ describe Bootstrap::ViewHelpers::GridCell do
   end
 
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::Column}
-  it {expect(described_class.helper_names).to eq nil}
 end

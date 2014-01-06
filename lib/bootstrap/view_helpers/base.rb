@@ -8,6 +8,7 @@ module Bootstrap
       define_callbacks :render, terminator: 'result == false'
 
       attr_accessor :tag
+      attr_reader :options
 
       def initialize view, *args, &block
         raise ArgumentError if view.nil? || !view.respond_to?(:capture)
@@ -22,34 +23,29 @@ module Bootstrap
           @tag = options.delete(:tag).to_s.downcase
           self.options = options
 
-          flags = self.class.flags
-          enums = self.class.enums
-          aliases = {}
-          enums_index = {}
-
-
-          # find flags in options
-          flags.each do |flag, opts|
-            opts[:aliases].each do |al|
-              aliases[al] = flag
-              self.send "#{flag}=", @options.delete(al) == true if @options.key? al
-            end if opts[:aliases].is_a? Array
-            self.send "#{flag}=", @options.delete(flag) == true if @options.key? flag
+          keys = @options.keys
+          self.class.get_derived_hash(:@opt_index).each do |name, opts|
+            next unless keys.include? name
+            value = @options.delete name
+            if opts[:type] == :flag
+              self.send "#{opts[:name]}=", value == true
+            else
+              @enums[opts[:name]] = value if opts[:values].include? value
+            end
           end
 
-          enums.each do |enum, opts|
-            opts[:values].each {|value| enums_index[value] = enum}
-            next unless @options.key? enum
-            value = @options.delete enum
-            @enums[enum] = value if opts[:values].include? value
+          arg_index = self.class.get_derived_hash :@arg_index
+          @args.extract!(Symbol, and: [arg_index.keys]).each do |arg|
+            if arg_index[arg][:type] == :flag
+              self.send "#{arg_index[arg][:name]}=", true
+            else
+              @enums[arg_index[arg][:name]] = arg
+            end
           end
 
-          @args.extract!(Symbol, and: [flags.keys]).each {|arg| self.send "#{arg}=", true}
-          @args.extract!(Symbol, and: [aliases.keys]).each {|arg| self.send "#{aliases[arg]}=", true}
-          @args.extract!(Symbol, and: [enums_index.keys]).each {|arg| @enums[enums_index[arg]] = arg}
+          @helper_name = options.delete :helper_name
 
-          @helper_name = options.delete(:helper_name) || self.class.helper_names
-          @helper_name = @helper_name[0] if @helper_name.is_a?(Array) && @helper_name.size > 0
+          self.class.get_derived_array(:@html_class).each {|c| add_class c}
         end
       end
 
@@ -61,13 +57,12 @@ module Bootstrap
         args.flatten.each {|a| @content += a if a.is_a? String}
         @content += yield self if block_given?
         run_callbacks :render do
+          @options.select! {|k, v| !v.blank?}
           @content = @view.content_tag @tag, @content, @options
         end
         @content = @wrapper.render @content.html_safe if @wrapper.is_a? Base
         @content
       end
-
-      attr_reader :options
 
       def add_class value
         if value.is_a? Array
@@ -130,8 +125,27 @@ module Bootstrap
         end
       end
 
-      def self.helper_names
-        instance_variable_defined?(:@helper_names) ? @helper_names : nil
+      def self.helper name, helper_class, &block
+        helper_class = helper_class.name if helper_class.is_a? Class
+        define_method name do |*h_args, &h_block|
+          begin
+            options = h_args.last.is_a?(Hash) ? h_args.last : h_args.push({}).last
+            options[:helper_name] = name.to_s
+            obj = helper_class.constantize.new(@view, *h_args, &h_block)
+            instance_exec obj, &block unless block.nil?
+            obj.render
+          rescue NameError
+            raise NameError.new "Helper class #{class_name} doesn't exists"
+          end
+        end
+      end
+
+      def self.html_class value
+        value = value.is_a?(Array) ? value.flatten : [value]
+        value.map! {|v| v.to_s}
+        @html_class ||= []
+        @html_class += value
+        @html_class.uniq!
       end
 
       def self.class_prefix
@@ -157,10 +171,21 @@ module Bootstrap
         setter = "#{name}=".to_sym
         name = name.to_sym unless name.is_a? Symbol
         options[:block] = block if block_given?
+        options[:type] = :flag
+        options[:name] = name
+        @arg_index ||= {}
+        @arg_index[name] = options
+        @opt_index ||= {}
+        @opt_index[name] = options
+        options[:aliases].each do |a|
+          @arg_index[a] = options
+          @opt_index[a] = options
+        end if options[:aliases].is_a? Array
 
         define_method getter do
           @flags[name] == true
         end
+
         define_method setter do |value|
           value = value == true
           @flags[name] = value
@@ -169,18 +194,6 @@ module Bootstrap
           end
           self.instance_exec(value, &options[:block]) if options[:block].is_a? Proc
         end
-        @flags = {} unless instance_variable_defined? :@flags
-        @flags[name] = options
-      end
-
-      def self.flags
-        flags = instance_variable_defined?(:@flags) ? @flags : {}
-        ancestors.each do |ancestor|
-          break if ancestor == Base
-          next unless ancestor.instance_variable_defined? :@flags
-          flags = ancestor.instance_variable_get(:@flags).merge flags
-        end
-        flags
       end
 
       # --- enums
@@ -188,28 +201,23 @@ module Bootstrap
         getter = "#{name}".to_sym
         setter = "#{name}=".to_sym
         name = name.to_sym unless name.is_a? Symbol
+        options[:type] = :enum
+        options[:name] = name
+        options[:values] = values
+        @arg_index ||= {}
+        values.each {|v| @arg_index[v] = options}
+        @opt_index ||= {}
+        @opt_index[name] = options
+
         define_method getter do
           @enums[name]
         end
+
         define_method setter do |value|
-          return unless self.class.enums[name][:values].include? value
+          return unless values.include? value
           @enums[name] = value
         end
-        @enums = {} unless instance_variable_defined? :@enums
-        @enums[name] = options.merge values: values
       end
-
-      def self.enums
-        enums = instance_variable_defined?(:@enums) ? @enums : {}
-        ancestors.each do |ancestor|
-          break if ancestor == Base
-          next unless ancestor.instance_variable_defined? :@enums
-          enums = ancestor.instance_variable_get(:@enums).merge enums
-        end
-        enums
-      end
-
-
 
       def self.after_initialize &block
         set_callback :initialize, :after, &block
@@ -245,7 +253,6 @@ module Bootstrap
       end
 
       def capture
-        #@content = ''.html_safe
         run_callbacks :capture do
           @content += @view.capture(self, &@block) || ''.html_safe unless @block.nil?
         end
@@ -257,6 +264,26 @@ module Bootstrap
       end
 
       private
+
+      def self.get_derived_hash name
+        hash = instance_variable_defined?(name) ? instance_variable_get(name) : {}
+        ancestors.each do |ancestor|
+          break if ancestor == Base
+          next unless ancestor.instance_variable_defined? name
+          hash = ancestor.instance_variable_get(name).merge hash
+        end
+        hash
+      end
+
+      def self.get_derived_array name
+        arr = instance_variable_defined?(name) ? instance_variable_get(name) : []
+        ancestors.each do |ancestor|
+          break if ancestor == Base
+          next unless ancestor.instance_variable_defined? name
+          arr += ancestor.instance_variable_get name
+        end
+        arr
+      end
 
       def prepare_args *args
         @args = args

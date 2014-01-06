@@ -4,33 +4,17 @@ module Bootstrap
       include Sizable
       include Justifable
 
-      self.helper_names = 'button_group'
       self.class_prefix = 'btn-group'
 
-      self.flag :vertical
+      html_class 'btn-group'
+      flag :vertical, html_class: 'btn-group-vertical'
 
-      def button *args, &block
-        Button.new(@view, *args, &block).render
-      end
-
-      def radio *args, &block
-        args.push({}) unless args.last.is_a? Hash
-        args.last[:helper_name] = 'radio'
-        set_data :toggle, 'buttons'
-        Button.new(@view, *args, &block).render
-      end
-
-      def checkbox *args, &block
-        args.push({}) unless args.last.is_a? Hash
-        args.last[:helper_name] = 'checkbox'
-        set_data :toggle, 'buttons'
-        Button.new(@view, *args, &block).render
-      end
-
-      after_initialize do
-        add_class 'btn-group'
-        add_class 'btn-group-vertical' if vertical?
-      end
+      helper :button, 'Bootstrap::ViewHelpers::Button'
+      helper(:radio, 'Bootstrap::ViewHelpers::Button') {|button| set_data :toggle, 'buttons'}
+      helper(:checkbox, 'Bootstrap::ViewHelpers::Button') {|button| set_data :toggle, 'buttons'}
+      helper :dropdown, 'Bootstrap::ViewHelpers::DropdownButton'
     end
+
+    register_helper :button_group, 'Bootstrap::ViewHelpers::ButtonGroup'
   end
 end

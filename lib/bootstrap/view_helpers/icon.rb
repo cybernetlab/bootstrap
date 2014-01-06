@@ -1,9 +1,7 @@
 module Bootstrap
   module ViewHelpers
     class Icon < Base
-      self.helper_names = ['icon', 'i']
-
-      set_callback :capture, :after do
+      after_capture do
         @content = EMPTY_HTML
       end
 
@@ -14,5 +12,7 @@ module Bootstrap
         add_class [prefix, "#{prefix}-#{@icon}"]
       end
     end
+
+    register_helper :icon, 'Bootstrap::ViewHelpers::Icon'
   end
 end

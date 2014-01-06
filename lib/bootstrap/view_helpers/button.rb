@@ -6,16 +6,14 @@ module Bootstrap
       include Sizable
       include TextContainer
 
-      self.helper_names = ['button', 'radio', 'checkbox']
       self.class_prefix = 'btn'
+      html_class 'btn'
 
-      self.flag(:toggle) {|value| value ? set_data(:toggle, 'button') : unset_data(:toggle)}
-      self.flag :block, html_class: 'btn-block'
-      self.enum :fashion, %i[default primary success info warning danger link]
+      flag(:toggle) {|value| value ? set_data(:toggle, 'button') : unset_data(:toggle)}
+      flag :block, html_class: 'btn-block'
+      enum :fashion, %i[default primary success info warning danger link]
 
-      def icon *args, &block
-        Icon.new(@view, *args, &block).render
-      end
+      helper :icon, 'Bootstrap::ViewHelpers::Icon'
 
       after_capture do
         @content = @icon.render + @content unless @icon.nil?
@@ -41,7 +39,7 @@ module Bootstrap
         @icon = @options.key?(:icon) ? Icon.new(@view, @options.delete(:icon)) : nil
 
         self.fashion ||= :default
-        add_class ['btn', "btn-#{self.fashion}"]
+        add_class "btn-#{self.fashion}"
 
         @options.keys.each do |key|
           next unless /_text$/ =~ key
@@ -81,5 +79,8 @@ module Bootstrap
         end
       end
     end
+
+    register_helper :button, :radio, :checkbox, 'Bootstrap::ViewHelpers::Button'
+    register_helper :dropdown_button, 'Bootstrap::ViewHelpers::DropdownButton'
   end
 end

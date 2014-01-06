@@ -3,14 +3,11 @@ require 'spec_helper'
 describe Bootstrap::ViewHelpers::ListItem do
   it {expect(helper).to render_with 'li'}
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::Disableable}
+  it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::TextContainer}
+end
 
-  it 'extracts text from :text option' do
-    expect(helper text: 'test').to render_with 'li[text()="test"]'
-  end
-
-  it 'extracts text from :body option' do
-    expect(helper body: 'test').to render_with 'li[text()="test"]'
-  end
+describe Bootstrap::ViewHelpers::ListLinkItem do
+  it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::ListItem}
 
   it 'renders link in form link_to {url_options} do ... end' do
     expect(view).to receive(:url_for).with(hash_including controller: 'test').and_return('http://test')

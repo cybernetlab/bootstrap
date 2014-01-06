@@ -38,7 +38,7 @@ module Bootstrap
           if value
             @tag == 'button' ? @options[:disabled] = 'disabled' : add_class('disabled')
           else
-            @tag == 'button' ? @options.remove(:disabled) : remove_class('disabled')
+            @tag == 'button' ? @options.delete(:disabled) : remove_class('disabled')
           end
         end
       end

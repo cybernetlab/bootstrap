@@ -1,8 +1,6 @@
 module Bootstrap
   module ViewHelpers
   	class Form < Base
-      self.helper_names = 'form'
-
       self.enum :kind, %i[inline horizontal]
 
       after_initialize do
@@ -11,5 +9,7 @@ module Bootstrap
         @tag = 'form'
       end
   	end
+
+    register_helper :form, 'Bootstrap::ViewHelpers::Form'
   end
 end

@@ -1,17 +1,15 @@
 module Bootstrap
   module ViewHelpers
     class ButtonToolbar < Base
-      self.helper_names = ['toolbar', 'button_toolbar']
+      html_class 'btn-toolbar'
 
-      def button_group *args, &block
-        ButtonGroup.new(@view, *args, &block).render
-      end
+      helper :button_group, 'Bootstrap::ViewHelpers::ButtonGroup'
       alias_method :group, :button_group
 
-      set_callback :initialize, :after do
-        add_class 'btn-toolbar'
-        @options[:role] = 'toolbar'
-      end
+      after_initialize {@options[:role] = 'toolbar'}
     end
+
+    register_helper :button_toolbar, 'Bootstrap::ViewHelpers::ButtonToolbar'
+    register_helper :toolbar, 'Bootstrap::ViewHelpers::ButtonToolbar'
   end
 end

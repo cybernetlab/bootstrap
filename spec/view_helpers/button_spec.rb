@@ -7,8 +7,6 @@ describe Bootstrap::ViewHelpers::Button do
   it {expect(helper tag: :input).to render_with 'input.btn.btn-default[@type="button"]'}
   it {expect(helper tag: :input, type: :submit).to render_with 'input.btn.btn-default[@type="submit"]'}
   it {expect(helper tag: :p).to render_with 'button.btn.btn-default'}
-  it {expect(helper class: :test).to render_with 'button.btn.btn-default.test'}
-  it {expect(helper(class: :test) {|g| '<p></p>'.html_safe}).to render_with 'button.btn.btn-default.test > p'}
 
   # method returns safety
   it {expect(helper).to have_safe_method :icon}
@@ -17,10 +15,7 @@ describe Bootstrap::ViewHelpers::Button do
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::Activable}
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::Disableable}
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::Sizable}
-
-  # text
-  it {expect(helper 'test text').to render_with 'button.btn.btn-default[text()="test text"]'}
-  it {expect(helper text: 'test text').to render_with 'button.btn.btn-default[text()="test text"]'}
+  it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::TextContainer}
 
   # fashion
   it {expect(helper).to have_enum :fashion}
@@ -55,7 +50,6 @@ describe Bootstrap::ViewHelpers::Button do
   it {expect(helper icon: :bell, block: true, toggle: false, some_text: false).to_not have_option :icon, :block, :toggle, :some_text}
 
   # class constants
-  it {expect(described_class.helper_names).to eq ['button', 'radio', 'checkbox']}
   it {expect(described_class.class_prefix).to eq 'btn'}
 end
 

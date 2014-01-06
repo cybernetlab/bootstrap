@@ -20,6 +20,5 @@ describe Bootstrap::ViewHelpers::ButtonGroup do
   it {expect(helper).to have_safe_method :button, :radio, :checkox}
 
   # class constants
-  it {expect(described_class.helper_names).to eq 'button_group'}
   it {expect(described_class.class_prefix).to eq 'btn-group'}
 end

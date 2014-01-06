@@ -9,6 +9,4 @@ describe Bootstrap::ViewHelpers::Form do
   it {expect(helper).to have_enum :kind}
   it {expect(helper :inline).to render_with 'form.form-inline'}
   it {expect(helper :horizontal).to render_with 'form.form-horizontal'}
-
-  it {expect(described_class.helper_names).to eq 'form'}
 end

@@ -26,18 +26,6 @@ describe Bootstrap::ViewHelpers::Base do
     expect(successor(helper_name: 'test').instance_variable_get :@helper_name).to eq 'test'
   end
 
-  it 'gets helper name from class variable helper_name' do
-    successor_class.class_eval {self.helper_names = 'test'}
-    expect(successor.instance_variable_get :@helper_name).to eq 'test'
-  end
-
-  it 'gets helper name from class array variable helper_name' do
-    successor_class.class_eval {self.helper_names = ['test1', 'test2']}
-    expect(successor.instance_variable_get :@helper_name).to eq 'test1'
-  end
-
-  it {expect(successor_class.helper_names).to be_nil}
-
   # options cleaning
   it {expect(successor(tag: :p)).to_not have_option :tag}
 

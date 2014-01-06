@@ -3,19 +3,20 @@ module Bootstrap
     class ListItem < Base
       TAG = 'li'
 
+      include Activable
       include Disableable
+      include TextContainer
+    end
 
+
+    class ListLinkItem < ListItem
       after_initialize do
         # no link by default
-        @body, @link, @link_body, @link_url, @link_options = nil, false, nil, nil, {}
+        @link, @link_body, @link_url, @link_options = false, nil, nil, {}
 
         # prefer to take link body from :link_body option
         @link_body = @options.delete :link_body
         @link = !@link_body.nil? || (!@block.nil? || @args.size > 0 && @args[0].is_a?(String))
-
-        # extract body from options
-        @body = @options.delete(:body)
-        @body = @options.delete(:text) if @body.nil?
 
         # disable link if body presented
         @link = @link && @body.nil?
@@ -50,8 +51,6 @@ module Bootstrap
             # link body presented - add @content after link
             @content = @view.link_to(@link_body, @link_url, @link_options) + @content
           end
-        elsif !@body.nil?
-          @content = @body + @content
         end
       end
     end
@@ -79,7 +78,7 @@ module Bootstrap
         def item_type type, item_class = ListItem, &block
           define_method type do |*args, &item_block|
             item = item_class.new @view, *args, &item_block
-            instance_exec(item, &block) unless block.nil?
+            instance_exec(item, *args, &block) unless block.nil?
             @items << item
             Base::EMPTY_HTML
           end

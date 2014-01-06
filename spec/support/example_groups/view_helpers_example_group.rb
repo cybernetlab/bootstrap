@@ -65,12 +65,13 @@ module ViewHelpersExampleGroup
 
       match do |obj|
         @options ||= {}
-        actual = obj.class.send :flags
+        actual = obj.class.send(:get_derived_hash, :@arg_index).select {|k, v| v[:type] == :flag}
         actual.include?(flag) && @options.all? {|k, v| actual[flag].key?(k) && actual[flag][k] == v}
       end
 
       failure_message_for_should do |obj|
-        msg = "expected that #{obj.class.name} with flags #{obj.class.send :flags} would have flag #{flag}"
+        flags = obj.class.send(:get_derived_hash, :@arg_index).select {|k, v| v[:type] == :flag}
+        msg = "expected that #{obj.class.name} with flags #{flags} would have flag #{flag}"
         msg += " with options #{@options}" if instance_variable_defined? :@options
         msg
       end
@@ -78,12 +79,13 @@ module ViewHelpersExampleGroup
 
     RSpec::Matchers.define :have_enum do |*enums|
       match do |obj|
-        actual = obj.class.send :enums
+        actual = obj.class.send(:get_derived_hash, :@opt_index).select {|k, v| v[:type] == :enum}
         enums.select {|enum| actual.include?(enum)}.size == enums.size
       end
 
       failure_message_for_should do |obj|
-        "expected that #{obj.class.name} with enums #{obj.class.send :enums} would have enums #{enums}"
+        class_enums = obj.class.send(:get_derived_hash, :@opt_index).select {|k, v| v[:type] == :enum}
+        "expected that #{obj.class.name} with enums #{class_enums} would have enums #{enums}"
       end
     end
 
