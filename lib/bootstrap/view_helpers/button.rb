@@ -4,31 +4,21 @@ module Bootstrap
       include Activable
       include Disableable
       include Sizable
-      include DropdownMenuWrapper
+      include TextContainer
 
       self.helper_names = ['button', 'radio', 'checkbox']
       self.class_prefix = 'btn'
 
-      self.flag :block, html_class: 'btn-block'
       self.flag(:toggle) {|value| value ? set_data(:toggle, 'button') : unset_data(:toggle)}
-      self.flag :splitted
-      self.flag :dropup
+      self.flag :block, html_class: 'btn-block'
       self.enum :fashion, %i[default primary success info warning danger link]
 
       def icon *args, &block
         Icon.new(@view, *args, &block).render
       end
 
-      set_callback :capture, :after do
-        @content = @text if @text.is_a? String
+      after_capture do
         @content = @icon.render + @content unless @icon.nil?
-        if @dropdown_menu.is_a? Base
-          unless splitted?
-            @content += @view.content_tag 'span', '', class: 'caret'
-            add_class 'dropdown-toggle'
-            set_data :toggle, 'dropdown'
-          end
-        end
         if @helper_name == 'radio' || @helper_name == 'checkbox'
           @tag = 'label'
           input_options = {type: @helper_name}
@@ -39,7 +29,45 @@ module Bootstrap
         end
       end
 
-      set_callback :render, :after do
+      after_initialize do
+        @tag = 'button' unless @tag == 'a' || @tag == 'input'
+        if @tag == 'a'
+          @options[:role] = "button"
+        else
+          @options[:type] = "button" unless @options.include? :type
+          @options[:type] = @options[:type].to_s.downcase
+        end
+
+        @icon = @options.key?(:icon) ? Icon.new(@view, @options.delete(:icon)) : nil
+
+        self.fashion ||= :default
+        add_class ['btn', "btn-#{self.fashion}"]
+
+        @options.keys.each do |key|
+          next unless /_text$/ =~ key
+          value = @options.delete(key)
+          set_data key.to_s.gsub(/_/, '-'), value if value.is_a? String
+        end
+      end
+    end
+
+    class DropdownButton < Button
+      include DropdownMenuWrapper
+
+      self.flag :splitted
+      self.flag :dropup
+
+      after_capture do
+        if @dropdown_menu.is_a? Base
+          unless splitted?
+            @content += @view.content_tag 'span', '', class: 'caret'
+            add_class 'dropdown-toggle'
+            set_data :toggle, 'dropdown'
+          end
+        end
+      end
+
+      after_render do
         if @dropdown_menu.is_a? Base
           if splitted?
             toggle = Base.new @view, @options.merge(tag: 'button')
@@ -52,31 +80,6 @@ module Bootstrap
           self.wrapper = {tag: 'div', class: wrapper_class}
         end
       end
-
-      after_initialize do
-        @text = @args.size > 0 ? @args[0].html_safe : nil
-
-        @tag = 'button' unless @tag == 'a' || @tag == 'input'
-        if @tag == 'a'
-          @options[:role] = "button"
-        else
-          @options[:type] = "button" unless @options.include? :type
-          @options[:type] = @options[:type].to_s.downcase
-        end
-
-        @icon = @options.key?(:icon) ? Icon.new(@view, @options.delete(:icon)) : nil
-        @text = @options.delete :text if @options[:text].is_a? String
-
-        self.fashion ||= :default
-        add_class ['btn', "btn-#{self.fashion}"]
-
-        @options.keys.each do |key|
-          next unless /_text$/ =~ key
-          value = @options.delete(key)
-          set_data key.to_s.gsub(/_/, '-'), value if value.is_a? String
-        end
-      end
-
     end
   end
 end

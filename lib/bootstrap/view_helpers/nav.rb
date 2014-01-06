@@ -14,15 +14,7 @@ module Bootstrap
 
       after_initialize do
         add_class 'dropdown'
-        @body = nil
-        @args.select! do |arg|
-          if arg.is_a?(String) && @body.nil?
-            @body = arg
-            false
-          else
-            true
-          end
-        end
+        @body = @args.extract_first! String
       end
 
       after_capture do

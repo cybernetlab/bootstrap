@@ -24,14 +24,7 @@ module Bootstrap
           # link is present
           @link_body = @args.shift if @block.nil? && @link_body.nil?
           # extract link url from arguments as first occured string or hash
-          @args.select! do |arg|
-            if arg.is_a?(String) || arg.is_a?(Hash)
-              @link_url = arg
-              false
-            else
-              true
-            end
-          end
+          @link_url = @args.extract_first! String, Hash
           if @link_url.nil?
             # where are no link url in arguments
             # so url options are taked from @options

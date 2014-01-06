@@ -32,12 +32,13 @@ module Bootstrap
       end
 
       after_initialize do
-        @args.each do |arg|
-          next unless /^(?:col[-_]?)?(?<size>(?:xs|(?:extra[-_]?small))|(?:sm|small)|(?:md|medium)|(?:lg|large))[-_]?(?<act>offset|push|pull)[-_]?(?<num>\d{1,2})$/ =~ arg
-          size = SIZES[size[0]]
-          add_class "col-#{size}-#{act}-#{num}" unless @options[:class].any? {|c| /^col-#{size}-#{act}-\d{1,2}/ =~ c}
+        re = /^(?:col[-_]?)?(?<size>(?:xs|(?:extra[-_]?small))|(?:sm|small)|(?:md|medium)|(?:lg|large))[-_]?(?<act>offset|push|pull)[-_]?(?<num>\d{1,2})$/
+        @args.extract!(Symbol, {and: [re]}).each do |arg|
+          m = re.match arg.to_s
+          size = SIZES[m[:size][0]]
+          add_class "col-#{size}-#{m[:act]}-#{m[:num]}" unless have_class?(/^col-#{size}-#{m[:act]}-\d{1,2}/)
         end
-        add_class 'col-md-3' if options[:class].none? {|c| /^col-(xs|sm|md|lg)-\d{1,2}$/ =~ c}
+        add_class 'col-md-3' if have_no_class?(/^col-(xs|sm|md|lg)-\d{1,2}$/)
       end
     end
   end

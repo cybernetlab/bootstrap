@@ -4,7 +4,7 @@ module Bootstrap
       self.helper_names = ['icon', 'i']
 
       set_callback :capture, :after do
-        @content = ''
+        @content = EMPTY_HTML
       end
 
       after_initialize do

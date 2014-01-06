@@ -4,15 +4,11 @@ module Bootstrap
       extend ActiveSupport::Concern
       included do
         after_initialize do
-          @args.select! do |arg|
-            arg = arg.is_a?(Symbol) || arg.is_a?(String) ? arg.to_s.downcase : ''
-            if /^(?:col[-_]?)?(?<size>(?:xs|(?:extra[-_]?small))|(?:sm|small)|(?:md|medium)|(?:lg|large))[-_]?(?<num>\d{1,2})$/ =~ arg
-              size = SIZES[size[0]]
-              add_class "col-#{size}-#{num}" unless have_class?(/^col-#{size}-\d{1,2}/)
-              false
-            else
-              true
-            end
+          re = /^(?:col[-_]?)?(?<size>(?:xs|(?:extra[-_]?small))|(?:sm|small)|(?:md|medium)|(?:lg|large))[-_]?(?<num>\d{1,2})$/
+          @args.extract!(Symbol, and: [re]).each do |arg|
+            m = re.match arg.to_s
+            size = SIZES[m[:size][0]]
+            add_class "col-#{size}-#{m[:num]}" unless have_class?(/^col-#{size}-\d{1,2}/)
           end
         end
       end
@@ -60,23 +56,17 @@ module Bootstrap
             re_prefix = cl_prefix = ''
           end
           skip = have_class?(/^#{cl_prefix}(xs|sm|lg)$/)
-          @args.select! do |arg|
-            arg = arg.is_a?(Symbol) || arg.is_a?(String) ? arg.to_s.downcase : ''
-            if /^#{re_prefix}(sm|small)$/ =~ arg
-              add_class "#{cl_prefix}sm" unless skip
-              skip = true
-              false
-            elsif /^#{re_prefix}(lg|large)$/ =~ arg
-              add_class "#{cl_prefix}lg" unless skip
-              skip = true
-              false
-            elsif /^#{re_prefix}((xs)|(extra[-_]?small))$/ =~ arg
-              add_class "#{cl_prefix}xs" unless skip
-              skip = true
-              false
-            else
-              true
-            end
+          unless skip || @args.extract!(Symbol, and: [/^#{re_prefix}(sm|small)$/]).empty?
+            add_class "#{cl_prefix}sm"
+            skip = true
+          end
+          unless skip || @args.extract!(Symbol, and: [/^#{re_prefix}(lg|large)$/]).empty?
+            add_class "#{cl_prefix}lg"
+            skip = true
+          end
+          unless skip || @args.extract!(Symbol, and: [/^#{re_prefix}((xs)|(extra[-_]?small))$/]).empty?
+            add_class "#{cl_prefix}xs"
+            skip = true
           end
           if @options.key? :size
             size = @options.delete :size

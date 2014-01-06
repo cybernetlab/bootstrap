@@ -11,7 +11,9 @@ module Bootstrap
 
       def initialize view, *args, &block
         raise ArgumentError if view.nil? || !view.respond_to?(:capture)
-        @flags, @enums, @view, @args, @block, @wrapper = {}, {}, view, args, block, nil
+        @flags, @enums, @view, @block, @wrapper, @content = {}, {}, view, block, nil, nil
+
+        prepare_args(*args)
 
         run_callbacks :initialize do
           options = {tag: self.class.const_defined?(:TAG) ? self.class.const_get(:TAG) : 'div'}
@@ -42,33 +44,19 @@ module Bootstrap
             @enums[enum] = value if opts[:values].include? value
           end
 
-          # find flags in arguments
-          @args.select! do |arg|
-            if arg.is_a? Symbol
-              if flags.key? arg
-                self.send "#{arg}=", true
-                false
-              elsif aliases.key? arg
-                self.send "#{aliases[arg]}=", true
-                false
-              elsif enums_index.key? arg
-                @enums[enums_index[arg]] = arg
-                false
-              else
-                true
-              end
-            else
-              true
-            end
-          end
+          @args.extract!(Symbol, and: [flags.keys]).each {|arg| self.send "#{arg}=", true}
+          @args.extract!(Symbol, and: [aliases.keys]).each {|arg| self.send "#{aliases[arg]}=", true}
+          @args.extract!(Symbol, and: [enums_index.keys]).each {|arg| @enums[enums_index[arg]] = arg}
 
-#          @args = @args.select {|a| a.is_a?(String) || a.is_a?(Symbol)}.map {|a| a.to_s.downcase}
           @helper_name = options.delete(:helper_name) || self.class.helper_names
           @helper_name = @helper_name[0] if @helper_name.is_a?(Array) && @helper_name.size > 0
         end
       end
 
       def render *args
+        # return cached content immidiately if it available
+        return @content unless @content.nil?
+        @content = EMPTY_HTML
         capture
         args.flatten.each {|a| @content += a if a.is_a? String}
         @content += yield self if block_given?
@@ -257,15 +245,59 @@ module Bootstrap
       end
 
       def capture
-        @content = ''.html_safe
+        #@content = ''.html_safe
         run_callbacks :capture do
-          @content = @view.capture(self, &@block) || ''.html_safe unless @block.nil?
+          @content += @view.capture(self, &@block) || ''.html_safe unless @block.nil?
         end
         @content
       end
 
       def capture!
         capture.html_safe
+      end
+
+      private
+
+      def prepare_args *args
+        @args = args
+
+        do_compare = Proc.new do |target, *c_args|
+          result = false
+          result = yield target if block_given?
+          unless result
+            options = c_args.last.is_a?(Hash) ? c_args.pop : {}
+            c_args.each do |dest|
+              if dest.is_a? Array
+                result = dest.include? target
+              elsif dest.is_a? Regexp
+                target = target.to_s unless target.is_a? String
+                result = dest.match target
+              elsif dest.is_a? Class
+                result = target.is_a? dest
+              else
+                result = dest == target
+              end
+              break if result
+            end
+            result &&= do_compare.call target, *options[:and] if options[:and].is_a? Array
+          end
+          result
+        end
+
+        @args.define_singleton_method :extract! do |*e_args, &e_block|
+          extracted = []
+          select! do |arg|
+            got_it = do_compare.call arg, *e_args, &e_block
+            extracted << arg if got_it
+            !got_it
+          end
+          extracted
+        end
+
+        @args.define_singleton_method :extract_first! do |*e_args, &e_block|
+          index = find_index {|arg| do_compare.call arg, *e_args, &e_block}
+          index.nil? ? nil : delete_at(index)
+        end
       end
     end
   end

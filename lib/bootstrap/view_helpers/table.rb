@@ -41,12 +41,7 @@ module Bootstrap
       include Column
 
       after_initialize do
-        header = false
-        @args.each do |arg|
-          arg = arg.is_a?(Symbol) || arg.is_a?(String) ? arg.to_s.downcase : ''
-          header = arg == 'header' || arg == 'head' || arg == 'th'
-          break if header
-        end
+        header = !@args.extract_first!([:header, :head, :th]).nil?
         header = [header, options.delete(:header) == true, options.delete(:head) == true, options.delete(:th) == true].any?
         @tag = (header || @tag == 'th') ? 'th' : 'td'
       end
