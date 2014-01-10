@@ -15,12 +15,9 @@ module Bootstrap
 
       helper :icon, 'Bootstrap::ViewHelpers::Icon'
 
-      after_capture do
-        if @icon.nil?
-          @content += ' '.html_safe unless @content.empty?
-        else
-          @content = @icon.render + ' '.html_safe + @content
-        end
+      set_callback :render, :before do
+        @content = @view.capture {@icon.render} + ' '.html_safe + @content unless @icon.nil?
+
         if @helper_name == 'radio' || @helper_name == 'checkbox'
           @tag = 'label'
           input_options = {type: @helper_name}
@@ -29,6 +26,11 @@ module Bootstrap
           @content = @view.content_tag('input', '', input_options) + @content
           @options[:label_for] = input_options[:id] unless input_options[:id].blank?
         end
+        true
+      end
+
+      after_capture do
+        @content += ' '.html_safe if @icon.nil? && !@content.empty?
       end
 
       after_initialize do
@@ -75,7 +77,7 @@ module Bootstrap
             toggle = Base.new @view, @options.merge(tag: 'button')
             toggle.send :add_class, 'dropdown-toggle'
             toggle.send :set_data, :toggle, 'dropdown'
-            @content += toggle.render(@view.content_tag('span', '', class: 'caret'))
+            @content += @view.capture {toggle.render(@view.content_tag('span', '', class: 'caret'))}
           end
           wrapper_class = ['btn-group']
           wrapper_class << 'dropup' if dropup?

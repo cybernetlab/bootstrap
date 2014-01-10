@@ -6,11 +6,11 @@ describe Bootstrap::ViewHelpers::Nav do
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::Justifable}
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::List}
 
-  it {expect(helper {|h| h.item :active}).to render_with 'ul > li.active'}
+  it {expect(helper {|h| h.link_item :active}).to render_with 'ul > li.active'}
   it {expect(helper {|h| h.dropdown('text') {|d| d.header 'header'}}).to render_with 'ul > li.dropdown > a.dropdown-toggle[@data-toggle="dropdown"][@href="#"][text()="text "]'}
 
   # method returns safety
-  it {expect(helper).to have_safe_method :item, :dropdown}
+  it {expect(helper).to have_safe_method :link_item, :dropdown}
 end
 
 describe Bootstrap::ViewHelpers::NavPills do

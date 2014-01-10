@@ -12,7 +12,7 @@ module Bootstrap
       def clear type = 'visible-md'
         type = type.to_s.downcase.gsub(/_/, '-').gsub(/extra-?small/, 'xs').gsub(/small/, 'sm').gsub(/medium/, 'md').gsub(/large/, 'lg')
         type = 'visible-md' unless %w[visible-xs visible-sm visible-md visible-lg hidden-xs hidden-sm hidden-md hidden-lg].include? type
-        @view.content_tag 'div', '', class: ['clearfix', type]
+        @view.concat @view.content_tag 'div', '', class: ['clearfix', type]
       end
     end
 
@@ -20,6 +20,7 @@ module Bootstrap
       include Column
       include TextContainer
 
+      TAG = 'div'
       helper :row, 'Bootstrap::ViewHelpers::GridRow'
 
       after_initialize do
@@ -29,7 +30,11 @@ module Bootstrap
           size = SIZES[m[:size][0]]
           add_class "col-#{size}-#{m[:act]}-#{m[:num]}" unless have_class?(/^col-#{size}-#{m[:act]}-\d{1,2}/)
         end
-        add_class 'col-md-3' if have_no_class?(/^col-(xs|sm|md|lg)-\d{1,2}$/)
+      end
+
+      set_callback :capture, :before do
+        add_class 'col-md-3' unless have_class?(/^col-(xs|sm|md|lg)-\d{1,2}$/)
+        true
       end
     end
 

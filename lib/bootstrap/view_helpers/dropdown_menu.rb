@@ -18,7 +18,7 @@ module Bootstrap
         options[:role] = 'presentation'
       end
 
-      item_type :item, ListLinkItem do |item, *args|
+      item_type :link_item, ListLinkItem do |item, *args|
         options = item.instance_variable_get(:@options)
         link_options = item.instance_variable_get(:@link_options)
         options[:role] = 'presentation'

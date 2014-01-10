@@ -70,7 +70,7 @@ module Bootstrap
         end
 
         after_capture do
-          @content = @items.reduce(Base::EMPTY_HTML) {|items, item| items += item.render} + @content
+          @content = @view.capture {@items.reduce(Base::EMPTY_HTML) {|items, item| items += item.render}} + @content
         end
       end
 

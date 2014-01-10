@@ -14,10 +14,10 @@ module Bootstrap
       end
     end
 
-    def self.register_helpers view
+    def self.register_helpers #view
       @helpers ||= {}
       @helpers.each do |helper, class_name|
-        view.define_singleton_method helper do |*args, &block|
+        define_method helper do |*args, &block|
           begin
             options = args.last.is_a?(Hash) ? args.last : args.push({}).last
             options[:helper_name] = helper.to_s

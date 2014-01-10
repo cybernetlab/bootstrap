@@ -1,8 +1,14 @@
-# Bootstrap
+# General info
 
 This gem provides helpers for easly creating sites with [Twitter Bootstrap 3](http://getbootstrap.com) framework.
 
 > **Warning!** This gem is in active development state. Please, don't use it in production.
+
+# State
+
+Project is in active development state now. First release version is '1.0.0' and planned at second half of February. Version '0.1.0' and all other '0.x.x' are for testing purposes.
+
+Not implemented now: forms, inputs, jumbotron, page header, thumbnails, alerts, progress bars, media object, list group, panels, wells and allmost all from JavaScript section of Bootstrap documentation.
 
 # Installation
 
@@ -18,8 +24,24 @@ and run
 bundle install
 ```
 
+Add bootstrap to your `application.css`:
+
+```ruby
+/*
+ *= require bootstrap
+ */
+```
+
+and to `application.js`:
+
+```ruby
+//= require bootstrap
+```
+
+
 # Configuration
 
+This section is not described yet.
 
 # Usage
 
@@ -40,7 +62,7 @@ produces same HTML:
 <button type="button" class="btn btn-success btn-lg active">Text</button>
 ```
 
-Order of flags irrelevant, but all flags and enumerations should be **symbols**. Only supported flags allowed, so refer to [Bootstrap documentation](getbootstrap.com/css) or read corresponding chapter of this document for valid values. You can replace hyphens `-` to underscores `_` in class names.
+Order of flags irrelevant, but all flags and enumerations should be **symbols**. Only supported flags allowed, so refer to [Bootstrap documentation](getbootstrap.com/css) or read corresponding section of this document for valid values. You can replace hyphens `-` to underscores `_` in class names.
 
 ### HTML attributes via options
 
@@ -231,19 +253,19 @@ will produce HTML:
       dropdown
       <span class="caret"></span>
     </button>
-    <ul class="dropdown-menu">
-      <li><a href="#">link 1</a></li>
-      <li><a href="#">link 2</a></li>
+    <ul class="dropdown-menu" role="menu">
+      <li role="presentation"><a href="#" role="menuitem" tabindex="-1">link 1</a></li>
+      <li role="presentation"><a href="#" role="menuitem" tabindex="-1">link 2</a></li>
     </ul>
   </div>
 </div>
 
-<div class="btn-group">
+<div class="btn-group" data-toggle="buttons">
   <label class="btn btn-primary">
-    <input type="checkbox"> radio 1
+    <input type="checkbox"></input>radio 1
   </label>
   <label class="btn btn-primary">
-    <input type="checkbox"> radio 2
+    <input type="checkbox"></input>radio 2
   </label>
 </div>
 ```
@@ -276,10 +298,10 @@ will produce HTML:
     <span class="caret"></span>
   </button>
   <ul class="dropdown-menu" role="menu">
-    <li class="dropdown-header">Actions</li>
-    <li><a href="#">Action</a></li>
-    <li><a href="#">Another action</a></li>
-    <li class="divider"></li>
+    <li role="presentation" class="dropdown-header">Actions</li>
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Another action</a></li>
+    <li role="presentation" class="divider"></li>
   </ul>
 </div>
 ```
@@ -324,9 +346,9 @@ Breadcrumps available via `breadcrumb` helper.
 
 ```ruby
 breadcrumb do |b|
-  b.link_item :active, 'Home', '#'
+  b.link_item 'Home', '#'
   b.link_item 'Library', '#'
-  b.link_item 'Data', '#'
+  b.item :active, 'Data'
 end
 ```
 

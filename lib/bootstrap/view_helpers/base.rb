@@ -49,19 +49,30 @@ module Bootstrap
         end
       end
 
-      def render *args
-        # return cached content immidiately if it available
+      def render *args, &render_block
         return @content unless @content.nil?
         @content = EMPTY_HTML
-        capture
+
+        run_callbacks :capture do
+          @content ||= EMPTY_HTML
+          @content += @view.capture(self, &@block) || EMPTY_HTML unless @block.nil?
+        end
+
         args.flatten.each {|a| @content += a if a.is_a? String}
-        @content += yield self if block_given?
+        @content += instance_exec(self, &render_block) unless render_block.nil?
+           
         run_callbacks :render do
           @options.select! {|k, v| !v.blank?}
           @content = @view.content_tag @tag, @content, @options
         end
+            
         @content = @wrapper.render @content.html_safe if @wrapper.is_a? Base
-        @content
+        if @view.instance_variable_get(:@output_buffer).nil?
+          @content
+        else
+          @view.concat(@content)
+          EMPTY_HTML
+        end
       end
 
       def add_class value
@@ -135,7 +146,7 @@ module Bootstrap
             instance_exec obj, &block unless block.nil?
             obj.render
           rescue NameError
-            raise NameError.new "Helper class #{class_name} doesn't exists"
+            raise NameError.new "Helper class #{helper_class} doesn't exists"
           end
         end
       end
@@ -252,7 +263,7 @@ module Bootstrap
         end
       end
 
-      def capture
+      def do_capture
         run_callbacks :capture do
           @content += @view.capture(self, &@block) || ''.html_safe unless @block.nil?
         end

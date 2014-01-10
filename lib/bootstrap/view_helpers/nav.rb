@@ -23,7 +23,7 @@ module Bootstrap
 
       html_class 'nav'
 
-      item_type :item, ListLinkItem
+      item_type :link_item, ListLinkItem
       item_type :dropdown, DropdownNavItem
     end
 

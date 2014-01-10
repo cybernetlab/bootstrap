@@ -29,6 +29,7 @@ module Bootstrap
     class TableCell < Base
       include Column
       include Contextual
+      include TextContainer
 
       after_initialize do
         header = !@args.extract_first!([:header, :head, :th]).nil?

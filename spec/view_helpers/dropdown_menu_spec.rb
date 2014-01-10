@@ -5,8 +5,8 @@ describe Bootstrap::ViewHelpers::DropdownMenu do
 
   it {expect(helper {|h| h.divider}).to render_with 'ul > li.divider[@role="presentation"]'}
   it {expect(helper {|h| h.header 'test'}).to render_with 'ul > li.dropdown-header[@role="presentation"]'}
-  it {expect(helper {|h| h.item 'test', 'http://url'}).to render_with 'ul > li[@role="presentation"] > a[@href="http://url"][@role="menuitem"][@tabindex="-1"]'}
-  it {expect(helper {|h| h.item 'test', :disabled, 'http://url'}).to render_with 'ul > li.disabled[@role="presentation"] > a[@href="http://url"][@role="menuitem"][@tabindex="-1"]'}
+  it {expect(helper {|h| h.link_item 'test', 'http://url'}).to render_with 'ul > li[@role="presentation"] > a[@href="http://url"][@role="menuitem"][@tabindex="-1"]'}
+  it {expect(helper {|h| h.link_item 'test', :disabled, 'http://url'}).to render_with 'ul > li.disabled[@role="presentation"] > a[@href="http://url"][@role="menuitem"][@tabindex="-1"]'}
   it {expect(helper align: :right).to render_with 'ul.dropdown-menu.pull-right'}
 
   it {expect(helper align: 'right').to_not have_option :align}

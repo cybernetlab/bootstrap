@@ -101,9 +101,9 @@ module Bootstrap
       end
 
       included do
-        delegate :divider, :header, :item, to: :dropdown_menu
+        delegate :divider, :header, :link_item, to: :dropdown_menu
         after_initialize {@dropdown_menu = nil}
-        after_render {@content += @dropdown_menu.render unless @dropdown_menu.nil?}
+        after_render {@content += @view.capture {@dropdown_menu.render} unless @dropdown_menu.nil?}
       end
     end
   end
