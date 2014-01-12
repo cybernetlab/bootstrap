@@ -29,6 +29,33 @@ module Bootstrap
         end
       end
     end
+
+    def bootstrap_stylesheets
+      src = Bootstrap.config.assets_source
+      if src == :cdn
+        stylesheet_link_tag "//netdna.bootstrapcdn.com/bootstrap/#{Bootstrap.config.bootstrap_version}/css/bootstrap.min.css"
+        if Bootstrap.config.font_awesome
+          stylesheet_link_tag "//netdna.bootstrapcdn.com/font-awesome/#{Bootstrap.config.font_awesome_version}/css/font-awesome.css"
+        end
+      elsif src == :precompiled
+        stylesheet_link_tag 'bootstrap'
+        stylesheet_link_tag 'font-awesome' if Bootstrap.config.font_awesome
+      end
+    end
+
+    def bootstrap_javascripts
+      src = Bootstrap.config.assets_source
+      if src == :cdn
+        javascript_include_tag "//netdna.bootstrapcdn.com/bootstrap/#{Bootstrap.config.bootstrap_version}/js/bootstrap.min.jss"
+      elsif src == :precompiled
+        javascript_include_tag 'bootstrap'
+      end
+    end
+
+    def bootstrap_headers
+      bootstrap_stylesheets
+      bootstrap_javascripts
+    end
   end
 end
 
@@ -47,3 +74,4 @@ require 'bootstrap/view_helpers/form'
 require 'bootstrap/view_helpers/nav'
 require 'bootstrap/view_helpers/breadcrumb'
 require 'bootstrap/view_helpers/pagination'
+require 'bootstrap/view_helpers/misc'

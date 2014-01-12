@@ -60,9 +60,10 @@ module Bootstrap
 
         args.flatten.each {|a| @content += a if a.is_a? String}
         @content += instance_exec(self, &render_block) unless render_block.nil?
-           
+
+        @options.select! {|k, v| !v.blank?}
+
         run_callbacks :render do
-          @options.select! {|k, v| !v.blank?}
           @content = @view.content_tag @tag, @content, @options
         end
             
@@ -240,6 +241,10 @@ module Bootstrap
 
       def self.after_render &block
         set_callback :render, :after, &block
+      end
+
+      def self.before_render &block
+        set_callback :render, :before, &block
       end
 
       def options= hash

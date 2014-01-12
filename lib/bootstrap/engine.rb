@@ -1,6 +1,7 @@
 module Bootstrap
   class Engine < Rails::Engine
     config.to_prepare do
+      Rails.application.config.i18n.load_path += Dir[Engine.root.join('lib', 'bootstrap', 'locales', '*.yml')]
       Assets.register Rails.application.assets
     end
 

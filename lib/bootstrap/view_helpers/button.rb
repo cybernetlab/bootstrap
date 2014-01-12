@@ -11,7 +11,7 @@ module Bootstrap
 
       flag(:toggle) {|value| value ? set_data(:toggle, 'button') : unset_data(:toggle)}
       flag :block, html_class: 'btn-block'
-      enum :fashion, %i[default primary success info warning danger link]
+      enum :appearence, %i[default primary success info warning danger link]
 
       helper :icon, 'Bootstrap::ViewHelpers::Icon'
 
@@ -44,8 +44,8 @@ module Bootstrap
 
         @icon = @options.key?(:icon) ? Icon.new(@view, @options.delete(:icon)) : nil
 
-        self.fashion ||= :default
-        add_class "btn-#{self.fashion}"
+        self.appearence ||= :default
+        add_class "btn-#{self.appearence}"
 
         @options.keys.each do |key|
           next unless /_text$/ =~ key

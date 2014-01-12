@@ -17,12 +17,12 @@ describe Bootstrap::ViewHelpers::Button do
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::Sizable}
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::TextContainer}
 
-  # fashion
-  it {expect(helper).to have_enum :fashion}
-  it 'supports many fashions' do
+  # appearence
+  it {expect(helper).to have_enum :appearence}
+  it 'supports many appearences' do
     %i[default primary success info warning danger link].each do |type|
       @helper = nil; expect(helper type).to render_with "button.btn.btn-#{type}"
-      @helper = nil; expect(helper fashion: type).to render_with "button.btn.btn-#{type}"
+      @helper = nil; expect(helper appearence: type).to render_with "button.btn.btn-#{type}"
     end
   end
 

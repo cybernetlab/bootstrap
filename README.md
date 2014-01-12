@@ -8,7 +8,7 @@ This gem provides helpers for easly creating sites with [Twitter Bootstrap 3](ht
 
 Project is in active development state now. First release version is '1.0.0' and planned at second half of February. Version '0.1.0' and all other '0.x.x' are for testing purposes.
 
-Not implemented now: forms, inputs, jumbotron, page header, thumbnails, alerts, progress bars, media object, list group, panels, wells and allmost all from JavaScript section of Bootstrap documentation.
+Not implemented now: forms, inputs, thumbnails, media object, list group, panels, wells and allmost all from JavaScript section of Bootstrap documentation.
 
 # Installation
 
@@ -53,7 +53,7 @@ All helpers supports Bootstrap flags and enumerations, passed as symbols. Any fl
 
 ```ruby
 button 'Text', :large, :active, :success
-button 'Text', size: :large, active: true, fashion: :success
+button 'Text', size: :large, active: true, appearence: :success
 ```
 
 produces same HTML:
@@ -127,7 +127,7 @@ grid do |g|
 end
 ```
 
-will produce HTML:
+*will produce HTML:*
 
 ```html
 <div class="container">
@@ -160,7 +160,7 @@ table :condensed, :bordered do |t|
 end
 ```
 
-will produce HTML:
+*will produce HTML:*
 
 ```html
 <table class="table table-condensed table-bordered">
@@ -190,7 +190,7 @@ Icon can be added to button with `icon` option.
 button :danger, :large, 'alert', icon: 'home'
 ```
 
-will produce HTML:
+*will produce HTML:*
 
 ```html
 <button type="button" class="btn btn-danger"><i class="fa fa-home"></i> alert</button>
@@ -214,7 +214,7 @@ To produce icon, use `icon` helper with icon name as argument.
 icon :asterisk
 ```
 
-will produce HTML:
+*will produce HTML:*
 
 ```html
 <i class="fa fa-asterisk"></i>
@@ -242,7 +242,7 @@ button_group do |g|
 end
 ```
 
-will produce HTML:
+*will produce HTML:*
 
 ```html
 <div class="btn-group">
@@ -289,7 +289,7 @@ dropdown_button :danger, :splitted, 'Button' do |b|
 end
 ```
 
-will produce HTML:
+*will produce HTML:*
 
 ```html
 <div class="btn-group">
@@ -324,7 +324,7 @@ pills do |p|
 end
 ```
 
-will produce HTML:
+*will produce HTML:*
 
 ```html
 <ul class="nav nav-pills">
@@ -352,7 +352,7 @@ breadcrumb do |b|
 end
 ```
 
-will produce HTML:
+*will produce HTML:*
 
 ```html
 <ol class="breadcrumb">
@@ -383,7 +383,7 @@ pager do |p|
 end
 ```
 
-will produce HTML:
+*will produce HTML:*
 
 ```html
 <ul class="pagination">
@@ -411,7 +411,7 @@ label :info, 'label text'
 badge '10'
 ```
 
-will produce HTML:
+*will produce HTML:*
 
 ```html
 <span class="label label-info">label text</span>
@@ -420,5 +420,95 @@ will produce HTML:
 
 
 ### Jumbotron
+
+Use `jumbotron` helper. To create full-width jumbotron, place it outside other other `.container` blocks and use `full_width` flag.
+
+*Example:*
+
+```html
+<%= jumbotron do %>
+  <h1>Hello, world!</h1>
+<% end %>
+```
+
+*will produce HTML:*
+
+```html
+<div class="jumbotron">
+  <h1>Hello, world!</h1>
+</div>
+```
+
+### Page header
+
+Use `page_header` helper
+
+*Example:*
+
+```html
+<%= page_header do %>
+  <h1>Hello, world!</h1>
+<% end %>
+```
+
+*will produce HTML:*
+
+```html
+<div class="page-header">
+  <h1>Hello, world!</h1>
+</div>
+```
+
+### Thumbnails
+
+Thumbnails is not implemented yet.
+
+### Alerts
+
+Use `alert_box` helper. To change appearence use `appearence` enum with following values: `success`, `info`, `warning`, `danger`. To make alert dismissable, use `dismissable` flag. To make your links inside alerts well-looking, use `link` method of alert.
+
+*Example:*
+
+```ruby
+alert_box :success, :dismissable do |a|
+  a.link 'link text', 'url'
+end
+```
+
+*will produce HTML:*
+
+```html
+<div class="alert alert-success alert-dismissable">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+  <a href="url" class="alert-link">link text</a>
+</div>
+```
+
+### Progress Bar
+
+Use `progress_bar` or `progress` helper. To specify completed percents just pass any Numeric argument, or use `completed` option. To change appearence use `appearence` enum with following values: `success`, `info`, `warning`, `danger`. You can use `striped` flag to make bar striped and `active` flag to make bar animated. You can make more that one progress bar stacked together. To do this, use `bar` method of progress bar object to add other bars. To override `sr-only` text for bar, specify it as String argument, or use `body` or `text` option.
+
+*Example:*
+
+```ruby
+progress_bar :striped, :success, 35, '35% total complete' do |p|
+  p.bar :warning, 20, '20% files complete'
+end
+```
+
+*will produce HTML:*
+
+```html
+<div class="progress progress-striped">
+  <div class="progress-bar progress-bar-success" style="width: 35%" role="progressbar" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100">
+    <span class="sr-only">35% total complete</span>
+  </div>
+  <div class="progress-bar progress-bar-warning" style="width: 20%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+    <span class="sr-only">20% files complete</span>
+  </div>
+</div>
+```
+
+### Media objects
 
 This and all other stuff are in development.

@@ -1,0 +1,4 @@
+en:
+  bootstrap:
+    progress_bar:
+      text: '%{completed}% Complete'

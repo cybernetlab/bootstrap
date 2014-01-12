@@ -30,6 +30,13 @@ module Bootstrap
     class Link < Base
       include TextContainer
       TAG = 'a'
+      before_render do
+        args = @args.clone
+        args << @options
+        args.unshift '#' if args.size <= 1
+        @content = @view.link_to @content, *args
+        false
+      end
     end
 
     class Label < Text

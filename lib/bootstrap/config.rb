@@ -1,5 +1,7 @@
 module Bootstrap
   module Config
+    ASSETS_SOURCES = %i[cdn precompiled]
+
     def self.font_awesome
       @font_awesome = true unless instance_variable_defined? :@font_awesome
       @font_awesome == true
@@ -10,7 +12,7 @@ module Bootstrap
     end
 
     def self.font_awesome_version
-      @font_awesome_version ||= FONTAWESOME_LATEST
+      @font_awesome_version ||= Bootstrap::FONTAWESOME_LATEST
     end
 
     def self.font_awesome_version= value
@@ -19,12 +21,20 @@ module Bootstrap
     end
 
     def self.bootstrap_version
-      @bootstrap_version ||= BOOTSTRAP_LATEST
+      @bootstrap_version ||= Bootstrap::BOOTSTRAP_LATEST
     end
 
     def self.bootstrap_version= value
       return unless /\d+\.\d+\.\d+/ =~ value
       @bootstrap_version = value
+    end
+
+    def self.assets_source
+      @assets_source ||= :precompiled
+    end
+
+    def self.assets_source= value
+      @assets_source = ASSETS_SOURCES.include?(value) ? value : :precompiled
     end
   end
 

@@ -159,4 +159,42 @@ describe 'examples for README.md' do
     HAML
     expect(rendered).to have_selector 'span.badge[text()="10"]'
   end
+
+  it 'renders jumbotron example' do
+    render inline: <<-HAML
+      <%= jumbotron do %>
+        <h1>Hello, world!</h1>
+      <% end %>
+    HAML
+    expect(rendered).to have_selector 'div.jumbotron > h1'
+  end
+
+  it 'renders page-header example' do
+    render inline: <<-HAML
+      <%= page_header do %>
+        <h1>Hello, world!</h1>
+      <% end %>
+    HAML
+    expect(rendered).to have_selector 'div.page-header > h1'
+  end
+
+  it 'renders alert example' do
+    render inline: <<-HAML
+      <%= alert_box :success, :dismissable do |a| %>
+        <%= a.link 'link text', 'url' %>
+      <% end %>
+    HAML
+    expect(rendered).to have_selector 'div.alert.alert-success.alert-dismissable > button.close[@type="button"][@data-dismiss="alert"][@aria-hidden="true"] + a.alert-link[@href="url"][text()="link text"]'
+  end
+
+  it 'renders progress-bar example' do
+    render inline: <<-HAML
+      <%= progress_bar :striped, :success, 35, '35% total complete' do |p|
+        p.bar :warning, 20, '20% files complete'
+      end %>
+    HAML
+    #puts "*** #{rendered}"
+    expect(rendered).to have_selector 'div.progress.progress-striped > div.progress-bar.progress-bar-success[@style="width: 35%"][@role="progressbar"][@aria-valuenow="35"][@aria-valuemin="0"][@aria-valuemax="100"] > span.sr-only[text()="35% total complete"]'
+    expect(rendered).to have_selector 'div.progress.progress-striped > div.progress-bar-success + div.progress-bar.progress-bar-warning[@style="width: 20%"][@role="progressbar"][@aria-valuenow="20"][@aria-valuemin="0"][@aria-valuemax="100"] > span.sr-only[text()="20% files complete"]'
+  end
 end
