@@ -512,3 +512,16 @@ end
 ### Media objects
 
 This and all other stuff are in development.
+
+# Todo
+
+- finish bootstrap components implementation
+- documentation
+- implement LESS compilation
+- `simple_form` integration
+- `simple-navigation` integration
+
+# Long time plans
+
+- integration to other ruby frameworks, such as `Sinatra`
+
