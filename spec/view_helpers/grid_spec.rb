@@ -44,35 +44,7 @@ describe Bootstrap::ViewHelpers::GridCell do
   # method returns safety
   it {expect(helper).to have_safe_method :row}
 
-  %w[offset push pull].each do |act|
-    it "sanitize extra small #{act}" do
-      %I[col_xs_#{act}_2 xs_#{act}_2 extra_small_#{act}_2 extrasmall#{act}2].each do |c|
-        @helper = nil
-        expect(helper c).to render_with "div.col-xs-#{act}-2"
-      end
-    end
-  
-    it "sanitize small #{act}" do
-      %I[col_sm_#{act}_2 sm_#{act}_2 sm#{act}2 small_#{act}_2 small#{act}2].each do |c|
-        @helper = nil
-        expect(helper c).to render_with "div.col-sm-#{act}-2"
-      end
-    end
-  
-    it "sanitize medium #{act}" do
-      %I[col_md_#{act}_2 md_#{act}_2 md#{act}2 medium_#{act}_2 medium#{act}2].each do |c|
-        @helper = nil
-        expect(helper c).to render_with "div.col-md-#{act}-2"
-      end
-    end
-  
-    it "sanitize large #{act}" do
-      %I[col_lg_#{act}_2 lg_#{act}_2 lg#{act}2 large_#{act}_2 large#{act}2].each do |c|
-        @helper = nil
-        expect(helper c).to render_with "div.col-lg-#{act}-2"
-      end
-    end
-  end
-
-  it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::Column}
+  # behaviour
+  it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::SizableColumn}
+  it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::PlacableColumn}
 end

@@ -141,8 +141,10 @@ module Bootstrap
         helper_class = helper_class.name if helper_class.is_a? Class
         define_method name do |*h_args, &h_block|
           begin
-            options = h_args.last.is_a?(Hash) ? h_args.last : h_args.push({}).last
+            #options = h_args.last.is_a?(Hash) ? h_args.last : h_args.push({}).last
+            options = h_args.extract_options!
             options[:helper_name] = name.to_s
+            h_args << options
             obj = helper_class.constantize.new(@view, *h_args, &h_block)
             instance_exec obj, &block unless block.nil?
             obj.render
@@ -168,6 +170,24 @@ module Bootstrap
       EMPTY_HTML = ''.html_safe
 
       protected
+
+      def args_copy
+        arr = []
+        @args.each do |arg|
+          if arg.is_a? Hash
+            arr << arg.deep_dup
+          elsif arg.duplicable?
+            arr << arg.clone
+          else
+            arr << arg
+          end
+        end
+        arr
+      end
+
+      def options_copy
+        @options.deep_dup
+      end
 
       def self.helper_names= value
         @helper_names = value.is_a?(Array) ? value.flatten : value

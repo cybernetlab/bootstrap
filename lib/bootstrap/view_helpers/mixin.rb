@@ -1,19 +1,77 @@
 module Bootstrap
   module ViewHelpers
-    module Column
+    module SizableColumn
       extend ActiveSupport::Concern
+
+      COLUMN_SIZE_REGEXP = /^(?:col[-_]?)?(?<size>(?:xs|(?:extra[-_]?small))|(?:sm|small)|(?:md|medium)|(?:lg|large))[-_]?(?<num>\d{1,2})$/
+
       included do
         after_initialize do
-          re = /^(?:col[-_]?)?(?<size>(?:xs|(?:extra[-_]?small))|(?:sm|small)|(?:md|medium)|(?:lg|large))[-_]?(?<num>\d{1,2})$/
-          @args.extract!(Symbol, and: [re]).each do |arg|
-            m = re.match arg.to_s
-            size = SIZES[m[:size][0]]
-            add_class "col-#{size}-#{m[:num]}" unless have_class?(/^col-#{size}-\d{1,2}/)
-          end
+          @args.extract!(Symbol, and: [COLUMN_SIZE_REGEXP]).each {|arg| add_column_size arg}
         end
       end
-      protected
-      SIZES = {'x' => 'xs', 'e' => 'xs', 's' => 'sm', 'm' => 'md', 'l' => 'lg'}
+
+      def column_size= value
+        if value.is_a? Array
+          value.each {|v| add_column_size v}
+        else
+          add_column_size value
+        end
+      end
+
+      def column_size_defined?
+        have_class?(/^col-(xs|sm|md|lg)-\d{1,2}/)
+      end
+
+      private
+      def add_column_size value
+        m = COLUMN_SIZE_REGEXP.match value.to_s
+        size = ViewHelpers::COLUMN_SIZES[m[:size][0]]
+        add_class "col-#{size}-#{m[:num]}" unless have_class?(/^col-#{size}-\d{1,2}/)
+      end
+    end
+
+    module PlacableColumn
+      extend ActiveSupport::Concern
+
+      COLUMN_PLACE_REGEXP = /^(?:col[-_]?)?(?<size>(?:xs|(?:extra[-_]?small))|(?:sm|small)|(?:md|medium)|(?:lg|large))[-_]?(?<act>offset|push|pull)[-_]?(?<num>\d{1,2})$/
+
+      included do
+        after_initialize do
+          @args.extract!(Symbol, {and: [COLUMN_PLACE_REGEXP]}).each {|arg| add_column_place arg}
+        end
+      end
+
+      def column_place= value
+        if value.is_a? Array
+          value.each {|v| add_column_place v}
+        else
+          add_column_place value
+        end
+      end
+
+      def column_offset_defined?
+        have_class?(/^col-(xs|sm|md|lg)-offset-\d{1,2}/)
+      end
+
+      def column_push_defined?
+        have_class?(/^col-(xs|sm|md|lg)-push-\d{1,2}/)
+      end
+
+      def column_pull_defined?
+        have_class?(/^col-(xs|sm|md|lg)-pull-\d{1,2}/)
+      end
+
+      def column_place_defined?
+        column_offset_defined? || column_push_defined? || column_pull_defined?
+      end
+
+      private
+      def add_column_place value
+        m = COLUMN_PLACE_REGEXP.match value.to_s
+        size = ViewHelpers::COLUMN_SIZES[m[:size][0]]
+        add_class "col-#{size}-#{m[:act]}-#{m[:num]}" unless have_class?(/^col-#{size}-#{m[:act]}-\d{1,2}/)
+      end
     end
 
     module Contextual
@@ -95,16 +153,19 @@ module Bootstrap
     module DropdownMenuWrapper
       extend ActiveSupport::Concern
 
-      protected
-      def dropdown_menu
-        @dropdown_menu ||= DropdownMenu.new @view
-      end
-
       included do
         delegate :divider, :header, :link_item, to: :dropdown_menu
         after_initialize {@dropdown_menu = nil}
         after_render {@content += @view.capture {@dropdown_menu.render} unless @dropdown_menu.nil?}
       end
+
+      protected
+      def dropdown_menu
+        @dropdown_menu ||= DropdownMenu.new @view
+      end
     end
+
+    protected
+    COLUMN_SIZES = {'x' => 'xs', 'e' => 'xs', 's' => 'sm', 'm' => 'md', 'l' => 'lg'}
   end
 end

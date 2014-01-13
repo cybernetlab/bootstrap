@@ -27,7 +27,7 @@ module Bootstrap
     end
 
     class TableCell < Base
-      include Column
+      include SizableColumn
       include Contextual
       include TextContainer
 

@@ -193,8 +193,16 @@ describe 'examples for README.md' do
         p.bar :warning, 20, '20% files complete'
       end %>
     HAML
-    #puts "*** #{rendered}"
     expect(rendered).to have_selector 'div.progress.progress-striped > div.progress-bar.progress-bar-success[@style="width: 35%"][@role="progressbar"][@aria-valuenow="35"][@aria-valuemin="0"][@aria-valuemax="100"] > span.sr-only[text()="35% total complete"]'
     expect(rendered).to have_selector 'div.progress.progress-striped > div.progress-bar-success + div.progress-bar.progress-bar-warning[@style="width: 20%"][@role="progressbar"][@aria-valuenow="20"][@aria-valuemin="0"][@aria-valuemax="100"] > span.sr-only[text()="20% files complete"]'
+  end
+
+  it 'renders inline form example' do
+    render inline: <<-HAML
+      <%= form :horizontal do |f|
+        f.input 'user@mail.ru', :xs_offset_2, type: 'email', id: 'exampleInputEmail2', placeholder: 'Enter email', label: ['Email address', :xs_4]
+      end %>
+    HAML
+    #puts "*** #{rendered}"
   end
 end

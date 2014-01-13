@@ -45,7 +45,7 @@ describe Bootstrap::ViewHelpers::TableCell, type: :view do
   it {expect(helper :head).to render_with 'th'}
   it {expect(helper :header).to render_with 'th'}
   it {expect(helper :th, :head, :header, th: true, head: true, header: true).to_not have_option :th, :head, :header}
-  it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::Column}
+  it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::SizableColumn}
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::Contextual}
   it {expect(helper).to be_kind_of Bootstrap::ViewHelpers::TextContainer}
 end

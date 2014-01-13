@@ -69,9 +69,9 @@ module Bootstrap
       flag :striped, html_class: 'progress-striped'
 
       after_initialize do
-        args = @args.clone
+        args = self.args_copy
         args.unshift @view
-        opts = @options.deep_dup
+        opts = self.options_copy
         opts[:class].select! {|o| o != 'progress' && o != 'progress-striped'}
         args.push opts
         @bars = [ProgressBar.new(*args)]

@@ -17,23 +17,15 @@ module Bootstrap
     end
 
     class GridCell < Base
-      include Column
+      include SizableColumn
+      include PlacableColumn
       include TextContainer
 
       TAG = 'div'
       helper :row, 'Bootstrap::ViewHelpers::GridRow'
 
-      after_initialize do
-        re = /^(?:col[-_]?)?(?<size>(?:xs|(?:extra[-_]?small))|(?:sm|small)|(?:md|medium)|(?:lg|large))[-_]?(?<act>offset|push|pull)[-_]?(?<num>\d{1,2})$/
-        @args.extract!(Symbol, {and: [re]}).each do |arg|
-          m = re.match arg.to_s
-          size = SIZES[m[:size][0]]
-          add_class "col-#{size}-#{m[:act]}-#{m[:num]}" unless have_class?(/^col-#{size}-#{m[:act]}-\d{1,2}/)
-        end
-      end
-
       set_callback :capture, :before do
-        add_class 'col-md-3' unless have_class?(/^col-(xs|sm|md|lg)-\d{1,2}$/)
+        add_class 'col-md-3' unless column_size_defined?
         true
       end
     end
