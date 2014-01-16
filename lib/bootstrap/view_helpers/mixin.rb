@@ -3,7 +3,19 @@ module Bootstrap
     module SizableColumn
       extend ActiveSupport::Concern
 
-      COLUMN_SIZE_REGEXP = /^(?:col[-_]?)?(?<size>(?:xs|(?:extra[-_]?small))|(?:sm|small)|(?:md|medium)|(?:lg|large))[-_]?(?<num>\d{1,2})$/
+      #COLUMN_SIZE_REGEXP = /^(?:col[-_]?)?(?<size>(?:xs|(?:extra[-_]?small))|(?:sm|small)|(?:md|medium)|(?:lg|large))[-_]?(?<num>\d{1,2})$/
+      COLUMN_SIZE_REGEXP = %r{\A
+        (?:col[-_]?)?
+        (?<size>(?:
+          xs
+          |(?:extra[-_]?small))
+          |(?:sm|small)
+          |(?:md|medium)
+          |(?:lg|large)
+        )
+        [-_]?
+        (?<num>\d{1,2}
+      )\z}x
 
       included do
         after_initialize do
@@ -34,7 +46,21 @@ module Bootstrap
     module PlacableColumn
       extend ActiveSupport::Concern
 
-      COLUMN_PLACE_REGEXP = /^(?:col[-_]?)?(?<size>(?:xs|(?:extra[-_]?small))|(?:sm|small)|(?:md|medium)|(?:lg|large))[-_]?(?<act>offset|push|pull)[-_]?(?<num>\d{1,2})$/
+      #COLUMN_PLACE_REGEXP = /^(?:col[-_]?)?(?<size>(?:xs|(?:extra[-_]?small))|(?:sm|small)|(?:md|medium)|(?:lg|large))[-_]?(?<act>offset|push|pull)[-_]?(?<num>\d{1,2})$/
+      COLUMN_PLACE_REGEXP = %r{\A
+        (?:col[-_]?)?
+        (?<size>(?:
+          xs
+          |(?:extra[-_]?small))
+          |(?:sm|small)
+          |(?:md|medium)
+          |(?:lg|large)
+        )
+        [-_]?
+        (?<act>offset|push|pull)
+        [-_]?
+        (?<num>\d{1,2})
+      \z}x
 
       included do
         after_initialize do
