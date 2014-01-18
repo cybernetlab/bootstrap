@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Bootstrap::ViewHelpers::Table do
+describe BootstrapIt::ViewHelpers::Table do
   it { expect(helper).to render_with 'table.table' }
   it { expect(helper tag: 'div').to render_with 'table.table' }
 
@@ -19,32 +19,32 @@ describe Bootstrap::ViewHelpers::Table do
   end
 
   it 'renders child rows' do
-    expect(Bootstrap::ViewHelpers::TableRow).to receive(:new).and_call_original
+    expect(BootstrapIt::ViewHelpers::TableRow).to receive(:new).and_call_original
     helper.row
   end
 end
 
-describe Bootstrap::ViewHelpers::TableRow do
+describe BootstrapIt::ViewHelpers::TableRow do
   it { expect(helper).to render_with 'tr' }
   it { expect(helper tag: 'div').to render_with 'tr' }
   it { expect(helper { |g| '<i>text</i>'.html_safe }).to render_with 'tr > i' }
 
   it 'renders child cells' do
-    expect(Bootstrap::ViewHelpers::TableCell).to receive(:new)
+    expect(BootstrapIt::ViewHelpers::TableCell).to receive(:new)
       .and_call_original
     helper.cell
   end
 
   it 'renders child head cells' do
-    expect(Bootstrap::ViewHelpers::TableCell).to receive(:new)
+    expect(BootstrapIt::ViewHelpers::TableCell).to receive(:new)
       .and_call_original
     helper.head
   end
 
-  it { expect(helper).to be_kind_of Bootstrap::ViewHelpers::Contextual }
+  it { expect(helper).to be_kind_of BootstrapIt::ViewHelpers::Contextual }
 end
 
-describe Bootstrap::ViewHelpers::TableCell, type: :view do
+describe BootstrapIt::ViewHelpers::TableCell, type: :view do
   it { expect(helper).to render_with 'td' }
   it { expect(helper :th).to render_with 'th' }
   it { expect(helper :head).to render_with 'th' }
@@ -53,7 +53,7 @@ describe Bootstrap::ViewHelpers::TableCell, type: :view do
     expect(helper :th, :head, :header, th: true, head: true, header: true)
       .to_not have_option :th, :head, :header
   end
-  it { expect(helper).to be_kind_of Bootstrap::ViewHelpers::SizableColumn }
-  it { expect(helper).to be_kind_of Bootstrap::ViewHelpers::Contextual }
+  it { expect(helper).to be_kind_of BootstrapIt::ViewHelpers::SizableColumn }
+  it { expect(helper).to be_kind_of BootstrapIt::ViewHelpers::Contextual }
   it { expect(helper).to be_kind_of WrapIt::TextContainer }
 end

@@ -1,0 +1,4 @@
+ru:
+  bootstrap_it:
+    progress_bar:
+      text: 'Завершено %{completed}%'

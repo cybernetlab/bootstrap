@@ -2,7 +2,7 @@ require 'spec_helper'
 
 # @TODO: dropdownwrapper testing
 
-describe Bootstrap::ViewHelpers::Contextual do
+describe BootstrapIt::ViewHelpers::Contextual do
   it {expect(wrapper).to have_enum :state}
   it 'sets state class' do
     %i(active success warning danger).each do |state|
@@ -14,7 +14,7 @@ describe Bootstrap::ViewHelpers::Contextual do
   end
 end
 
-describe Bootstrap::ViewHelpers::SizableColumn do
+describe BootstrapIt::ViewHelpers::SizableColumn do
   # column_size_defined?
   it { expect(wrapper.column_size_defined?).to be_false }
   it 'detects if size defined' do
@@ -73,7 +73,7 @@ describe Bootstrap::ViewHelpers::SizableColumn do
   it { expect(wrapper :sm12, :lg1).to render_with 'div.col-sm-12.col-lg-1' }
 end
 
-describe Bootstrap::ViewHelpers::PlacableColumn do
+describe BootstrapIt::ViewHelpers::PlacableColumn do
   %w[offset push pull].each do |act|
     # column_[offset|push|pull]_defined?
     it { expect(wrapper.send "column_#{act}_defined?").to be_false }
@@ -133,11 +133,11 @@ describe Bootstrap::ViewHelpers::PlacableColumn do
   end
 end
 
-describe Bootstrap::ViewHelpers::Activable do
+describe BootstrapIt::ViewHelpers::Activable do
   it { expect(wrapper).to have_flag(:active).with(html_class: ['active']) }
 end
 
-describe Bootstrap::ViewHelpers::Disableable do
+describe BootstrapIt::ViewHelpers::Disableable do
   it { expect(wrapper).to have_flag(:disabled).with(aliases: [:disable]) }
   it { expect(wrapper).to_not render_with '.disabled' }
   it { expect(wrapper :disabled).to render_with '.disabled' }
@@ -146,7 +146,7 @@ describe Bootstrap::ViewHelpers::Disableable do
   it { expect(wrapper :disabled, tag: :button).to_not render_with '.disabled' }
 end
 
-describe Bootstrap::ViewHelpers::Sizable do
+describe BootstrapIt::ViewHelpers::Sizable do
   it { expect(wrapper :lg).to render_with '.lg' }
   it { expect(wrapper :large).to render_with '.lg' }
   it { expect(wrapper :sm).to render_with '.sm' }
@@ -172,6 +172,6 @@ describe Bootstrap::ViewHelpers::Sizable do
   it { expect(wrapper size: 'value').to_not have_option :size }
 end
 
-describe Bootstrap::ViewHelpers::Justifable do
+describe BootstrapIt::ViewHelpers::Justifable do
   it { expect(wrapper).to have_flag :justified }
 end

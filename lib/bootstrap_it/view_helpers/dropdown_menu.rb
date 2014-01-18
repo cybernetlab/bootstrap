@@ -1,4 +1,4 @@
-module Bootstrap
+module BootstrapIt
   #
   module ViewHelpers
     #
@@ -25,6 +25,6 @@ module Bootstrap
       end
     end
 
-    WrapIt.register :dropdown_menu, 'Bootstrap::ViewHelpers::DropdownMenu'
+    WrapIt.register :dropdown_menu, 'BootstrapIt::ViewHelpers::DropdownMenu'
   end
 end

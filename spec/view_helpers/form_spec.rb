@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Bootstrap::ViewHelpers::Input do
+describe BootstrapIt::ViewHelpers::Input do
   it { expect(helper).to render_with 'input.form-control[@type="text"]' }
 
   it 'accepts valid input types' do
@@ -14,7 +14,7 @@ describe Bootstrap::ViewHelpers::Input do
   end
 end
 
-describe Bootstrap::ViewHelpers::Form do
+describe BootstrapIt::ViewHelpers::Form do
   it { expect(helper).to render_with 'form[@role="form"]' }
 
   # kind

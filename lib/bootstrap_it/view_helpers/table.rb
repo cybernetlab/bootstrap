@@ -1,4 +1,4 @@
-module Bootstrap
+module BootstrapIt
   #
   module ViewHelpers
     #
@@ -18,7 +18,7 @@ module Bootstrap
         value && wrap(class: 'table-responsive')
       end
 
-      child :row, 'Bootstrap::ViewHelpers::TableRow'
+      child :row, 'BootstrapIt::ViewHelpers::TableRow'
 
       after_initialize { @tag = 'table' }
 
@@ -36,10 +36,10 @@ module Bootstrap
     class TableRow < WrapIt::Container
       include Contextual
 
-      child :cell, 'Bootstrap::ViewHelpers::TableCell'
+      child :cell, 'BootstrapIt::ViewHelpers::TableCell'
       alias_method :td, :cell
 
-      child :head, 'Bootstrap::ViewHelpers::TableCell', [tag: 'th']
+      child :head, 'BootstrapIt::ViewHelpers::TableCell', [tag: 'th']
       alias_method :th, :head
       alias_method :header, :head
 
@@ -67,6 +67,6 @@ module Bootstrap
       end
     end
 
-    WrapIt.register :table, 'Bootstrap::ViewHelpers::Table'
+    WrapIt.register :table, 'BootstrapIt::ViewHelpers::Table'
   end
 end

@@ -1,4 +1,4 @@
-module Bootstrap
+module BootstrapIt
   #
   module ViewHelpers
     #
@@ -81,16 +81,16 @@ module Bootstrap
         @options[:role] = 'navigation'
       end
 
-      child :button, 'Bootstrap::ViewHelpers::Button', [class: 'navbar-btn']
-      child :text, 'Bootstrap::ViewHelpers::Text', [class: 'navbar-text']
+      child :button, 'BootstrapIt::ViewHelpers::Button', [class: 'navbar-btn']
+      child :text, 'BootstrapIt::ViewHelpers::Text', [class: 'navbar-text']
       alias_method :p, :text
-      child :span, 'Bootstrap::ViewHelpers::Text', [class: 'navbar-text']
+      child :span, 'BootstrapIt::ViewHelpers::Text', [class: 'navbar-text']
     end
 
-    WrapIt.register :nav_pills, 'Bootstrap::ViewHelpers::NavPills'
-    WrapIt.register :pills, 'Bootstrap::ViewHelpers::NavPills'
-    WrapIt.register :nav_tabs, 'Bootstrap::ViewHelpers::NavTabs'
-    WrapIt.register :tabs, 'Bootstrap::ViewHelpers::NavTabs'
-    WrapIt.register :navbar, 'Bootstrap::ViewHelpers::NavBar'
+    WrapIt.register :nav_pills, 'BootstrapIt::ViewHelpers::NavPills'
+    WrapIt.register :pills, 'BootstrapIt::ViewHelpers::NavPills'
+    WrapIt.register :nav_tabs, 'BootstrapIt::ViewHelpers::NavTabs'
+    WrapIt.register :tabs, 'BootstrapIt::ViewHelpers::NavTabs'
+    WrapIt.register :navbar, 'BootstrapIt::ViewHelpers::NavBar'
   end
 end

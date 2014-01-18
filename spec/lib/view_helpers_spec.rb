@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Bootstrap::ViewHelpers do
+describe BootstrapIt::ViewHelpers do
 #  after { described_class.instance_variable_set :@helpers, nil }
 
 

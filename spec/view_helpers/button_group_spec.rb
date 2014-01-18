@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe Bootstrap::ViewHelpers::ButtonGroup do
+describe BootstrapIt::ViewHelpers::ButtonGroup do
   it { expect(helper).to render_with 'div.btn-group' }
 
   # behaviour
-  it { expect(helper).to be_kind_of Bootstrap::ViewHelpers::Sizable }
-  it { expect(helper).to be_kind_of Bootstrap::ViewHelpers::Justifable }
+  it { expect(helper).to be_kind_of BootstrapIt::ViewHelpers::Sizable }
+  it { expect(helper).to be_kind_of BootstrapIt::ViewHelpers::Justifable }
 
   # vertical
   it 'has vertical switch' do

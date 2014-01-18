@@ -1,7 +1,8 @@
+#
 module AssetsExampleGroup
   extend ActiveSupport::Concern
 
-  def compiled asset
+  def compiled(asset)
     Dir.glob(Rails.root.join('tmp', sprintf("%s-*.%s", *asset.split('.'))))
   end
 
@@ -10,8 +11,8 @@ module AssetsExampleGroup
 
     let :env do
       env = Sprockets::Environment.new Rails.root
-      Rails.application.assets.paths.each {|path| env.append_path path}
-      Bootstrap::Assets.register env
+      Rails.application.assets.paths.each { |path| env.append_path path }
+      BootstrapIt::Assets.register env
       env
     end
 
@@ -30,12 +31,12 @@ module AssetsExampleGroup
     RSpec::Matchers.define :compile_with do |expected|
       match_for_should do |asset|
         assets.compile asset
-        compiled(asset).any? {|file| File.read(file).include? expected}
+        compiled(asset).any? { |file| File.read(file).include? expected }
       end
 
       match_for_should_not do |asset|
         assets.compile asset
-        compiled(asset).none? {|file| File.read(file).include? expected}
+        compiled(asset).none? { |file| File.read(file).include? expected }
       end
     end
 
@@ -50,7 +51,9 @@ module AssetsExampleGroup
       match_for_should do |asset|
         Rails.application.config.assets.precompile.any? do |pre|
           if pre.is_a? Proc
-            Rails.application.config.assets.paths.any? {|path| pre.call asset, path}
+            Rails.application.config.assets.paths.any? do |path|
+              pre.call(asset, path)
+            end
           elsif pre.is_a? Regexp
             pre.match asset
           end
@@ -60,7 +63,9 @@ module AssetsExampleGroup
       match_for_should_not do |asset|
         Rails.application.config.assets.precompile.none? do |pre|
           if pre.is_a? Proc
-            Rails.application.config.assets.paths.none? {|path| pre.call asset, path}
+            Rails.application.config.assets.paths.none? do |path|
+              pre.call(asset, path)
+            end
           elsif pre.is_a? Regexp
             pre.match asset
           end
@@ -70,6 +75,10 @@ module AssetsExampleGroup
   end
 
   RSpec.configure do |config|
-    config.include self, type: :assets, example_group: {file_path: %r(spec/assets)}
+    config.include(
+      self,
+      type: :assets,
+      example_group: {file_path: %r(spec/assets)}
+    )
   end
 end

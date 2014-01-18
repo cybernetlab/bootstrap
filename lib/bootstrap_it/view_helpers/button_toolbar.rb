@@ -1,4 +1,4 @@
-module Bootstrap
+module BootstrapIt
   #
   module ViewHelpers
     #
@@ -9,13 +9,13 @@ module Bootstrap
     class ButtonToolbar < WrapIt::Container
       html_class 'btn-toolbar'
 
-      child :button_group, 'Bootstrap::ViewHelpers::ButtonGroup'
+      child :button_group, 'BootstrapIt::ViewHelpers::ButtonGroup'
       alias_method :group, :button_group
 
       after_initialize { @options[:role] = 'toolbar' }
     end
 
-    WrapIt.register :button_toolbar, 'Bootstrap::ViewHelpers::ButtonToolbar'
-    WrapIt.register :toolbar, 'Bootstrap::ViewHelpers::ButtonToolbar'
+    WrapIt.register :button_toolbar, 'BootstrapIt::ViewHelpers::ButtonToolbar'
+    WrapIt.register :toolbar, 'BootstrapIt::ViewHelpers::ButtonToolbar'
   end
 end

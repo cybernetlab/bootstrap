@@ -1,4 +1,0 @@
-ru:
-  bootstrap:
-    progress_bar:
-      text: 'Завершено %{completed}%'

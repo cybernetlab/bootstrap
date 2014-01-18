@@ -1,4 +1,4 @@
-module Bootstrap
+module BootstrapIt
   #
   module ViewHelpers
     #
@@ -23,7 +23,7 @@ module Bootstrap
            %i[default primary success info warning danger link],
            default: :default, html_class: true
 
-      child :icon, 'Bootstrap::ViewHelpers::Icon'
+      child :icon, 'BootstrapIt::ViewHelpers::Icon'
 
       before_render do
         unless @icon.nil?
@@ -110,7 +110,7 @@ module Bootstrap
     end
 
     WrapIt.register :button, :radio, :checkbox,
-                    'Bootstrap::ViewHelpers::Button'
-    WrapIt.register :dropdown_button, 'Bootstrap::ViewHelpers::DropdownButton'
+                    'BootstrapIt::ViewHelpers::Button'
+    WrapIt.register :dropdown_button, 'BootstrapIt::ViewHelpers::DropdownButton'
   end
 end

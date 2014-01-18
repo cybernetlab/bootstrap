@@ -1,4 +1,4 @@
-module Bootstrap
+module BootstrapIt
   #
   module ViewHelpers
     #
@@ -28,7 +28,7 @@ module Bootstrap
       child :next, ListLinkItem, [li_class: 'next']
     end
 
-    WrapIt.register :pagination, 'Bootstrap::ViewHelpers::Pagination'
-    WrapIt.register :pager, 'Bootstrap::ViewHelpers::Pager'
+    WrapIt.register :pagination, 'BootstrapIt::ViewHelpers::Pagination'
+    WrapIt.register :pager, 'BootstrapIt::ViewHelpers::Pager'
   end
 end

@@ -1,4 +1,4 @@
-module Bootstrap
+module BootstrapIt
   #
   module ViewHelpers
     #
@@ -8,7 +8,7 @@ module Bootstrap
     #
     class Grid < WrapIt::Container
       html_class 'container'
-      child :row, 'Bootstrap::ViewHelpers::GridRow'
+      child :row, 'BootstrapIt::ViewHelpers::GridRow'
     end
 
     #
@@ -48,8 +48,8 @@ module Bootstrap
       end
 
       html_class 'row'
-      child :cell, 'Bootstrap::ViewHelpers::GridCell'
-      child :clear, 'Bootstrap::ViewHelpers::GridRow::Clearfix'
+      child :cell, 'BootstrapIt::ViewHelpers::GridCell'
+      child :clear, 'BootstrapIt::ViewHelpers::GridRow::Clearfix'
     end
 
     #
@@ -63,13 +63,13 @@ module Bootstrap
       include WrapIt::TextContainer
 
       default_tag 'div'
-      child :row, 'Bootstrap::ViewHelpers::GridRow'
+      child :row, 'BootstrapIt::ViewHelpers::GridRow'
 
       before_capture do
         column_size_defined? || add_html_class('col-md-3')
       end
     end
 
-    WrapIt.register :grid, 'Bootstrap::ViewHelpers::Grid'
+    WrapIt.register :grid, 'BootstrapIt::ViewHelpers::Grid'
   end
 end

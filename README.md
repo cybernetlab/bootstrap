@@ -4,9 +4,17 @@ This package provides helpers for easly creating sites with [Twitter Bootstrap 3
 
 > **Warning!** This gem is in active development state. Please, don't use it in production.
 
+# Why to use it?
+
+At first, it simplify views writing process. You dont't need to keep in mind Bootstrap-specific markup - just write `<%= button 'text', :success %>` and thats it! At the same time, your views will looks clearly.
+
+At second, when Bootstrap version changed and some HTML attributes needs to be updated, you don't need to search through all your views for this changes to switch your project to new version. Just select appropriate version with `gem bootstrap_it, 'x.x.x'`. In future releases, markup part of library will be separated from main code and will be versioned respectively to Twitter Bootstrap versions.
+
+At third, you can easily extend helpers with your own. This package use [WrapIt](https://github.com/cybernetlab/wrap_it) library, see it's documentation for details.
+
 # State
 
-Project is in active development state now. First release version is '1.0.0' and planned at second half of February. Version '0.1.0' and all other '0.x.x' are for testing purposes.
+Project is in active development state now. First release version is `1.0.0` and planned at second half of February. Version `0.1.0` and all other `0.x.x` are for testing purposes.
 
 Not implemented now: forms, inputs, thumbnails, media object, list group, panels, wells and allmost all from JavaScript section of Bootstrap documentation.
 
@@ -15,7 +23,7 @@ Not implemented now: forms, inputs, thumbnails, media object, list group, panels
 put following line in you `Gemfile`
 
 ```ruby
-gem 'bootstrap', github: 'cybernetlab/bootstrap'
+gem 'bootstrap_it'
 ```
 
 and run
@@ -24,20 +32,17 @@ and run
 bundle install
 ```
 
-Add bootstrap to your `application.css`:
+Add bootstrap_it to your `layout` file:
 
-```ruby
-/*
- *= require bootstrap
- */
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    ...
+    <%= bootstrap_it %>
+  </head>
+</html>
 ```
-
-and to `application.js`:
-
-```ruby
-//= require bootstrap
-```
-
 
 # Configuration
 
@@ -46,26 +51,25 @@ Full Rails-style configuration is not implemented yet. So, to change config opti
 ```ruby
   class Application < Rails::Application
     ...
-    Bootstrap.config.assets_source = :cdn
+    BootstrapIt.config.assets_source = :cdn
   end
 ```
 
 ## Bootstrap assets
 
-Now, you have two choises: at first, CDN source of CSS and JavaScript. And second is minified versions of assets, downloaded from official sites. Third options - compile from LESS source will be available soon. So, you can configure bootstrap in `application.rb` linke this:
+Now, you have two choises: at first, CDN source of CSS and JavaScript. And second is minified versions of assets, downloaded from official sites. Third options - compile from LESS source will be available soon. So, you can configure bootstrap_it in `application.rb` linke this:
 
 ```ruby
-Bootstrap.config.assets_source = :cdn # or :precompiled for minified version
+BootstrapIt.config.assets_source = :cdn # or :precompiled for minified version
 ```
 
-Also you need to insert following line into your layout file:
-
-```ruby
-```
-
-> Package have some other options, thats are not implemented yet. Look into `lib/bootstrap/config.rb` for details.
+> Package have some other options, thats are not implemented yet. Look into `lib/bootstrap_it/config.rb` for details.
 
 # Usage
+
+## Sample application
+
+You can explore [sample application](https://github.com/cybernetlab/bootstrap_it_sample), especially `app/views/welcome/index.html.erb` for usage examples. This repository will be updated frequently, so keep track on it.
 
 ## Common guidelines
 
@@ -223,9 +227,7 @@ button :danger, :large, 'alert', icon: 'home'
 You can use icon set from bootstrap or font-awesome. To select icon set use following configuration option:
 
 ```ruby
-Bootstrap.config do |config|
-  config.font_awesome = true
-end
+BootstrapIt.config.font_awesome = true
 ```
 
 To produce icon, use `icon` helper with icon name as argument.
@@ -548,4 +550,33 @@ This and all other stuff are in development.
 # Long time plans
 
 - integration to other ruby frameworks, such as `Sinatra`
+
+# Changes
+
+`0.1.0`
+* initial version
+
+# License
+
+The MIT License (MIT)
+
+Copyright (c) 2014 Alexey Ovchinnikov
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 

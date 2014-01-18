@@ -1,4 +1,4 @@
-module Bootstrap
+module BootstrapIt
   #
   module ViewHelpers
     #
@@ -37,10 +37,10 @@ module Bootstrap
       html_class 'badge'
     end
 
-    WrapIt.register :text, 'Bootstrap::ViewHelpers::Text'
-    WrapIt.register :p, 'Bootstrap::ViewHelpers::Text'
-    WrapIt.register :span, 'Bootstrap::ViewHelpers::Text'
-    WrapIt.register :label, 'Bootstrap::ViewHelpers::Label'
-    WrapIt.register :badge, 'Bootstrap::ViewHelpers::Badge'
+    WrapIt.register :text, 'BootstrapIt::ViewHelpers::Text'
+    WrapIt.register :p, 'BootstrapIt::ViewHelpers::Text'
+    WrapIt.register :span, 'BootstrapIt::ViewHelpers::Text'
+    WrapIt.register :label, 'BootstrapIt::ViewHelpers::Label'
+    WrapIt.register :badge, 'BootstrapIt::ViewHelpers::Badge'
   end
 end

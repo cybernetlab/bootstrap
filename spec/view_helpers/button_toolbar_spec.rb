@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Bootstrap::ViewHelpers::ButtonToolbar do
+describe BootstrapIt::ViewHelpers::ButtonToolbar do
   it { expect(helper).to render_with 'div.btn-toolbar[@role="toolbar"]' }
 
   it 'reders button group' do

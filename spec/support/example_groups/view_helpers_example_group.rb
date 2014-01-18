@@ -1,24 +1,25 @@
+#
 module ViewHelpersExampleGroup
   extend ActiveSupport::Concern
 
-  def helper *args, &block
+  def helper(*args, &block)
     @helper ||= described_class.new view, *args, &block
   end
 
-  def wrapper *args, &block
+  def wrapper(*args, &block)
     @wrapper ||= wrapper_class.new view, *args, &block
   end
 
-  def successor *args, &block
+  def successor(*args, &block)
     @successor ||= successor_class.new view, *args, &block
   end
 
   included do
     metadata[:type] = :view_helpers
 
-    after {@helper, @wrapper, @successor = nil, nil, nil}
-    let(:view) {ActionView::Base.new}
-    let(:successor_class) {Class.new described_class}
+    after { @helper, @wrapper, @successor = nil, nil, nil }
+    let(:view) { ActionView::Base.new }
+    let(:successor_class) { Class.new(described_class) }
     let(:wrapper_class) do
       mod = described_class
       Class.new WrapIt::Base do
@@ -30,23 +31,25 @@ module ViewHelpersExampleGroup
       match_for_should do |obj|
         actual = obj.instance_variable_get :@options
         options.flatten!
-        actual.select {|o| options.include? o}.size == options.size
+        actual.select { |o| options.include? o }.size == options.size
       end
 
       match_for_should_not do |obj|
         actual = obj.instance_variable_get :@options
         options.flatten!
-        actual.select {|o| options.include? o}.size == 0
+        actual.select { |o| options.include? o }.size == 0
       end
     end
 
     RSpec::Matchers.define :render_with do |selector, options = {}|
       match_for_should do |actual|
-        Capybara::Node::Simple.new(actual.render).has_selector? selector, options
+        Capybara::Node::Simple.new(actual.render)
+          .has_selector?(selector, options)
       end
 
       match_for_should_not do |actual|
-        Capybara::Node::Simple.new(actual.render).has_no_selector? selector, options
+        Capybara::Node::Simple.new(actual.render)
+          .has_no_selector?(selector, options)
       end
 
       failure_message_for_should do |actual|
@@ -73,8 +76,11 @@ module ViewHelpersExampleGroup
 
       failure_message_for_should do |obj|
         flags = obj.send(:switches)
-        msg = "expected that #{obj.class.name} with flags #{flags} would have flag #{flag}"
-        msg += " with options #{@options}" if instance_variable_defined? :@options
+        msg = "expected that #{obj.class.name}"
+        msg += " with flags #{flags} would have flag #{flag}"
+        if instance_variable_defined?(:@options)
+          msg += " with options #{@options}"
+        end
         msg
       end
     end
@@ -92,14 +98,15 @@ module ViewHelpersExampleGroup
 
       failure_message_for_should do |obj|
         class_enums = obj.send(:enums)
-        "expected that #{obj.class.name} with enums #{class_enums} would have enum #{enum}"
+        "expected that #{obj.class.name}" \
+        "with enums #{class_enums} would have enum #{enum}"
       end
     end
 
     RSpec::Matchers.define :have_safe_method do |method|
       match do |obj|
         if method.is_a? Array
-          method.all? {|m| obj.send(m).html_safe?}
+          method.all? { |m| obj.send(m).html_safe? }
         else
           obj.send(method).html_safe?
         end
@@ -108,6 +115,10 @@ module ViewHelpersExampleGroup
   end
 
   RSpec.configure do |config|
-    config.include self, type: :view_helpers, example_group: {file_path: %r(spec/view_helpers)}
+    config.include(
+      self,
+      type: :view_helpers,
+      example_group: {file_path: %r(spec/view_helpers)}
+    )
   end
 end

@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Bootstrap::ViewHelpers::Pagination do
+describe BootstrapIt::ViewHelpers::Pagination do
   it { expect(helper).to render_with 'ul.pagination' }
   it { expect(helper).to be_kind_of WrapIt::Container }
-  it { expect(helper).to be_kind_of Bootstrap::ViewHelpers::Sizable }
+  it { expect(helper).to be_kind_of BootstrapIt::ViewHelpers::Sizable }
 
   it 'renders links' do
     expect(helper { |h| h.link_item 'test', 'http://url' }).to render_with(
@@ -12,7 +12,7 @@ describe Bootstrap::ViewHelpers::Pagination do
   end
 end
 
-describe Bootstrap::ViewHelpers::Pager do
+describe BootstrapIt::ViewHelpers::Pager do
   it { expect(helper).to render_with 'ul.pager' }
   it { expect(helper).to be_kind_of WrapIt::Container }
 

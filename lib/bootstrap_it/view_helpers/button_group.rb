@@ -1,4 +1,4 @@
-module Bootstrap
+module BootstrapIt
   #
   module ViewHelpers
     #
@@ -15,18 +15,18 @@ module Bootstrap
 
       switch :vertical, html_class: true
 
-      child :button, 'Bootstrap::ViewHelpers::Button'
-      child :dropdown, 'Bootstrap::ViewHelpers::DropdownButton'
+      child :button, 'BootstrapIt::ViewHelpers::Button'
+      child :dropdown, 'BootstrapIt::ViewHelpers::DropdownButton'
 
-      child :radio, 'Bootstrap::ViewHelpers::Button' do |button|
+      child :radio, 'BootstrapIt::ViewHelpers::Button' do |button|
         set_html_data(:toggle, 'buttons')
       end
 
-      child :checkbox, 'Bootstrap::ViewHelpers::Button' do |button|
+      child :checkbox, 'BootstrapIt::ViewHelpers::Button' do |button|
         set_html_data(:toggle, 'buttons')
       end
     end
 
-    WrapIt.register :button_group, 'Bootstrap::ViewHelpers::ButtonGroup'
+    WrapIt.register :button_group, 'BootstrapIt::ViewHelpers::ButtonGroup'
   end
 end

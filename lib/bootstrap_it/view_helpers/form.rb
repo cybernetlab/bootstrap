@@ -1,4 +1,4 @@
-module Bootstrap
+module BootstrapIt
   #
   module ViewHelpers
     #
@@ -47,7 +47,7 @@ module Bootstrap
     class FormGroup < WrapIt::Container
       html_class 'form-group'
 
-      child :input, 'Bootstrap::ViewHelpers::Input' do |input|
+      child :input, 'BootstrapIt::ViewHelpers::Input' do |input|
         input_args = input.instance_variable_get(:@saved_args)
         @control_size = input_args.extract!(
           Symbol, and: [SizableColumn::COLUMN_SIZE_REGEXP]
@@ -108,7 +108,7 @@ module Bootstrap
       attr_reader :control_size
 
       def input(*args, &block)
-        group = Bootstrap::ViewHelpers::FormGroup.new(@template, form: self)
+        group = BootstrapIt::ViewHelpers::FormGroup.new(@template, form: self)
         group.input(*args, &block)
       end
 
@@ -122,6 +122,6 @@ module Bootstrap
       end
     end
 
-    WrapIt.register :form, 'Bootstrap::ViewHelpers::Form'
+    WrapIt.register :form, 'BootstrapIt::ViewHelpers::Form'
   end
 end

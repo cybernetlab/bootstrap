@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Bootstrap::ViewHelpers::DropdownMenu do
+describe BootstrapIt::ViewHelpers::DropdownMenu do
   it { expect(helper).to render_with 'ul.dropdown-menu[@role="menu"]' }
 
   it 'reders devider' do

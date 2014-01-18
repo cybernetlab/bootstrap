@@ -1,4 +1,4 @@
-module Bootstrap
+module BootstrapIt
   #
   module ViewHelpers
     #
@@ -242,7 +242,7 @@ module Bootstrap
           TypeError, 'Can be included only into WrapIt::Container subclasses'
         )
         # delegate :divider, :header, :link_item, to: :dropdown_menu
-        child :dropdown_menu, 'Bootstrap::ViewHelpers::DropdownMenu'
+        child :dropdown_menu, 'BootstrapIt::ViewHelpers::DropdownMenu'
         after_initialize do
           @dropdown_items = []
         end

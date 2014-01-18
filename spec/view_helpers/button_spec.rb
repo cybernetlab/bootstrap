@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Bootstrap::ViewHelpers::Button do
+describe BootstrapIt::ViewHelpers::Button do
   it { expect(helper).to render_with 'button.btn.btn-default[@type="button"]' }
 
   it 'allows `submit` type' do
@@ -33,9 +33,9 @@ describe Bootstrap::ViewHelpers::Button do
   it { expect(helper).to have_safe_method :icon }
 
   # behaviour
-  it { expect(helper).to be_kind_of Bootstrap::ViewHelpers::Activable }
-  it { expect(helper).to be_kind_of Bootstrap::ViewHelpers::Disableable }
-  it { expect(helper).to be_kind_of Bootstrap::ViewHelpers::Sizable }
+  it { expect(helper).to be_kind_of BootstrapIt::ViewHelpers::Activable }
+  it { expect(helper).to be_kind_of BootstrapIt::ViewHelpers::Disableable }
+  it { expect(helper).to be_kind_of BootstrapIt::ViewHelpers::Sizable }
   it { expect(helper).to be_kind_of WrapIt::TextContainer }
 
   # appearence
@@ -114,10 +114,10 @@ describe Bootstrap::ViewHelpers::Button do
   it { expect(described_class.html_class_prefix).to eq 'btn-' }
 end
 
-describe Bootstrap::ViewHelpers::DropdownButton do
+describe BootstrapIt::ViewHelpers::DropdownButton do
   # behaviour
   it 'subclassed from DropdownMenuWrapper' do
-    expect(helper).to be_kind_of Bootstrap::ViewHelpers::DropdownMenuWrapper
+    expect(helper).to be_kind_of BootstrapIt::ViewHelpers::DropdownMenuWrapper
   end
 
   # dropdown

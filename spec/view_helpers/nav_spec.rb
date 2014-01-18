@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Bootstrap::ViewHelpers::Nav do
+describe BootstrapIt::ViewHelpers::Nav do
   it { expect(helper).to render_with 'ul.nav' }
 
-  it { expect(helper).to be_kind_of Bootstrap::ViewHelpers::Justifable }
+  it { expect(helper).to be_kind_of BootstrapIt::ViewHelpers::Justifable }
   it { expect(helper).to be_kind_of WrapIt::Container }
 
   it 'renders active links' do
@@ -21,17 +21,17 @@ describe Bootstrap::ViewHelpers::Nav do
   end
 end
 
-describe Bootstrap::ViewHelpers::NavPills do
-  it { expect(helper).to be_kind_of Bootstrap::ViewHelpers::Nav }
+describe BootstrapIt::ViewHelpers::NavPills do
+  it { expect(helper).to be_kind_of BootstrapIt::ViewHelpers::Nav }
   it { expect(helper).to render_with 'ul.nav.nav-pills' }
 end
 
-describe Bootstrap::ViewHelpers::NavTabs do
-  it { expect(helper).to be_kind_of Bootstrap::ViewHelpers::Nav }
+describe BootstrapIt::ViewHelpers::NavTabs do
+  it { expect(helper).to be_kind_of BootstrapIt::ViewHelpers::Nav }
   it { expect(helper).to render_with 'ul.nav.nav-tabs' }
 end
 
-describe Bootstrap::ViewHelpers::NavBar do
+describe BootstrapIt::ViewHelpers::NavBar do
   it 'renders with all needed options' do
     expect(helper).to render_with(
       'nav.navbar.navbar-default[@role="navigation"]'

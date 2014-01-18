@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe Bootstrap::ViewHelpers::ListItem do
+describe BootstrapIt::ViewHelpers::ListItem do
   it { expect(helper).to render_with 'li' }
-  it { expect(helper).to be_kind_of Bootstrap::ViewHelpers::Disableable }
+  it { expect(helper).to be_kind_of BootstrapIt::ViewHelpers::Disableable }
   it { expect(helper).to be_kind_of WrapIt::TextContainer }
 end
 
-describe Bootstrap::ViewHelpers::ListLinkItem do
+describe BootstrapIt::ViewHelpers::ListLinkItem do
   it { expect(helper).to be_kind_of WrapIt::Link }
 
   it { expect(helper).to render_with 'li > a' }

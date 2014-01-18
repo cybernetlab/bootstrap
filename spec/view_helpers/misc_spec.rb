@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Bootstrap::ViewHelpers::Jumbotron do
+describe BootstrapIt::ViewHelpers::Jumbotron do
   it { expect(helper).to render_with 'div.jumbotron' }
 
   # full_width
@@ -10,11 +10,11 @@ describe Bootstrap::ViewHelpers::Jumbotron do
   end
 end
 
-describe Bootstrap::ViewHelpers::PageHeader do
+describe BootstrapIt::ViewHelpers::PageHeader do
   it { expect(helper).to render_with 'div.page-header' }
 end
 
-describe Bootstrap::ViewHelpers::Alert do
+describe BootstrapIt::ViewHelpers::Alert do
   it { expect(helper).to render_with 'div.alert.alert-success' }
 
   # behaviour
@@ -53,7 +53,7 @@ describe Bootstrap::ViewHelpers::Alert do
   it { expect(helper.class.html_class_prefix).to eq 'alert-' }
 end
 
-describe Bootstrap::ViewHelpers::ProgressBar do
+describe BootstrapIt::ViewHelpers::ProgressBar do
   it 'renders with all needed atrributes' do
     expect(helper).to render_with(
       'div.progress-bar[@role="progressbar"][@aria-valuenow="0"]' \
@@ -89,7 +89,7 @@ describe Bootstrap::ViewHelpers::ProgressBar do
   end
 end
 
-describe Bootstrap::ViewHelpers::Progress do
+describe BootstrapIt::ViewHelpers::Progress do
   it 'renders with all needed atrributes' do
     expect(helper).to render_with(
       'div.progress > div.progress-bar[@role="progressbar"]' \
@@ -99,7 +99,7 @@ describe Bootstrap::ViewHelpers::Progress do
   end
 
   # behaviour
-  it { expect(helper).to be_kind_of Bootstrap::ViewHelpers::Activable }
+  it { expect(helper).to be_kind_of BootstrapIt::ViewHelpers::Activable }
 
   # striped
   it 'has striped switch' do

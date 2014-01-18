@@ -1,4 +1,4 @@
-module Bootstrap
+module BootstrapIt
   #
   module ViewHelpers
     #
@@ -89,7 +89,7 @@ module Bootstrap
         text =
           if @content.empty?
             I18n.translate(
-              'bootstrap.progress_bar.text', completed: @completed
+              'bootstrap_it.progress_bar.text', completed: @completed
             )
           else
             @content
@@ -109,7 +109,7 @@ module Bootstrap
       html_class 'progress'
       html_class_prefix 'progress-'
 
-      child :bar, 'Bootstrap::ViewHelpers::ProgressBar'
+      child :bar, 'BootstrapIt::ViewHelpers::ProgressBar'
 
       switch :striped, html_class: true
 
@@ -134,11 +134,11 @@ module Bootstrap
 #      end
     end
 
-    WrapIt.register :jumbotron, 'Bootstrap::ViewHelpers::Jumbotron'
-    WrapIt.register :jumbo, 'Bootstrap::ViewHelpers::Jumbotron'
-    WrapIt.register :page_header, 'Bootstrap::ViewHelpers::PageHeader'
-    WrapIt.register :alert_box, 'Bootstrap::ViewHelpers::Alert'
-    WrapIt.register :progress_bar, 'Bootstrap::ViewHelpers::Progress'
-    WrapIt.register :progress, 'Bootstrap::ViewHelpers::Progress'
+    WrapIt.register :jumbotron, 'BootstrapIt::ViewHelpers::Jumbotron'
+    WrapIt.register :jumbo, 'BootstrapIt::ViewHelpers::Jumbotron'
+    WrapIt.register :page_header, 'BootstrapIt::ViewHelpers::PageHeader'
+    WrapIt.register :alert_box, 'BootstrapIt::ViewHelpers::Alert'
+    WrapIt.register :progress_bar, 'BootstrapIt::ViewHelpers::Progress'
+    WrapIt.register :progress, 'BootstrapIt::ViewHelpers::Progress'
   end
 end
