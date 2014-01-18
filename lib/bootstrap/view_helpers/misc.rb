@@ -1,92 +1,144 @@
 module Bootstrap
+  #
   module ViewHelpers
-    class Jumbotron < Base
+    #
+    # Jumbotron
+    #
+    # @author [alexiss]
+    #
+    class Jumbotron < WrapIt::Base
       html_class 'jumbotron'
-      flag :full_width
+      switch :full_width
+
       after_capture do
-        @content = @view.content_tag 'div', @content, class: 'container' if full_width?
+        full_width? && @content = content_tag(
+          'div', @content, class: 'container'
+        )
       end
     end
 
-    class PageHeader < Base
+    #
+    # PageHeader
+    #
+    # @author [alexiss]
+    #
+    class PageHeader < WrapIt::Base
       html_class 'page-header'
     end
 
-    class Alert < Base
-      include TextContainer
+    #
+    # Alert
+    #
+    # @author [alexiss]
+    #
+    class Alert < WrapIt::Container
+      include WrapIt::TextContainer
 
-      TAG = 'div'
+      default_tag 'div'
       html_class 'alert'
-      enum :appearence, %i[success info warning danger]
-      flag :dismissable, html_class: 'alert-dismissable'
-      helper(:link, 'Bootstrap::ViewHelpers::Link') {|link| link.add_class 'alert-link'}
-
-      after_initialize do
-        self.appearence ||= :success
-        add_class "alert-#{self.appearence}"
-      end
+      html_class_prefix 'alert-'
+      enum :appearence, %i(success info warning danger),
+           default: :success, html_class: true
+      switch :dismissable, html_class: true
+      child :link, 'WrapIt::Link', [class: 'alert-link']
 
       before_render do
         if dismissable?
-          @content = @view.content_tag('button', '&times;'.html_safe, type: 'button', class: 'close', data: {dismiss: 'alert'}, 'aria-hidden' => true) + @content
+          @content = content_tag(
+            'button',
+            html_safe('&times;'),
+            type: 'button',
+            class: 'close',
+            data: {dismiss: 'alert'},
+            'aria-hidden' => true
+          ) + @content
         end
       end
     end
 
-    class ProgressBar < Base
-      include TextContainer
+    #
+    # ProgressBar
+    #
+    # @author [alexiss]
+    #
+    class ProgressBar < WrapIt::Base
+      include WrapIt::TextContainer
 
-      TAG = 'div'
+      default_tag 'div'
       html_class 'progress-bar'
-      enum :appearence, %i[success info warning danger]
+      html_class_prefix 'progress-bar-'
+
+      enum :appearence, %i[success info warning danger],
+           html_class: true
 
       after_initialize do
-        @completed = @args.extract_first! Numeric
-        @completed = @options.delete :completed if @options[:completed].is_a? Numeric
+        @completed = @arguments.extract_first!(Numeric)
+        if @options[:completed].is_a?(Numeric)
+          @completed = @options.delete(:completed)
+        end
         @completed ||= 0
         @completed = @completed.round
         @options[:role] = 'progressbar'
-        @options['aria-valuenow'] = @completed
-        @options['aria-valuemin'] = 0
-        @options['aria-valuemax'] = 100
-        @options['style'] = "width: #{@completed}%"
-        add_class "progress-bar-#{self.appearence}" unless self.appearence.nil?
+        @options['aria-valuenow'.to_sym] = @completed
+        @options['aria-valuemin'.to_sym] = 0
+        @options['aria-valuemax'.to_sym] = 100
+        @options[:style] = "width: #{@completed}%"
       end
 
       before_render do
-        text = @content.empty? ? I18n.translate('bootstrap.progress_bar.text', completed: @completed) : @content
-        @content = @view.content_tag 'span', text, class: 'sr-only'
-        true
+        text =
+          if @content.empty?
+            I18n.translate(
+              'bootstrap.progress_bar.text', completed: @completed
+            )
+          else
+            @content
+          end
+        @content = content_tag('span', text, class: 'sr-only')
       end
     end
 
-    class Progress < Base
+    #
+    # Progress
+    #
+    # @author [alexiss]
+    #
+    class Progress < WrapIt::Container
       include Activable
 
       html_class 'progress'
+      html_class_prefix 'progress-'
 
-      helper :bar, 'Bootstrap::ViewHelpers::ProgressBar'
-      flag :striped, html_class: 'progress-striped'
+      child :bar, 'Bootstrap::ViewHelpers::ProgressBar'
+
+      switch :striped, html_class: true
 
       after_initialize do
-        args = self.args_copy
-        args.unshift @view
-        opts = self.options_copy
-        opts[:class].select! {|o| o != 'progress' && o != 'progress-striped'}
-        args.push opts
-        @bars = [ProgressBar.new(*args)]
+        @first_bar_args = @arguments.clone
+        # TODO: PORTABILITY: replace deep_dup (Rails)
+        opts = @options.deep_dup
+        opts[:class].select! { |o| o != 'progress' && o != 'progress-striped' }
+        @first_bar_args.push(opts)
       end
 
       after_capture do
-        @content = @view.capture {@bars.reduce(Base::EMPTY_HTML) {|html, bar| html += bar.render}} + @content
+        @content = capture do
+          ProgressBar.new(@template, *@first_bar_args).render
+        end + @content
       end
+
+#      after_capture do
+#        @content = capture do
+#          @bars.reduce(empty_html) { |a, e| a += e.render }
+#        end + @content
+#      end
     end
 
-    register_helper :jumbotron, 'Bootstrap::ViewHelpers::Jumbotron'
-    register_helper :jumbo, 'Bootstrap::ViewHelpers::Jumbotron'
-    register_helper :page_header, 'Bootstrap::ViewHelpers::PageHeader'
-    register_helper :alert_box, 'Bootstrap::ViewHelpers::Alert'
-    register_helper :progress_bar, 'Bootstrap::ViewHelpers::Progress'
-    register_helper :progress, 'Bootstrap::ViewHelpers::Progress'
+    WrapIt.register :jumbotron, 'Bootstrap::ViewHelpers::Jumbotron'
+    WrapIt.register :jumbo, 'Bootstrap::ViewHelpers::Jumbotron'
+    WrapIt.register :page_header, 'Bootstrap::ViewHelpers::PageHeader'
+    WrapIt.register :alert_box, 'Bootstrap::ViewHelpers::Alert'
+    WrapIt.register :progress_bar, 'Bootstrap::ViewHelpers::Progress'
+    WrapIt.register :progress, 'Bootstrap::ViewHelpers::Progress'
   end
 end

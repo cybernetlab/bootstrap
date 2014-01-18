@@ -1,15 +1,19 @@
 module Bootstrap
+  #
   module ViewHelpers
-    class Breadcrumb < Base
-      include List
-
-      TAG = 'ol'
+    #
+    # Breadcrumb
+    #
+    # @author [alexiss]
+    #
+    class Breadcrumb < WrapIt::Container
+      default_tag 'ol'
       html_class 'breadcrumb'
 
-      item_type :link_item, ListLinkItem
-      item_type :item, ListItem
+      child :link_item, 'Bootstrap::ViewHelpers::ListLinkItem'
+      child :item, 'Bootstrap::ViewHelpers::ListItem'
     end
 
-    register_helper :breadcrumb, 'Bootstrap::ViewHelpers::Breadcrumb'
+    WrapIt.register :breadcrumb, 'Bootstrap::ViewHelpers::Breadcrumb'
   end
 end

@@ -1,6 +1,6 @@
 # General info
 
-This gem provides helpers for easly creating sites with [Twitter Bootstrap 3](http://getbootstrap.com) framework.
+This package provides helpers for easly creating sites with [Twitter Bootstrap 3](http://getbootstrap.com) framework.
 
 > **Warning!** This gem is in active development state. Please, don't use it in production.
 
@@ -41,12 +41,26 @@ and to `application.js`:
 
 # Configuration
 
+Full Rails-style configuration is not implemented yet. So, to change config options, just put following line inside your `config/application.rb`:
+
+```ruby
+  class Application < Rails::Application
+    ...
+    Bootstrap.config.assets_source = :cdn
+  end
+```
+
 ## Bootstrap assets
 
 Now, you have two choises: at first, CDN source of CSS and JavaScript. And second is minified versions of assets, downloaded from official sites. Third options - compile from LESS source will be available soon. So, you can configure bootstrap in `application.rb` linke this:
 
 ```ruby
 Bootstrap.config.assets_source = :cdn # or :precompiled for minified version
+```
+
+Also you need to insert following line into your layout file:
+
+```ruby
 ```
 
 > Package have some other options, thats are not implemented yet. Look into `lib/bootstrap/config.rb` for details.
@@ -526,6 +540,8 @@ This and all other stuff are in development.
 - finish bootstrap components implementation
 - documentation
 - implement LESS compilation
+- finish Rails config
+- create Rails generators
 - `simple_form` integration
 - `simple-navigation` integration
 

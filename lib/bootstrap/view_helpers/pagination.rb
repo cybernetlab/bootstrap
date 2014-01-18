@@ -1,25 +1,34 @@
 module Bootstrap
+  #
   module ViewHelpers
-    class Pagination < Base
-      include List
+    #
+    # Pagination
+    #
+    # @author [alexiss]
+    #
+    class Pagination < WrapIt::Container
       include Sizable
 
-      TAG = 'ul'
+      default_tag 'ul'
       html_class 'pagination'
 
-      item_type :link_item, ListLinkItem
+      child :link_item, ListLinkItem
     end
 
-    class Pager < Base
-      include List
-      TAG = 'ul'
+    #
+    # Pager
+    #
+    # @author [alexiss]
+    #
+    class Pager < WrapIt::Container
+      default_tag 'ul'
       html_class 'pager'
-      item_type :link_item, ListLinkItem
-      item_type(:previous, ListLinkItem) {|item| item.add_class 'previous'}
-      item_type(:next, ListLinkItem) {|item| item.add_class 'next'}
+      child :link_item, ListLinkItem
+      child :previous, ListLinkItem, [li_class: 'previous']
+      child :next, ListLinkItem, [li_class: 'next']
     end
 
-    register_helper :pagination, 'Bootstrap::ViewHelpers::Pagination'
-    register_helper :pager, 'Bootstrap::ViewHelpers::Pager'
+    WrapIt.register :pagination, 'Bootstrap::ViewHelpers::Pagination'
+    WrapIt.register :pager, 'Bootstrap::ViewHelpers::Pager'
   end
 end

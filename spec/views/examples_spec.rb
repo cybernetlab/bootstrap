@@ -38,7 +38,9 @@ describe 'examples for README.md' do
     render inline: <<-HAML
       <%= button :danger, :large, 'alert', icon: 'home' %>
     HAML
-    expect(rendered).to have_selector 'button.btn.btn-danger[@type="button"][text()=" alert"] > i.fa.fa-home'
+    expect(rendered).to have_selector(
+      'button.btn.btn-danger[@type="button"][text()=" alert"] > i.fa.fa-home'
+    )
   end
 
   it 'renders icon example' do
@@ -85,11 +87,30 @@ describe 'examples for README.md' do
         b.divider
       end %>
     HAML
-    expect(rendered).to have_selector 'div.btn-group > button.btn.btn-danger[@type="button"][text()="Button"] + button.btn.btn-danger.dropdown-toggle[@type="button"][@data-toggle="dropdown"] > span.caret'
-    expect(rendered).to have_selector 'div.btn-group > button[@data-toggle="dropdown"] + ul.dropdown-menu[@role="menu"] > li.dropdown-header[text()="Actions"][@role="presentation"]'
-    expect(rendered).to have_selector 'div.btn-group > button + ul > li.dropdown-header + li[@role="presentation"] > a[@href="#"][text()="Action"][@role="menuitem"][@tabindex="-1"]'
-    expect(rendered).to have_selector 'div.btn-group > button + ul > li.dropdown-header + li + li > a[@href="#"][text()="Another action"]'
-    expect(rendered).to have_selector 'div.btn-group > button + ul > li.dropdown-header + li + li + li.divider'
+    expect(rendered).to have_selector(
+      'div.btn-group' \
+      ' > button.btn.btn-danger[@type="button"][text()="Button"]' \
+      ' + button.btn.btn-danger.dropdown-toggle[@type="button"]' \
+      '[@data-toggle="dropdown"] > span.caret'
+    )
+    expect(rendered).to have_selector(
+      'div.btn-group > button[@data-toggle="dropdown"]' \
+      ' + ul.dropdown-menu[@role="menu"]' \
+      ' > li.dropdown-header[text()="Actions"][@role="presentation"]'
+    )
+    expect(rendered).to have_selector(
+      'div.btn-group > button + ul > li.dropdown-header' \
+      ' + li[@role="presentation"]' \
+      ' > a[@href="#"][text()="Action"][@role="menuitem"][@tabindex="-1"]'
+    )
+    expect(rendered).to have_selector(
+      'div.btn-group > button + ul > li.dropdown-header + li + li' \
+      ' > a[@href="#"][text()="Another action"]'
+    )
+    expect(rendered).to have_selector(
+      'div.btn-group > button + ul' \
+      ' > li.dropdown-header + li + li + li.divider'
+    )
   end
 
   it 'renders pills example' do
@@ -128,11 +149,26 @@ describe 'examples for README.md' do
         p.link_item '&raquo;', '#'
       end %>
     HAML
-    expect(rendered).to have_selector 'ul.pagination > li.disabled > a[@href="#"][text()="&laquo;"]'
-    expect(rendered).to have_selector 'ul > li.disabled + li.active > a[@href="#"][text()="1"]'
-    expect(rendered).to have_selector 'ul > li.disabled + li.active + li > a[@href="#"][text()="2"]'
-    expect(rendered).to have_selector 'ul > li.disabled + li.active + li + li > a[@href="#"][text()="3"]'
-    expect(rendered).to have_selector 'ul > li.disabled + li.active + li + li + li > a[@href="#"][text()="&raquo;"]'
+    expect(rendered).to have_selector(
+      'ul.pagination > li.disabled > a[@href="#"]',
+      text: '«'
+    )
+    expect(rendered).to have_selector(
+      'ul > li.disabled + li.active > a[@href="#"]',
+      text: '1'
+    )
+    expect(rendered).to have_selector(
+      'ul > li.disabled + li.active + li > a[@href="#"]',
+      text: '2'
+    )
+    expect(rendered).to have_selector(
+      'ul > li.disabled + li.active + li + li > a[@href="#"]',
+      text: '3'
+    )
+    expect(rendered).to have_selector(
+      'ul > li.disabled + li.active + li + li + li > a[@href="#"]',
+      text: '»'
+    )
   end
 
   it 'renders pager example' do
@@ -142,8 +178,14 @@ describe 'examples for README.md' do
         p.next 'Newer &rarr;', '#'
       end %>
     HAML
-    expect(rendered).to have_selector 'ul.pager > li.previous.disabled > a[@href="#"][text()="&larr; Older"]'
-    expect(rendered).to have_selector 'ul.pager > li.previous.disabled + li.next > a[@href="#"][text()="Newer &rarr;"]'
+    expect(rendered).to have_selector(
+      'ul.pager > li.previous.disabled > a[@href="#"]',
+      text: '← Older'
+    )
+    expect(rendered).to have_selector(
+      'ul.pager > li.previous.disabled + li.next > a[@href="#"]',
+      text: 'Newer →'
+    )
   end
 
   it 'renders label example' do

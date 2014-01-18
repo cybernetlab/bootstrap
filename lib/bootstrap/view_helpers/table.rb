@@ -1,43 +1,72 @@
 module Bootstrap
+  #
   module ViewHelpers
-    class Table < Base
-      self.flag :striped, html_class: 'table-striped'
-      self.flag :bordered, html_class: 'table-bordered'
-      self.flag :hover, html_class: 'table-hover'
-      self.flag :condensed, html_class: 'table-condensed'
-      self.flag(:responsive) {|value| self.wrapper = value ? {tag: 'div', class: 'table-responsive'} : nil}
-
+    #
+    # Table
+    #
+    # @author [alexiss]
+    #
+    class Table < WrapIt::Container
       html_class 'table'
-      helper :row, 'Bootstrap::ViewHelpers::TableRow'
+      html_class_prefix 'table-'
 
-      after_initialize {@tag = 'table'}
-    end
+      switch :striped, html_class: true
+      switch :bordered, html_class: true
+      switch :hover, html_class: true
+      switch :condensed, html_class: true
+      switch :responsive do |value|
+        value && wrap(class: 'table-responsive')
+      end
 
-    class TableRow < Base
-      include Contextual
+      child :row, 'Bootstrap::ViewHelpers::TableRow'
 
-      helper :cell, 'Bootstrap::ViewHelpers::TableCell'
-      alias_method :td, :cell
+      after_initialize { @tag = 'table' }
 
-      helper(:head, 'Bootstrap::ViewHelpers::TableCell') {|cell| cell.tag = 'th'}
-      alias_method :th, :head
-      alias_method :header, :head
-
-      after_initialize {@tag = 'tr'}
-    end
-
-    class TableCell < Base
-      include SizableColumn
-      include Contextual
-      include TextContainer
-
-      after_initialize do
-        header = !@args.extract_first!([:header, :head, :th]).nil?
-        header = [header, options.delete(:header) == true, options.delete(:head) == true, options.delete(:th) == true].any?
-        @tag = (header || @tag == 'th') ? 'th' : 'td'
+      # TODO: remove it since WrapIt 0.1.5
+      def unwrap
+        @wrapper = nil
       end
     end
 
-    register_helper :table, 'Bootstrap::ViewHelpers::Table'
+    #
+    # TableRow
+    #
+    # @author [alexiss]
+    #
+    class TableRow < WrapIt::Container
+      include Contextual
+
+      child :cell, 'Bootstrap::ViewHelpers::TableCell'
+      alias_method :td, :cell
+
+      child :head, 'Bootstrap::ViewHelpers::TableCell', [tag: 'th']
+      alias_method :th, :head
+      alias_method :header, :head
+
+      after_initialize { @tag = 'tr' }
+    end
+
+    #
+    # TableCell
+    #
+    # @author [alexiss]
+    #
+    class TableCell < WrapIt::Base
+      include WrapIt::TextContainer
+      include SizableColumn
+      include Contextual
+
+      after_initialize do
+        header = !@arguments.extract_first!([:header, :head, :th]).nil?
+        header ||= @options[:header] == true || @options[:head] == true ||
+          @options[:th] == true
+        @options.delete(:header)
+        @options.delete(:head)
+        @options.delete(:th)
+        @tag = header || @tag == 'th' ? 'th' : 'td'
+      end
+    end
+
+    WrapIt.register :table, 'Bootstrap::ViewHelpers::Table'
   end
 end

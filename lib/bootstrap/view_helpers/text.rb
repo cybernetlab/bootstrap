@@ -1,64 +1,46 @@
 module Bootstrap
+  #
   module ViewHelpers
-    module TextContainer
-      extend ActiveSupport::Concern
-
-      TAG = 'p'
-
-      included do
-        after_initialize do
-          @body = @args.extract_first!(String) || Base::EMPTY_HTML
-          @body += @options[:body] || @options[:text] || Base::EMPTY_HTML
-          @options.delete(:body)
-          @options.delete(:text)
-        end
-
-        after_capture do
-          # TODO: take care about html_safe here
-          @content = @body.html_safe + @content unless @body.nil?
-        end
-      end
-    end
-
-    class Text < Base
-      include TextContainer
+    #
+    # Text
+    #
+    # @author [alexiss]
+    #
+    class Text < WrapIt::Base
+      include WrapIt::TextContainer
       after_initialize do
         @tag ||= @helper_name == 'text' ? 'p' : @helper_name
       end
     end
 
-    class Link < Base
-      include TextContainer
-      TAG = 'a'
-      before_render do
-        args = @args.clone
-        args << @options
-        args.unshift '#' if args.size <= 1
-        @content = @view.link_to @content, *args
-        false
-      end
-    end
-
+    #
+    # Label
+    #
+    # @author [alexiss]
+    #
     class Label < Text
-      TAG = 'span'
+      default_tag 'span'
       html_class 'label'
-      enum :appearence, %i[default primary success info warning danger]
-      after_initialize do
-        self.appearence ||= :default
-        add_class "label-#{self.appearence}"
-      end
+      html_class_prefix 'label-'
+      enum :appearence, %i[default primary success info warning danger],
+           default: :default, html_class: true
     end
 
+    #
+    # Badge
+    #
+    # @author [alexiss]
+    #
     # TODO: right-alignment
     class Badge < Text
-      TAG = 'span'
+      default_tag 'span'
       html_class 'badge'
     end
 
-    register_helper :text, 'Bootstrap::ViewHelpers::Text'
-    register_helper :p, 'Bootstrap::ViewHelpers::Text'
-    register_helper :span, 'Bootstrap::ViewHelpers::Text'
-    register_helper :label, 'Bootstrap::ViewHelpers::Label'
-    register_helper :badge, 'Bootstrap::ViewHelpers::Badge'
+    WrapIt.register :text, 'Bootstrap::ViewHelpers::Text'
+    WrapIt.register :p, 'Bootstrap::ViewHelpers::Text'
+    WrapIt.register :span, 'Bootstrap::ViewHelpers::Text'
+    WrapIt.register :label, 'Bootstrap::ViewHelpers::Label'
+    WrapIt.register :badge, 'Bootstrap::ViewHelpers::Badge'
   end
 end

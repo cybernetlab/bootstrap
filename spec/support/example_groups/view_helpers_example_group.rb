@@ -21,7 +21,7 @@ module ViewHelpersExampleGroup
     let(:successor_class) {Class.new described_class}
     let(:wrapper_class) do
       mod = described_class
-      Class.new Bootstrap::ViewHelpers::Base do
+      Class.new WrapIt::Base do
         include mod
       end
     end
@@ -65,27 +65,34 @@ module ViewHelpersExampleGroup
 
       match do |obj|
         @options ||= {}
-        actual = obj.class.send(:get_derived_hash, :@arg_index).select {|k, v| v[:type] == :flag}
-        actual.include?(flag) && @options.all? {|k, v| actual[flag].key?(k) && actual[flag][k] == v}
+        actual = obj.send(:switches)
+        actual.include?(flag) && @options.all? do |k, v|
+          actual[flag].key?(k) && actual[flag][k] == v
+        end
       end
 
       failure_message_for_should do |obj|
-        flags = obj.class.send(:get_derived_hash, :@arg_index).select {|k, v| v[:type] == :flag}
+        flags = obj.send(:switches)
         msg = "expected that #{obj.class.name} with flags #{flags} would have flag #{flag}"
         msg += " with options #{@options}" if instance_variable_defined? :@options
         msg
       end
     end
 
-    RSpec::Matchers.define :have_enum do |*enums|
+    RSpec::Matchers.define :have_enum do |enum|
+      chain(:with) { |options| @options = options }
+
       match do |obj|
-        actual = obj.class.send(:get_derived_hash, :@opt_index).select {|k, v| v[:type] == :enum}
-        enums.select {|enum| actual.include?(enum)}.size == enums.size
+        @options ||= {}
+        actual = obj.send(:enums)
+        actual.include?(enum) && @options.all? do |k, v|
+          actual[enum].key?(k) && actual[enum][k] == v
+        end
       end
 
       failure_message_for_should do |obj|
-        class_enums = obj.class.send(:get_derived_hash, :@opt_index).select {|k, v| v[:type] == :enum}
-        "expected that #{obj.class.name} with enums #{class_enums} would have enums #{enums}"
+        class_enums = obj.send(:enums)
+        "expected that #{obj.class.name} with enums #{class_enums} would have enum #{enum}"
       end
     end
 

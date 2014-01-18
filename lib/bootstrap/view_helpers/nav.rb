@@ -1,65 +1,96 @@
 module Bootstrap
+  #
   module ViewHelpers
-    class DropdownNavItem < Base
+    #
+    # DropdownNavItem
+    #
+    # @author [alexiss]
+    #
+    class DropdownNavItem < WrapIt::Container
+      include WrapIt::TextContainer
       include Activable
       include Disableable
       include DropdownMenuWrapper
-      include TextContainer
 
-      TAG = 'li'
+      default_tag 'li'
       html_class 'dropdown'
 
       after_capture do
-        # TODO: TextContainer should include body into content, but content empty at this point
+        # TODO: TextContainer should include body into content, but content
+        # empty at this point
         @content += @body.html_safe unless @body.nil?
-        body = @content + ' '.html_safe + @view.content_tag('span', '', class: 'caret')
-        @content = @view.link_to body, '#', class: 'dropdown-toggle', data: {toggle: 'dropdown'}
+        body = @content + html_safe(' ') +
+          content_tag('span', '', class: 'caret')
+        # TODO: Replace 'link_to'
+        @content = @template.link_to(
+          body, '#', class: 'dropdown-toggle', data: {toggle: 'dropdown'}
+        )
       end
     end
 
-    class Nav < Base
+    #
+    # Nav
+    #
+    # @author [alexiss]
+    #
+    class Nav < WrapIt::Container
       include Justifable
-      include List
 
       html_class 'nav'
+      default_tag 'ul'
 
-      item_type :link_item, ListLinkItem
-      item_type :dropdown, DropdownNavItem
+      child :link_item, ListLinkItem
+      child :dropdown, DropdownNavItem
     end
 
+    #
+    # NavPills
+    #
+    # @author [alexiss]
+    #
     class NavPills < Nav
-      flag :stacked, html_class: 'nav-stacked'
+      default_tag 'ul'
+      switch :stacked, html_class: 'nav-stacked'
       html_class 'nav-pills'
     end
 
+    #
+    # NavTabs
+    #
+    # @author [alexiss]
+    #
     class NavTabs < Nav
+      default_tag 'ul'
       html_class 'nav-tabs'
     end
 
-    class NavBar < Base
-      TAG = 'nav'
+    #
+    # NavBar
+    #
+    # @author [alexiss]
+    #
+    class NavBar < WrapIt::Container
+      default_tag 'nav'
       html_class 'navbar'
+      html_class_prefix 'navbar-'
 
-      self.enum :position, %i[fixed_top fixed_bottom static_top]
-      self.enum :type, %i[default inverse]
+      enum :position, %i[fixed-top fixed-bottom static-top], html_class: true
+      enum :type, %i[default inverse], default: :default, html_class: true
 
       after_initialize do
-        self.type ||= :default
         @options[:role] = 'navigation'
-        add_class "navbar-#{self.type}"
-        add_class "navbar-#{self.position.to_s.gsub(/_/, '-')}" unless self.position.nil?
       end
 
-      helper(:button, 'Bootstrap::ViewHelpers::Button') {|button| button.add_class('navbar-btn')}
-      helper(:text, 'Bootstrap::ViewHelpers::Text') {|text| text.add_class('navbar-text')}
+      child :button, 'Bootstrap::ViewHelpers::Button', [class: 'navbar-btn']
+      child :text, 'Bootstrap::ViewHelpers::Text', [class: 'navbar-text']
       alias_method :p, :text
-      helper(:span, 'Bootstrap::ViewHelpers::Text') {|text| text.add_class('navbar-text')}
+      child :span, 'Bootstrap::ViewHelpers::Text', [class: 'navbar-text']
     end
 
-    register_helper :nav_pills, 'Bootstrap::ViewHelpers::NavPills'
-    register_helper :pills, 'Bootstrap::ViewHelpers::NavPills'
-    register_helper :nav_tabs, 'Bootstrap::ViewHelpers::NavTabs'
-    register_helper :tabs, 'Bootstrap::ViewHelpers::NavTabs'
-    register_helper :navbar, 'Bootstrap::ViewHelpers::NavBar'
+    WrapIt.register :nav_pills, 'Bootstrap::ViewHelpers::NavPills'
+    WrapIt.register :pills, 'Bootstrap::ViewHelpers::NavPills'
+    WrapIt.register :nav_tabs, 'Bootstrap::ViewHelpers::NavTabs'
+    WrapIt.register :tabs, 'Bootstrap::ViewHelpers::NavTabs'
+    WrapIt.register :navbar, 'Bootstrap::ViewHelpers::NavBar'
   end
 end
