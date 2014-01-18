@@ -553,6 +553,9 @@ This and all other stuff are in development.
 
 # Changes
 
+`0.1.1`
+* fixed: bootstrap version uninitialized constant
+
 `0.1.0`
 * initial version
 
