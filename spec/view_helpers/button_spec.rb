@@ -1,32 +1,32 @@
 require 'spec_helper'
 
 describe BootstrapIt::ViewHelpers::Button do
-  it { expect(helper).to render_with 'button.btn.btn-default[@type="button"]' }
+  it { expect(helper.render).to have_tag 'button.btn.btn-default[@type="button"]' }
 
   it 'allows `submit` type' do
-    expect(helper type: 'submit').to render_with(
+    expect(helper(type: 'submit').render).to have_tag(
       'button.btn.btn-default[@type="submit"]'
     )
   end
 
   it 'allows `a` tag' do
-    expect(helper tag: :a).to render_with 'a.btn.btn-default[@role="button"]'
+    expect(helper(tag: :a).render).to have_tag 'a.btn.btn-default[@role="button"]'
   end
 
   it 'allows `input` tag' do
-    expect(helper tag: :input).to render_with(
+    expect(helper(tag: :input).render).to have_tag(
       'input.btn.btn-default[@type="button"]'
     )
   end
 
   it 'allows `input` with `submit` type' do
-    expect(helper tag: :input, type: :submit).to render_with(
+    expect(helper(tag: :input, type: :submit).render).to have_tag(
       'input.btn.btn-default[@type="submit"]'
     )
   end
 
   it 'changes custom tags to `button`' do
-    expect(helper tag: :p).to render_with 'button.btn.btn-default'
+    expect(helper(tag: :p).render).to have_tag 'button.btn.btn-default'
   end
 
   # method returns safety
@@ -43,13 +43,13 @@ describe BootstrapIt::ViewHelpers::Button do
 
   # icons
   it 'renders icon throw options' do
-    expect(helper icon: :bell).to render_with(
+    expect(helper(icon: :bell).render).to have_tag(
       'button.btn.btn-default > i.fa.fa-bell'
     )
   end
 
   it 'renders icon with helper' do
-    expect(helper { |b| b.icon :star }).to render_with(
+    expect(helper { |b| b.icon :star }.render).to have_tag(
       'button.btn.btn-default > i.fa.fa-star'
     )
   end
@@ -66,7 +66,7 @@ describe BootstrapIt::ViewHelpers::Button do
       value: 'v1',
       class: 'someclass',
       helper_name: 'radio'
-    )).to render_with(
+    ).render).to have_tag(
       'label.btn.btn-default.someclass[text()="text"][@label_for="option1"]' \
       ' > input[@type="radio"][@name="group-name"][@id="option1"]' \
       '[@value="v1"]'
@@ -82,7 +82,7 @@ describe BootstrapIt::ViewHelpers::Button do
       value: 'v1',
       class: 'someclass',
       helper_name: 'checkbox'
-    )).to render_with(
+    ).render).to have_tag(
       'label.btn.btn-default.someclass[text()="text"] >' \
       ' input[@type="checkbox"][@name="group-name"]' \
       '[@id="option1"][@value="v1"]'
@@ -91,11 +91,13 @@ describe BootstrapIt::ViewHelpers::Button do
 
   # toggling
   it { expect(helper).to have_flag :toggle }
-  it { expect(helper :toggle).to render_with 'button[@data-toggle="button"]' }
+  it 'renders button with toggle data' do
+    expect(helper(:toggle).render).to have_tag 'button[@data-toggle="button"]'
+  end
 
   # state text
   it 'extracts state text from options' do
-    expect(helper loading_text: 'text').to render_with(
+    expect(helper(loading_text: 'text').render).to have_tag(
       'button[@data-loading-text="text"]'
     )
   end
@@ -122,14 +124,14 @@ describe BootstrapIt::ViewHelpers::DropdownButton do
 
   # dropdown
   it 'renders dropdown toggle' do
-    expect(helper('action text') { |b| b.divider }).to render_with(
+    expect(helper('action text') { |b| b.divider }.render).to have_tag(
       'div.btn-group > button.dropdown-toggle[@data-toggle="dropdown"]' \
-      '[text()="action text"] > span.caret'
+      '[text()="action text "] > span.caret'
     )
   end
 
   it 'renders dropdown menu' do
-    expect(helper('action text') { |b| b.divider }).to render_with(
+    expect(helper('action text') { |b| b.divider }.render).to have_tag(
       'div.btn-group > button + ul.dropdown-menu > li.divider'
     )
   end
@@ -138,14 +140,14 @@ describe BootstrapIt::ViewHelpers::DropdownButton do
 
   it 'renders splitted toggle button' do
     expect(
-      helper(:splitted, :danger, 'action') { |b| b.divider }
-    ).to render_with 'div.btn-group > button.btn-danger[text()="action"]'
+      helper(:splitted, :danger, 'action') { |b| b.divider }.render
+    ).to have_tag 'div.btn-group > button.btn-danger[text()="action"]'
   end
 
   it 'renders spliited toggle' do
     expect(
-      helper(:splitted, :danger, 'action') { |b| b.divider }
-    ).to render_with(
+      helper(:splitted, :danger, 'action') { |b| b.divider }.render
+    ).to have_tag(
       'div.btn-group' \
       ' > button.btn-danger.dropdown-toggle[@data-toggle="dropdown"]' \
       ' > span.caret'
@@ -154,8 +156,8 @@ describe BootstrapIt::ViewHelpers::DropdownButton do
 
   it 'renders splitted dropdown menu' do
     expect(
-      helper(:splitted, :danger, 'action') { |b| b.divider }
-    ).to render_with 'div.btn-group > ul.dropdown-menu > li.divider'
+      helper(:splitted, :danger, 'action') { |b| b.divider }.render
+    ).to have_tag 'div.btn-group > ul.dropdown-menu > li.divider'
   end
 
   # dropup
@@ -163,7 +165,7 @@ describe BootstrapIt::ViewHelpers::DropdownButton do
 
   it 'renders dropup' do
     expect(
-      helper(:dropup) { |b| b.divider }
-    ).to render_with 'div.btn-group.dropup'
+      helper(:dropup) { |b| b.divider }.render
+    ).to have_tag 'div.btn-group.dropup'
   end
 end

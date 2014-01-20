@@ -41,15 +41,14 @@ module ViewHelpersExampleGroup
       end
     end
 
+=begin
     RSpec::Matchers.define :render_with do |selector, options = {}|
       match_for_should do |actual|
-        Capybara::Node::Simple.new(actual.render)
-          .has_selector?(selector, options)
+        actual.render.has_tag?(selector, options)
       end
 
       match_for_should_not do |actual|
-        Capybara::Node::Simple.new(actual.render)
-          .has_no_selector?(selector, options)
+        actual.render.has_no_tag?(selector, options)
       end
 
       failure_message_for_should do |actual|
@@ -60,7 +59,7 @@ module ViewHelpersExampleGroup
         "expected that #{actual.render} would not have selector #{selector}"
       end
     end
-
+=end
     RSpec::Matchers.define :have_flag do |flag|
       chain :with do |options|
         @options = options

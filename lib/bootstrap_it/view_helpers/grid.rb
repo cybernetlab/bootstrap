@@ -4,8 +4,9 @@ module BootstrapIt
     #
     # Grid
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
+    # @see http://getbootstrap.com/css/#grid Bootstrap docs
     class Grid < WrapIt::Container
       html_class 'container'
       child :row, 'BootstrapIt::ViewHelpers::GridRow'
@@ -14,14 +15,15 @@ module BootstrapIt
     #
     # GridRow
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
     class GridRow < WrapIt::Container
       #
       # Clearfix
       #
-      # @author [alexiss]
+      # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
       #
+      # @see http://getbootstrap.com/css/#grid-responsive-resets Bootstrap docs
       class Clearfix < WrapIt::Base
         TYPES = %w(visible-xs visible-sm visible-md visible-lg
                    hidden-xs hidden-sm hidden-md hidden-lg)
@@ -30,7 +32,9 @@ module BootstrapIt
             [-_]?
             (?:(?:extra[-_]?small)|xs|small|sm|medium|md|large|lg)
           \z/xi
+
         html_class 'clearfix'
+
         after_initialize do
           type = @arguments.extract_first!(Symbol, String, and: [REGEXP]) ||
             'visible-md'
@@ -55,7 +59,7 @@ module BootstrapIt
     #
     # GridCell
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
     class GridCell < WrapIt::Container
       include SizableColumn
@@ -70,6 +74,6 @@ module BootstrapIt
       end
     end
 
-    WrapIt.register :grid, 'BootstrapIt::ViewHelpers::Grid'
+    register :grid, 'BootstrapIt::ViewHelpers::Grid'
   end
 end

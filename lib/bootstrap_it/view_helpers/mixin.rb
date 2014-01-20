@@ -4,7 +4,7 @@ module BootstrapIt
     #
     # SizableColumn
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
     module SizableColumn
       extend ActiveSupport::Concern
@@ -56,7 +56,7 @@ module BootstrapIt
     #
     # PlacableColumn
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
     module PlacableColumn
       extend ActiveSupport::Concern
@@ -122,7 +122,7 @@ module BootstrapIt
     #
     # Contextual
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
     module Contextual
       extend ActiveSupport::Concern
@@ -134,7 +134,7 @@ module BootstrapIt
     #
     # Activable
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
     module Activable
       extend ActiveSupport::Concern
@@ -146,7 +146,7 @@ module BootstrapIt
     #
     # Disablable
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
     module Disableable
       extend ActiveSupport::Concern
@@ -172,7 +172,7 @@ module BootstrapIt
     #
     # Sizable
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
     module Sizable
       extend ActiveSupport::Concern
@@ -219,7 +219,7 @@ module BootstrapIt
     #
     # Justifable
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
     module Justifable
       extend ActiveSupport::Concern
@@ -231,43 +231,35 @@ module BootstrapIt
     #
     # DropdownMenuWrapper
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
     module DropdownMenuWrapper
       extend ActiveSupport::Concern
 
       included do |base|
-        # puts "--- #{base.name}"
         base <= WrapIt::Container || fail(
           TypeError, 'Can be included only into WrapIt::Container subclasses'
         )
-        # delegate :divider, :header, :link_item, to: :dropdown_menu
+
         child :dropdown_menu, 'BootstrapIt::ViewHelpers::DropdownMenu'
+
         after_initialize do
-          @dropdown_items = []
-        end
-        after_render do
-          unless @dropdown_items.empty?
-            @content += capture do
-              items = @dropdown_items
-              dropdown_menu do |menu|
-                items.each { |item| menu.send(item[0], *item[1], &item[2]) }
-              end
-            end
-          end
+          self.deffered_render = true
+          dropdown_menu deffered_render: true
+          @dropdown_menu = children.first
         end
       end
 
       def header(*args, &block)
-        @dropdown_items << [:header, args, block]
+        @dropdown_menu.header(*args, &block)
       end
 
       def divider(*args, &block)
-        @dropdown_items << [:divider, args, block]
+        @dropdown_menu.divider(*args, &block)
       end
 
       def link_item(*args, &block)
-        @dropdown_items << [:link_item, args, block]
+        @dropdown_menu.link_item(*args, &block)
       end
     end
 

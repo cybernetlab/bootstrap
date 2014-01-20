@@ -57,7 +57,7 @@ Full Rails-style configuration is not implemented yet. So, to change config opti
 
 ## Bootstrap assets
 
-Now, you have two choises: at first, CDN source of CSS and JavaScript. And second is minified versions of assets, downloaded from official sites. Third options - compile from LESS source will be available soon. So, you can configure bootstrap_it in `application.rb` linke this:
+Now, you have two choises: at first, CDN source of CSS and JavaScript. And second is minified versions of assets, downloaded from official sites. Third options - compile from LESS source will be available soon. So, you can configure bootstrap_it in `application.rb` like this:
 
 ```ruby
 BootstrapIt.config.assets_source = :cdn # or :precompiled for minified version
@@ -552,6 +552,11 @@ This and all other stuff are in development.
 - integration to other ruby frameworks, such as `Sinatra`
 
 # Changes
+
+`0.1.2`
+* switched to wrap_it 0.2.0
+* code refactoring
+* testing improvements
 
 `0.1.1`
 * fixed: bootstrap version uninitialized constant

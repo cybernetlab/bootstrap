@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe BootstrapIt::ViewHelpers::Table do
-  it { expect(helper).to render_with 'table.table' }
-  it { expect(helper tag: 'div').to render_with 'table.table' }
+  it { expect(helper.render).to have_tag 'table.table' }
+  it { expect(helper(tag: 'div').render).to have_tag 'table.table' }
 
   %i(striped bordered hover condensed).each do |switch|
     it "has #{switch} switch" do
@@ -13,7 +13,7 @@ describe BootstrapIt::ViewHelpers::Table do
 
   it { expect(helper).to have_flag(:responsive) }
   it 'wraps responsive tables' do
-    expect(helper :responsive).to render_with(
+    expect(helper(:responsive).render).to have_tag(
       'div.table-responsive > table.table'
     )
   end
@@ -25,9 +25,8 @@ describe BootstrapIt::ViewHelpers::Table do
 end
 
 describe BootstrapIt::ViewHelpers::TableRow do
-  it { expect(helper).to render_with 'tr' }
-  it { expect(helper tag: 'div').to render_with 'tr' }
-  it { expect(helper { |g| '<i>text</i>'.html_safe }).to render_with 'tr > i' }
+  it { expect(helper.render).to have_tag 'tr' }
+  it { expect(helper(tag: 'div').render).to have_tag 'tr' }
 
   it 'renders child cells' do
     expect(BootstrapIt::ViewHelpers::TableCell).to receive(:new)
@@ -45,10 +44,10 @@ describe BootstrapIt::ViewHelpers::TableRow do
 end
 
 describe BootstrapIt::ViewHelpers::TableCell, type: :view do
-  it { expect(helper).to render_with 'td' }
-  it { expect(helper :th).to render_with 'th' }
-  it { expect(helper :head).to render_with 'th' }
-  it { expect(helper :header).to render_with 'th' }
+  it { expect(helper.render).to have_tag 'td' }
+  it { expect(helper(:th).render).to have_tag 'th' }
+  it { expect(helper(:head).render).to have_tag 'th' }
+  it { expect(helper(:header).render).to have_tag 'th' }
   it 'cleans up options' do
     expect(helper :th, :head, :header, th: true, head: true, header: true)
       .to_not have_option :th, :head, :header

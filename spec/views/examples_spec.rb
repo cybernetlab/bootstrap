@@ -14,8 +14,8 @@ describe 'examples for README.md' do
         end
       end %>
     HAML
-    expect(rendered).to have_selector 'div.container > div.row > div.col-md-4[text()="col 1"] + div.col-md-4.col-md-offset-4[text()="col 2"]'
-    expect(rendered).to have_selector 'div.container > div.row > div.col-md-6.col-md-offset-3[text()="col 3"] + div.clearfix.visible-md'
+    expect(rendered).to have_tag 'div.container > div.row > div.col-md-4[text()="col 1"] + div.col-md-4.col-md-offset-4[text()="col 2"]'
+    expect(rendered).to have_tag 'div.container > div.row > div.col-md-6.col-md-offset-3[text()="col 3"] + div.clearfix.visible-md'
   end
 
   it 'renders table example' do
@@ -30,15 +30,15 @@ describe 'examples for README.md' do
         end
       end %>
     HAML
-    expect(rendered).to have_selector 'table.table.table-condensed.table-bordered > tr.success > th[text()="header 1"] + th[text()="header 2"]'
-    expect(rendered).to have_selector 'table > tr > td[@colspan="2"][text()="data"]'
+    expect(rendered).to have_tag 'table.table.table-condensed.table-bordered > tr.success > th[text()="header 1"] + th[text()="header 2"]'
+    expect(rendered).to have_tag 'table > tr > td[@colspan="2"][text()="data"]'
   end
 
   it 'renders button example' do
     render inline: <<-HAML
       <%= button :danger, :large, 'alert', icon: 'home' %>
     HAML
-    expect(rendered).to have_selector(
+    expect(rendered).to have_tag(
       'button.btn.btn-danger[@type="button"][text()=" alert"] > i.fa.fa-home'
     )
   end
@@ -48,7 +48,7 @@ describe 'examples for README.md' do
       <%= icon :asterisk %>
     HAML
     #puts "*** #{rendered}"
-    expect(rendered).to have_selector 'i.fa.fa-asterisk'
+    expect(rendered).to have_tag 'i.fa.fa-asterisk'
   end
 
   it 'renders button-group example #1' do
@@ -62,9 +62,22 @@ describe 'examples for README.md' do
         end
       end %>
     HAML
-    expect(rendered).to have_selector 'div.btn-group > button.btn.btn-default[@type="button"][text()="one"] + button.btn.btn-success[@type="button"][text()="two"]'
-    expect(rendered).to have_selector 'div.btn-group > button.btn.btn-success[@type="button"][text()="two"] + div.btn-group > button.btn.btn-default.dropdown-toggle[@data-toggle="dropdown"][@type="button"][text()="dropdown"] > span.caret'
-    expect(rendered).to have_selector 'div.btn-group > button.btn.btn-success[@type="button"][text()="two"] + div.btn-group > button + ul.dropdown-menu[@role="menu"] > li[@role="presentation"] + li > a[@role="menuitem"][@tabindex="-1"][text()="link 2"]'
+    expect(rendered).to have_tag(
+      'div.btn-group > button.btn.btn-default[@type="button"][text()="one"]' \
+      ' + button.btn.btn-success[@type="button"][text()="two"]'
+    )
+    expect(rendered).to have_tag(
+      'div.btn-group > button.btn.btn-success[@type="button"][text()="two"]' \
+      ' + div.btn-group > button.btn.btn-default.dropdown-toggle' \
+      '[@data-toggle="dropdown"][@type="button"][text()="dropdown "]' \
+      ' > span.caret'
+    )
+    expect(rendered).to have_tag(
+      'div.btn-group > button.btn.btn-success[@type="button"][text()="two"]' \
+      ' + div.btn-group > button + ul.dropdown-menu[@role="menu"]' \
+      ' > li[@role="presentation"]' \
+      ' + li > a[@role="menuitem"][@tabindex="-1"][text()="link 2"]'
+    )
   end
 
   it 'renders button-group example #2' do
@@ -74,8 +87,8 @@ describe 'examples for README.md' do
         g.radio 'radio 2', :primary
       end %>
     HAML
-    expect(rendered).to have_selector 'div.btn-group[@data-toggle="buttons"] > label.btn.btn-primary[text()="radio 1"] > input[@type="radio"]'
-    expect(rendered).to have_selector 'div.btn-group > label.btn.btn-primary[text()="radio 1"] + label.btn.btn-primary[text()="radio 2"] > input[@type="radio"]'
+    expect(rendered).to have_tag 'div.btn-group[@data-toggle="buttons"] > label.btn.btn-primary[text()="radio 1"] > input[@type="radio"]'
+    expect(rendered).to have_tag 'div.btn-group > label.btn.btn-primary[text()="radio 1"] + label.btn.btn-primary[text()="radio 2"] > input[@type="radio"]'
   end
 
   it 'renders dropdown button example' do
@@ -87,27 +100,27 @@ describe 'examples for README.md' do
         b.divider
       end %>
     HAML
-    expect(rendered).to have_selector(
+    expect(rendered).to have_tag(
       'div.btn-group' \
       ' > button.btn.btn-danger[@type="button"][text()="Button"]' \
       ' + button.btn.btn-danger.dropdown-toggle[@type="button"]' \
       '[@data-toggle="dropdown"] > span.caret'
     )
-    expect(rendered).to have_selector(
+    expect(rendered).to have_tag(
       'div.btn-group > button[@data-toggle="dropdown"]' \
       ' + ul.dropdown-menu[@role="menu"]' \
       ' > li.dropdown-header[text()="Actions"][@role="presentation"]'
     )
-    expect(rendered).to have_selector(
+    expect(rendered).to have_tag(
       'div.btn-group > button + ul > li.dropdown-header' \
       ' + li[@role="presentation"]' \
       ' > a[@href="#"][text()="Action"][@role="menuitem"][@tabindex="-1"]'
     )
-    expect(rendered).to have_selector(
+    expect(rendered).to have_tag(
       'div.btn-group > button + ul > li.dropdown-header + li + li' \
       ' > a[@href="#"][text()="Another action"]'
     )
-    expect(rendered).to have_selector(
+    expect(rendered).to have_tag(
       'div.btn-group > button + ul' \
       ' > li.dropdown-header + li + li + li.divider'
     )
@@ -121,9 +134,9 @@ describe 'examples for README.md' do
         p.link_item 'Messages', '#'
       end %>
     HAML
-    expect(rendered).to have_selector 'ul.nav.nav-pills > li.active > a[@href="#"][text()="Home"]'
-    expect(rendered).to have_selector 'ul > li + li > a[@href="#"][text()="Profile"]'
-    expect(rendered).to have_selector 'ul > li + li + li > a[@href="#"][text()="Messages"]'
+    expect(rendered).to have_tag 'ul.nav.nav-pills > li.active > a[@href="#"][text()="Home"]'
+    expect(rendered).to have_tag 'ul > li + li > a[@href="#"][text()="Profile"]'
+    expect(rendered).to have_tag 'ul > li + li + li > a[@href="#"][text()="Messages"]'
   end
 
   it 'renders breadcrumb example' do
@@ -134,9 +147,9 @@ describe 'examples for README.md' do
         b.item :active, 'Data'
       end %>
     HAML
-    expect(rendered).to have_selector 'ol.breadcrumb > li > a[@href="#"][text()="Home"]'
-    expect(rendered).to have_selector 'ol > li + li > a[@href="#"][text()="Library"]'
-    expect(rendered).to have_selector 'ol > li + li + li.active[text()="Data"]'
+    expect(rendered).to have_tag 'ol.breadcrumb > li > a[@href="#"][text()="Home"]'
+    expect(rendered).to have_tag 'ol > li + li > a[@href="#"][text()="Library"]'
+    expect(rendered).to have_tag 'ol > li + li + li.active[text()="Data"]'
   end
 
   it 'renders pagination example' do
@@ -149,23 +162,23 @@ describe 'examples for README.md' do
         p.link_item '&raquo;', '#'
       end %>
     HAML
-    expect(rendered).to have_selector(
+    expect(rendered).to have_tag(
       'ul.pagination > li.disabled > a[@href="#"]',
       text: '«'
     )
-    expect(rendered).to have_selector(
+    expect(rendered).to have_tag(
       'ul > li.disabled + li.active > a[@href="#"]',
       text: '1'
     )
-    expect(rendered).to have_selector(
+    expect(rendered).to have_tag(
       'ul > li.disabled + li.active + li > a[@href="#"]',
       text: '2'
     )
-    expect(rendered).to have_selector(
+    expect(rendered).to have_tag(
       'ul > li.disabled + li.active + li + li > a[@href="#"]',
       text: '3'
     )
-    expect(rendered).to have_selector(
+    expect(rendered).to have_tag(
       'ul > li.disabled + li.active + li + li + li > a[@href="#"]',
       text: '»'
     )
@@ -178,11 +191,11 @@ describe 'examples for README.md' do
         p.next 'Newer &rarr;', '#'
       end %>
     HAML
-    expect(rendered).to have_selector(
+    expect(rendered).to have_tag(
       'ul.pager > li.previous.disabled > a[@href="#"]',
       text: '← Older'
     )
-    expect(rendered).to have_selector(
+    expect(rendered).to have_tag(
       'ul.pager > li.previous.disabled + li.next > a[@href="#"]',
       text: 'Newer →'
     )
@@ -192,14 +205,14 @@ describe 'examples for README.md' do
     render inline: <<-HAML
       <%= label :info, 'label text' %>
     HAML
-    expect(rendered).to have_selector 'span.label.label-info[text()="label text"]'
+    expect(rendered).to have_tag 'span.label.label-info[text()="label text"]'
   end
 
   it 'renders badge example' do
     render inline: <<-HAML
       <%= badge '10' %>
     HAML
-    expect(rendered).to have_selector 'span.badge[text()="10"]'
+    expect(rendered).to have_tag 'span.badge[text()="10"]'
   end
 
   it 'renders jumbotron example' do
@@ -208,7 +221,7 @@ describe 'examples for README.md' do
         <h1>Hello, world!</h1>
       <% end %>
     HAML
-    expect(rendered).to have_selector 'div.jumbotron > h1'
+    expect(rendered).to have_tag 'div.jumbotron > h1'
   end
 
   it 'renders page-header example' do
@@ -217,7 +230,7 @@ describe 'examples for README.md' do
         <h1>Hello, world!</h1>
       <% end %>
     HAML
-    expect(rendered).to have_selector 'div.page-header > h1'
+    expect(rendered).to have_tag 'div.page-header > h1'
   end
 
   it 'renders alert example' do
@@ -226,7 +239,7 @@ describe 'examples for README.md' do
         <%= a.link 'link text', 'url' %>
       <% end %>
     HAML
-    expect(rendered).to have_selector 'div.alert.alert-success.alert-dismissable > button.close[@type="button"][@data-dismiss="alert"][@aria-hidden="true"] + a.alert-link[@href="url"][text()="link text"]'
+    expect(rendered).to have_tag 'div.alert.alert-success.alert-dismissable > button.close[@type="button"][@data-dismiss="alert"][@aria-hidden="true"] + a.alert-link[@href="url"][text()="link text"]'
   end
 
   it 'renders progress-bar example' do
@@ -235,8 +248,8 @@ describe 'examples for README.md' do
         p.bar :warning, 20, '20% files complete'
       end %>
     HAML
-    expect(rendered).to have_selector 'div.progress.progress-striped > div.progress-bar.progress-bar-success[@style="width: 35%"][@role="progressbar"][@aria-valuenow="35"][@aria-valuemin="0"][@aria-valuemax="100"] > span.sr-only[text()="35% total complete"]'
-    expect(rendered).to have_selector 'div.progress.progress-striped > div.progress-bar-success + div.progress-bar.progress-bar-warning[@style="width: 20%"][@role="progressbar"][@aria-valuenow="20"][@aria-valuemin="0"][@aria-valuemax="100"] > span.sr-only[text()="20% files complete"]'
+    expect(rendered).to have_tag 'div.progress.progress-striped > div.progress-bar.progress-bar-success[@style="width: 35%"][@role="progressbar"][@aria-valuenow="35"][@aria-valuemin="0"][@aria-valuemax="100"] > span.sr-only[text()="35% total complete"]'
+    expect(rendered).to have_tag 'div.progress.progress-striped > div.progress-bar-success + div.progress-bar.progress-bar-warning[@style="width: 20%"][@role="progressbar"][@aria-valuenow="20"][@aria-valuemin="0"][@aria-valuemax="100"] > span.sr-only[text()="20% files complete"]'
   end
 
   it 'renders inline form example' do

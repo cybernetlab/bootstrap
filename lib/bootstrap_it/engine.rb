@@ -9,8 +9,8 @@ module BootstrapIt
 
     initializer 'bootstrap_it.configure_view_controller' do |app|
       ActiveSupport.on_load(:action_view) do
-        include WrapIt.helpers
         include BootstrapIt::LayoutHelpers
+        include BootstrapIt::ViewHelpers
       end
 
 #      ActiveSupport.on_load :action_controller do

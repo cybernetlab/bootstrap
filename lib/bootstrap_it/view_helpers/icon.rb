@@ -4,8 +4,10 @@ module BootstrapIt
     #
     # Icon
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
+    # @see http://getbootstrap.com/components/#glyphicons Bootstrap docs
+    # @see http://fontawesome.io/icons/ Font awesome icon list
     class Icon < WrapIt::Base
       omit_content
 
@@ -19,6 +21,6 @@ module BootstrapIt
       end
     end
 
-    WrapIt.register :icon, 'BootstrapIt::ViewHelpers::Icon'
+    register :icon, 'BootstrapIt::ViewHelpers::Icon'
   end
 end

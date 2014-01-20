@@ -1,21 +1,21 @@
 require 'spec_helper'
 
 describe BootstrapIt::ViewHelpers::Input do
-  it { expect(helper).to render_with 'input.form-control[@type="text"]' }
+  it { expect(helper.render).to have_tag 'input.form-control[@type="text"]' }
 
   it 'accepts valid input types' do
-    expect(helper type: 'password').to render_with(
+    expect(helper(type: 'password').render).to have_tag(
       'input.form-control[@type="password"]'
     )
   end
 
   it 'accepts string arguments as values' do
-    expect(helper {'10'}).to render_with 'input.form-control[@value="10"]'
+    expect(helper {'10'}.render).to have_tag 'input.form-control[@value="10"]'
   end
 end
 
 describe BootstrapIt::ViewHelpers::Form do
-  it { expect(helper).to render_with 'form[@role="form"]' }
+  it { expect(helper.render).to have_tag 'form[@role="form"]' }
 
   # kind
   it 'has `kind` enum' do

@@ -4,18 +4,19 @@ module BootstrapIt
     #
     # Dropdown Menu
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
+    # @see http://getbootstrap.com/components/#dropdowns Bootstrap docs
     class DropdownMenu < WrapIt::Container
       default_tag 'ul'
       html_class 'dropdown-menu'
 
       child :divider, ListItem,
-            [tag: 'li', class: 'divider', role: 'presentation']
+            tag: 'li', class: 'divider', role: 'presentation'
       child :header, ListItem,
-            [tag: 'li', class: 'dropdown-header', role: 'presentation']
+            tag: 'li', class: 'dropdown-header', role: 'presentation'
       child :link_item, ListLinkItem,
-            [li_role: 'presentation', role: 'menuitem', tabindex: '-1']
+            li_role: 'presentation', role: 'menuitem', tabindex: '-1'
 
       after_initialize do
         @options['role'] = 'menu'
@@ -25,6 +26,6 @@ module BootstrapIt
       end
     end
 
-    WrapIt.register :dropdown_menu, 'BootstrapIt::ViewHelpers::DropdownMenu'
+    register :dropdown_menu, 'BootstrapIt::ViewHelpers::DropdownMenu'
   end
 end

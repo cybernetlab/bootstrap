@@ -4,8 +4,9 @@ module BootstrapIt
     #
     # Input
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
+    # @see http://getbootstrap.com/css/#forms Bootstrap docs
     class Input < WrapIt::Base
       include WrapIt::TextContainer
       TYPES = %w(text password datetime datetime-local date month time
@@ -20,16 +21,15 @@ module BootstrapIt
         @saved_args = @arguments.clone
       end
 
-      before_render do
-        @options.key?(:value) || @options[:value] = @content
-        @content = empty_html
+      after_capture do
+        @options.key?(:value) || @options[:value] = render_sections
       end
     end
 
     #
     # FormLabel
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
     class FormLabel < WrapIt::Base
       include WrapIt::TextContainer
@@ -42,60 +42,56 @@ module BootstrapIt
     #
     # FormGroup
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
     class FormGroup < WrapIt::Container
       html_class 'form-group'
 
+      section :label, :input
+
+      child :label, 'BootstrapIt::ViewHelpers::FormLabel', section: :label
       child :input, 'BootstrapIt::ViewHelpers::Input' do |input|
         input_args = input.instance_variable_get(:@saved_args)
-        @control_size = input_args.extract!(
+        control_size = input_args.extract!(
           Symbol, and: [SizableColumn::COLUMN_SIZE_REGEXP]
         )
-        @control_place = input_args.extract!(
+        control_place = input_args.extract!(
           Symbol, and: [PlacableColumn::COLUMN_PLACE_REGEXP]
         )
-        @control_size.empty? && @control_size = @form.control_size
+        control_size.empty? && control_size = parent.control_size
 
-        label_args = input.options.delete(:label)
-        unless label_args.nil?
-          label_args.is_a?(Array) || label_args = [label_args]
-          @label = FormLabel.new(@template, *label_args)
-          if @form.kind == :horizontal && !@label.column_size_defined?
-            @label.column_size = @form.label_size
-          end
-          unless input.options[:id].nil?
-            @label.options[:label_for] = input.options[:id]
-          end
-        end
-      end
-
-      after_initialize do
-        @form = @options.delete :form
-        # @form.is_a? Form || fail(
-        #   ArgumentError,
-        #   'Required option `form` for `form_group` is not specified'
-        # )
-      end
-
-      after_capture do
-        if @form.kind == :horizontal
-          input_wrapper = Base.new(@template)
+        if parent.kind == :horizontal
+          input_wrapper = WrapIt::Base.new(@template)
           input_wrapper.extend SizableColumn
           input_wrapper.extend PlacableColumn
-          input_wrapper.column_size = @control_size
-          input_wrapper.column_place = @control_place
-          @content = capture { input_wrapper.render(@content) }
+          input_wrapper.column_size = control_size
+          input_wrapper.column_place = control_place
+          input.wrap(input_wrapper)
         end
-        @label.nil? || @content = capture { @label.render } + @content
+
+        args = input.options.delete(:label)
+        unless args.nil?
+          args.is_a?(Array) || args = [args]
+          options = args.extract_options!
+          unless input.options[:id].nil?
+            options[:label_for] = input.options[:id]
+          end
+          args << options
+          label(*args)
+          l = children.last
+          if parent.kind == :horizontal && !l.column_size_defined?
+            l.column_size = @form.label_size
+          end
+        end
       end
     end
 
     #
     # Form
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
+    # @see http://getbootstrap.com/css/#forms Bootstrap docs
     class Form < WrapIt::Container
       DEFAULT_LABEL_SIZE = %i(xs2 sm2 md2 lg2)
       DEFAULT_CONTROL_SIZE = %i(xs10 sm10 md10 lg10)
@@ -107,9 +103,11 @@ module BootstrapIt
       attr_reader :label_size
       attr_reader :control_size
 
+      child :group, 'BootstrapIt::ViewHelpers::FormGroup',
+            deffered_render: true
+
       def input(*args, &block)
-        group = BootstrapIt::ViewHelpers::FormGroup.new(@template, form: self)
-        group.input(*args, &block)
+        group { |g| g.input(*args, &block) }
       end
 
       after_initialize do
@@ -119,9 +117,10 @@ module BootstrapIt
           @label_size = options.delete(:label_size) || DEFAULT_LABEL_SIZE
           @control_size = options.delete(:control_size) || DEFAULT_CONTROL_SIZE
         end
+        self.deffered_render = true
       end
     end
 
-    WrapIt.register :form, 'BootstrapIt::ViewHelpers::Form'
+    register :form, 'BootstrapIt::ViewHelpers::Form'
   end
 end

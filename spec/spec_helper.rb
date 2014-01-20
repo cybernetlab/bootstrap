@@ -1,11 +1,14 @@
 require 'rubygems'
 require 'bundler'
+
+require 'rspec-html-matchers'
+
 #Bundler.require :default, :development
 #Bundler.require :development
 #puts "--- #{Object.constants}"
 
 require 'combustion'
-require 'capybara/rspec'
+# require 'capybara/rspec'
 
 Dir[File.join File.dirname(__FILE__), 'support', '**', '*.rb'].each {|file| require file}
 
@@ -14,7 +17,7 @@ Combustion.initialize! :action_controller, :action_view, :sprockets do |app|
 #  app.config.sass.cache = false
 end
 
-Capybara.app = Combustion::Application
+# Capybara.app = Combustion::Application
 
 require 'rspec/rails'
 #require 'capybara/rails'

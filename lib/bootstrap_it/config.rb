@@ -3,7 +3,7 @@ module BootstrapIt
   #
   # Configuration
   #
-  # @author [alexiss]
+  # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
   #
   module Config
     ASSETS_SOURCES = %i[cdn precompiled]

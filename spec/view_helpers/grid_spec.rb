@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe BootstrapIt::ViewHelpers::Grid do
-  it { expect(helper).to render_with 'div.container' }
+  it { expect(helper.render).to have_tag 'div.container' }
 
   it 'renders child rows' do
     expect(BootstrapIt::ViewHelpers::GridRow).to receive(:new).and_call_original
@@ -10,7 +10,7 @@ describe BootstrapIt::ViewHelpers::Grid do
 end
 
 describe BootstrapIt::ViewHelpers::GridRow do
-  it { expect(helper).to render_with 'div.row' }
+  it { expect(helper.render).to have_tag 'div.row' }
 
   it 'renders child cells' do
     expect(BootstrapIt::ViewHelpers::GridCell).to receive(:new).and_call_original
@@ -18,13 +18,13 @@ describe BootstrapIt::ViewHelpers::GridRow do
   end
 
   it 'renders clearfix' do
-    expect(helper { |h| h.clear }).to render_with(
+    expect(helper { |h| h.clear }.render).to have_tag(
       'div.row > div.clearfix.visible-md'
     )
   end
 
   it 'renders clearfix with custom attributes' do
-    expect(helper { |h| h.clear :hidden_large }).to render_with(
+    expect(helper { |h| h.clear :hidden_large }.render).to have_tag(
       'div.row > div.clearfix.hidden-lg'
     )
   end
@@ -34,7 +34,7 @@ describe BootstrapIt::ViewHelpers::GridRow do
 end
 
 describe BootstrapIt::ViewHelpers::GridCell do
-  it { expect(helper).to render_with 'div.col-md-3' }
+  it { expect(helper.render).to have_tag 'div.col-md-3' }
 
   it 'renders child rows' do
     expect(BootstrapIt::ViewHelpers::GridRow).to receive(:new).and_call_original

@@ -4,21 +4,21 @@ module BootstrapIt
     #
     # ListItem
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
     class ListItem < WrapIt::Base
-      default_tag 'li'
-
+      include WrapIt::TextContainer
       include Activable
       include Disableable
-      include WrapIt::TextContainer
+
+      default_tag 'li'
     end
 
 
     #
     # ListLinkItem
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
     class ListLinkItem < WrapIt::Link
       REGEXP = /\Ali_/

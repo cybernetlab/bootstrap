@@ -4,8 +4,9 @@ module BootstrapIt
     #
     # Pagination
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
+    # @see http://getbootstrap.com/components/#pagination Bootstrap docs
     class Pagination < WrapIt::Container
       include Sizable
 
@@ -18,17 +19,18 @@ module BootstrapIt
     #
     # Pager
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
+    # @see http://getbootstrap.com/components/#pagination-pager Bootstrap docs
     class Pager < WrapIt::Container
       default_tag 'ul'
       html_class 'pager'
       child :link_item, ListLinkItem
-      child :previous, ListLinkItem, [li_class: 'previous']
-      child :next, ListLinkItem, [li_class: 'next']
+      child :previous, ListLinkItem, li_class: 'previous'
+      child :next, ListLinkItem, li_class: 'next'
     end
 
-    WrapIt.register :pagination, 'BootstrapIt::ViewHelpers::Pagination'
-    WrapIt.register :pager, 'BootstrapIt::ViewHelpers::Pager'
+    register :pagination, 'BootstrapIt::ViewHelpers::Pagination'
+    register :pager, 'BootstrapIt::ViewHelpers::Pager'
   end
 end

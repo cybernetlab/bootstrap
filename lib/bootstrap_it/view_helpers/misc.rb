@@ -4,15 +4,16 @@ module BootstrapIt
     #
     # Jumbotron
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
+    # @see http://getbootstrap.com/components/#jumbotron Bootstrap docs
     class Jumbotron < WrapIt::Base
       html_class 'jumbotron'
       switch :full_width
 
       after_capture do
-        full_width? && @content = content_tag(
-          'div', @content, class: 'container'
+        full_width? && self[:content] = content_tag(
+          'div', render_sections, class: 'container'
         )
       end
     end
@@ -20,8 +21,9 @@ module BootstrapIt
     #
     # PageHeader
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
+    # @see http://getbootstrap.com/components/#page-header Bootstrap docs
     class PageHeader < WrapIt::Base
       html_class 'page-header'
     end
@@ -29,8 +31,9 @@ module BootstrapIt
     #
     # Alert
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
+    # @see http://getbootstrap.com/components/#alerts Bootstrap docs
     class Alert < WrapIt::Container
       include WrapIt::TextContainer
 
@@ -40,18 +43,20 @@ module BootstrapIt
       enum :appearence, %i(success info warning danger),
            default: :success, html_class: true
       switch :dismissable, html_class: true
-      child :link, 'WrapIt::Link', [class: 'alert-link']
+      child :link, 'WrapIt::Link', class: 'alert-link'
+      section :dismissable
+      place :dismissable, before: :content
 
-      before_render do
+      after_capture do
         if dismissable?
-          @content = content_tag(
+          self[:dismissable] = content_tag(
             'button',
             html_safe('&times;'),
             type: 'button',
             class: 'close',
             data: {dismiss: 'alert'},
             'aria-hidden' => true
-          ) + @content
+          )
         end
       end
     end
@@ -59,8 +64,9 @@ module BootstrapIt
     #
     # ProgressBar
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
+    # @see http://getbootstrap.com/components/#progress Bootstrap docs
     class ProgressBar < WrapIt::Base
       include WrapIt::TextContainer
 
@@ -85,24 +91,27 @@ module BootstrapIt
         @options[:style] = "width: #{@completed}%"
       end
 
-      before_render do
+      after_capture do
+        rendered = render_sections
         text =
-          if @content.empty?
+          if rendered.empty?
             I18n.translate(
               'bootstrap_it.progress_bar.text', completed: @completed
             )
           else
-            @content
+            rendered
           end
-        @content = content_tag('span', text, class: 'sr-only')
+        # TODO: do it with wrap when simple wrapping will be coded
+        self[:content] = content_tag('span', text, class: 'sr-only')
       end
     end
 
     #
     # Progress
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
+    # @see http://getbootstrap.com/components/#progress Bootstrap docs
     class Progress < WrapIt::Container
       include Activable
 
@@ -110,35 +119,27 @@ module BootstrapIt
       html_class_prefix 'progress-'
 
       child :bar, 'BootstrapIt::ViewHelpers::ProgressBar'
-
       switch :striped, html_class: true
+      section :first_bar
+      place :first_bar, before: :content
 
       after_initialize do
-        @first_bar_args = @arguments.clone
+        self.deffered_render = true
+        args = @arguments.clone
         # TODO: PORTABILITY: replace deep_dup (Rails)
         opts = @options.deep_dup
         opts[:class].select! { |o| o != 'progress' && o != 'progress-striped' }
-        @first_bar_args.push(opts)
+        opts[:section] = :first_bar
+        args.push(opts)
+        bar(*args)
       end
-
-      after_capture do
-        @content = capture do
-          ProgressBar.new(@template, *@first_bar_args).render
-        end + @content
-      end
-
-#      after_capture do
-#        @content = capture do
-#          @bars.reduce(empty_html) { |a, e| a += e.render }
-#        end + @content
-#      end
     end
 
-    WrapIt.register :jumbotron, 'BootstrapIt::ViewHelpers::Jumbotron'
-    WrapIt.register :jumbo, 'BootstrapIt::ViewHelpers::Jumbotron'
-    WrapIt.register :page_header, 'BootstrapIt::ViewHelpers::PageHeader'
-    WrapIt.register :alert_box, 'BootstrapIt::ViewHelpers::Alert'
-    WrapIt.register :progress_bar, 'BootstrapIt::ViewHelpers::Progress'
-    WrapIt.register :progress, 'BootstrapIt::ViewHelpers::Progress'
+    register :jumbotron, 'BootstrapIt::ViewHelpers::Jumbotron'
+    register :jumbo, 'BootstrapIt::ViewHelpers::Jumbotron'
+    register :page_header, 'BootstrapIt::ViewHelpers::PageHeader'
+    register :alert_box, 'BootstrapIt::ViewHelpers::Alert'
+    register :progress_bar, 'BootstrapIt::ViewHelpers::Progress'
+    register :progress, 'BootstrapIt::ViewHelpers::Progress'
   end
 end

@@ -36,6 +36,10 @@ module BootstrapIt
       bootstrap_it_stylesheets << bootstrap_it_javascripts
     end
   end
+
+  module ViewHelpers; end
+
+  WrapIt.register_module ViewHelpers
 end
 
 require 'bootstrap_it/view_helpers/mixin'
@@ -47,7 +51,6 @@ require 'bootstrap_it/view_helpers/list'
 require 'bootstrap_it/view_helpers/dropdown_menu'
 require 'bootstrap_it/view_helpers/button'
 require 'bootstrap_it/view_helpers/button_group'
-require 'bootstrap_it/view_helpers/button_toolbar'
 require 'bootstrap_it/view_helpers/form'
 require 'bootstrap_it/view_helpers/nav'
 require 'bootstrap_it/view_helpers/breadcrumb'

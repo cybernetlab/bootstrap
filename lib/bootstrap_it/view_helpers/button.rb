@@ -4,13 +4,15 @@ module BootstrapIt
     #
     # Button
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
+    # @see http://getbootstrap.com/css/#buttons Bootstrap docs
+    # @see http://getbootstrap.com/javascript/#buttons Bootstrap docs
     class Button < WrapIt::Container
+      include WrapIt::TextContainer
       include Activable
       include Disableable
       include Sizable
-      include WrapIt::TextContainer
 
       html_class 'btn'
       html_class_prefix 'btn-'
@@ -24,11 +26,14 @@ module BootstrapIt
            default: :default, html_class: true
 
       child :icon, 'BootstrapIt::ViewHelpers::Icon'
+      extract_from_options icon: :icon
+      section :space_separator, :input
+      place :children, after: :begin
+      place :space_separator, after: :children
+      place :input, before: :content
 
-      before_render do
-        unless @icon.nil?
-          @content = capture { @icon.render } + html_safe(' ') + @content
-        end
+      after_capture do
+        children.size > 0 && self[:space_separator] = html_safe(' ')
 
         if @helper_name == :radio || @helper_name == :checkbox
           @tag = 'label'
@@ -37,35 +42,29 @@ module BootstrapIt
             next if k == :class || k == :type
             input_options[k] = @options.delete(k)
           end
-          input_options.key?(:checked) && input_options[:checked] != false &&
+          if input_options.key?(:checked) && input_options[:checked] != false
             input_options[:checked] = 'checked'
-          @content = content_tag('input', '', input_options) + @content
-          input_options[:id].blank? ||
+          end
+          self[:input] = content_tag('input', '', input_options)
+          unless input_options[:id].blank?
             @options[:label_for] = input_options[:id]
+          end
         end
-        true
-      end
-
-      after_capture do
-        @icon.nil? && !@content.empty? && @content += html_safe(' ')
       end
 
       after_initialize do
-        @tag = 'button' unless @tag == 'a' || @tag == 'input'
+        @tag == 'a' || @tag == 'input' || @tag = 'button'
         if @tag == 'a'
           @options[:role] = 'button'
         else
-          @options[:type] = 'button' unless @options.include?(:type)
+          @options.include?(:type) || @options[:type] = 'button'
           @options[:type] = @options[:type].to_s.downcase
         end
 
-        @options.key?(:icon) &&
-          @icon = Icon.new(@template, @options.delete(:icon))
-
         @options.keys.each do |key|
-          next unless /_text$/ =~ key
+          /_text$/ =~ key || next
           value = @options.delete(key)
-          next unless value.is_a?(String)
+          value.is_a?(String) || next
           set_html_data(key.to_s.gsub(/_/, '-'), value)
         end
       end
@@ -74,43 +73,52 @@ module BootstrapIt
     #
     # DropdownButton
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
+    # @see http://getbootstrap.com/components/#btn-dropdowns Bootstrap docs
     class DropdownButton < Button
       include DropdownMenuWrapper
 
       switch :splitted
       switch :dropup
+      section :caret, :splitted
+      place :caret, after: :content
+      place :splitted, after: :caret
+      place :space_separator, before: :caret
+      place :children, before: :end
 
       after_capture do
-        unless @dropdown_items.empty?
-          unless splitted?
-            @content += content_tag('span', '', class: 'caret')
-            add_html_class('dropdown-toggle')
-            set_html_data(:toggle, 'dropdown')
-          end
-        end
-      end
-
-      after_render do
-        unless @dropdown_items.empty?
+        if !@dropdown_menu.nil?
+          caret = content_tag('span', empty_html, class: 'caret')
           if splitted?
             toggle = WrapIt::Base.new(@template, @options.merge(tag: 'button'))
             toggle.add_html_class('dropdown-toggle')
             toggle.set_html_data(:toggle, 'dropdown')
-            @content += capture do
-              toggle.render(content_tag('span', '', class: 'caret'))
-            end
+            self[:splitted] = capture { toggle.render(caret) }
+            self[:space_separator] = empty_html
+          else
+            self[:caret] = caret
+            self[:space_separator] = html_safe(' ')
+            add_html_class('dropdown-toggle')
+            set_html_data(:toggle, 'dropdown')
           end
+          #puts "--- #{self.class.placement}"
+          #puts "--> #{instance_variable_get(:@sections)}"
+          self[:content] = render_sections(except: [:children, :splitted])
+          @after_render = render_sections(:children, :splitted)
+          #puts "RENDERED: #{self[:content]} #{@}"
           wrapper_class = ['btn-group']
           wrapper_class << 'dropup' if dropup?
           wrap(class: wrapper_class)
         end
       end
+
+      after_render do
+        @after_render.nil? || @rendered << @after_render
+      end
     end
 
-    WrapIt.register :button, :radio, :checkbox,
-                    'BootstrapIt::ViewHelpers::Button'
-    WrapIt.register :dropdown_button, 'BootstrapIt::ViewHelpers::DropdownButton'
+    register :button, :radio, :checkbox, 'BootstrapIt::ViewHelpers::Button'
+    register :dropdown_button, 'BootstrapIt::ViewHelpers::DropdownButton'
   end
 end

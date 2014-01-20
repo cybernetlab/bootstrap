@@ -4,7 +4,7 @@ module BootstrapIt
     #
     # DropdownNavItem
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
     class DropdownNavItem < WrapIt::Container
       include WrapIt::TextContainer
@@ -14,16 +14,14 @@ module BootstrapIt
 
       default_tag 'li'
       html_class 'dropdown'
+      place :children, before: :end
 
       after_capture do
-        # TODO: TextContainer should include body into content, but content
-        # empty at this point
-        @content += @body.html_safe unless @body.nil?
-        body = @content + html_safe(' ') +
-          content_tag('span', '', class: 'caret')
-        # TODO: Replace 'link_to'
-        @content = @template.link_to(
-          body, '#', class: 'dropdown-toggle', data: {toggle: 'dropdown'}
+        rendered = render_sections(except: :children)
+        rendered << html_safe(' ') << content_tag('span', '', class: 'caret')
+        self[:content] = @template.content_tag(
+          'a', rendered, href: '#', class: 'dropdown-toggle',
+          data: {toggle: 'dropdown'}
         )
       end
     end
@@ -31,8 +29,9 @@ module BootstrapIt
     #
     # Nav
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
+    # @see http://getbootstrap.com/components/#nav Bootstrap docs
     class Nav < WrapIt::Container
       include Justifable
 
@@ -46,8 +45,9 @@ module BootstrapIt
     #
     # NavPills
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
+    # @see http://getbootstrap.com/components/#nav-pills Bootstrap docs
     class NavPills < Nav
       default_tag 'ul'
       switch :stacked, html_class: 'nav-stacked'
@@ -57,8 +57,9 @@ module BootstrapIt
     #
     # NavTabs
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
+    # @see http://getbootstrap.com/components/#nav-tabs Bootstrap docs
     class NavTabs < Nav
       default_tag 'ul'
       html_class 'nav-tabs'
@@ -67,8 +68,9 @@ module BootstrapIt
     #
     # NavBar
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
+    # @see http://getbootstrap.com/components/#navbar Bootstrap docs
     class NavBar < WrapIt::Container
       default_tag 'nav'
       html_class 'navbar'
@@ -81,16 +83,16 @@ module BootstrapIt
         @options[:role] = 'navigation'
       end
 
-      child :button, 'BootstrapIt::ViewHelpers::Button', [class: 'navbar-btn']
-      child :text, 'BootstrapIt::ViewHelpers::Text', [class: 'navbar-text']
+      child :button, 'BootstrapIt::ViewHelpers::Button', class: 'navbar-btn'
+      child :text, 'BootstrapIt::ViewHelpers::Text', class: 'navbar-text'
       alias_method :p, :text
-      child :span, 'BootstrapIt::ViewHelpers::Text', [class: 'navbar-text']
+      child :span, 'BootstrapIt::ViewHelpers::Text', class: 'navbar-text'
     end
 
-    WrapIt.register :nav_pills, 'BootstrapIt::ViewHelpers::NavPills'
-    WrapIt.register :pills, 'BootstrapIt::ViewHelpers::NavPills'
-    WrapIt.register :nav_tabs, 'BootstrapIt::ViewHelpers::NavTabs'
-    WrapIt.register :tabs, 'BootstrapIt::ViewHelpers::NavTabs'
-    WrapIt.register :navbar, 'BootstrapIt::ViewHelpers::NavBar'
+    register :nav_pills, 'BootstrapIt::ViewHelpers::NavPills'
+    register :pills, 'BootstrapIt::ViewHelpers::NavPills'
+    register :nav_tabs, 'BootstrapIt::ViewHelpers::NavTabs'
+    register :tabs, 'BootstrapIt::ViewHelpers::NavTabs'
+    register :navbar, 'BootstrapIt::ViewHelpers::NavBar'
   end
 end

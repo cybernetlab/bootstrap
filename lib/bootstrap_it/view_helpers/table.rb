@@ -4,8 +4,9 @@ module BootstrapIt
     #
     # Table
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
+    # @see http://getbootstrap.com/css/#tables Bootstrap docs
     class Table < WrapIt::Container
       html_class 'table'
       html_class_prefix 'table-'
@@ -21,17 +22,12 @@ module BootstrapIt
       child :row, 'BootstrapIt::ViewHelpers::TableRow'
 
       after_initialize { @tag = 'table' }
-
-      # TODO: remove it since WrapIt 0.1.5
-      def unwrap
-        @wrapper = nil
-      end
     end
 
     #
     # TableRow
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
     class TableRow < WrapIt::Container
       include Contextual
@@ -39,7 +35,7 @@ module BootstrapIt
       child :cell, 'BootstrapIt::ViewHelpers::TableCell'
       alias_method :td, :cell
 
-      child :head, 'BootstrapIt::ViewHelpers::TableCell', [tag: 'th']
+      child :head, 'BootstrapIt::ViewHelpers::TableCell', tag: 'th'
       alias_method :th, :head
       alias_method :header, :head
 
@@ -49,7 +45,7 @@ module BootstrapIt
     #
     # TableCell
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
     class TableCell < WrapIt::Base
       include WrapIt::TextContainer
@@ -67,6 +63,6 @@ module BootstrapIt
       end
     end
 
-    WrapIt.register :table, 'BootstrapIt::ViewHelpers::Table'
+    register :table, 'BootstrapIt::ViewHelpers::Table'
   end
 end

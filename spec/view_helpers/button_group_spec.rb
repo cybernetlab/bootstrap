@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe BootstrapIt::ViewHelpers::ButtonGroup do
-  it { expect(helper).to render_with 'div.btn-group' }
+  it { expect(helper.render).to have_tag 'div.btn-group' }
 
   # behaviour
   it { expect(helper).to be_kind_of BootstrapIt::ViewHelpers::Sizable }
@@ -16,20 +16,20 @@ describe BootstrapIt::ViewHelpers::ButtonGroup do
 
   # buttons
   it 'renders buttons' do
-    expect(helper { |h| h.button 'test' }).to render_with(
+    expect(helper { |h| h.button 'test' }.render).to have_tag(
       'div.btn-group > button.btn.btn-default[text()="test"]'
     )
   end
 
   it 'renders radios' do
-    expect(helper { |h| h.radio 'test' }).to render_with(
+    expect(helper { |h| h.radio 'test' }.render).to have_tag(
       'div.btn-group[@data-toggle="buttons"]' \
       ' > label.btn.btn-default[text()="test"] > input[@type="radio"]'
     )
   end
 
   it 'renders checkboxes' do
-    expect(helper { |h| h.checkbox 'test' }).to render_with(
+    expect(helper { |h| h.checkbox 'test' }.render).to have_tag(
       'div.btn-group[@data-toggle="buttons"]' \
       ' > label.btn.btn-default[text()="test"] > input[@type="checkbox"]'
     )

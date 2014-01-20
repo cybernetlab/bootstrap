@@ -2,9 +2,10 @@ module BootstrapIt
   #
   module ViewHelpers
     #
+    # @see http://getbootstrap.com/components/#breadcrumbs Bootstrap docs
     # Breadcrumb
     #
-    # @author [alexiss]
+    # @author Alexey Ovchinnikov <alexiss@cybernetlab.ru>
     #
     class Breadcrumb < WrapIt::Container
       default_tag 'ol'
@@ -14,6 +15,6 @@ module BootstrapIt
       child :item, 'BootstrapIt::ViewHelpers::ListItem'
     end
 
-    WrapIt.register :breadcrumb, 'BootstrapIt::ViewHelpers::Breadcrumb'
+    register :breadcrumb, 'BootstrapIt::ViewHelpers::Breadcrumb'
   end
 end
